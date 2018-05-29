@@ -1,0 +1,16 @@
+﻿body {
+}
+
+#action-bar {
+    margin-top: 20px;
+}
+
+#search-box {
+    width: 100%;
+    padding-left: 5px;
+    outline: none;
+    border-radius: 2px;
+    border: 1px solid white;
+    box-shadow: 0px 1px 5px #BDBDBD;
+    font-size: medium;
+}

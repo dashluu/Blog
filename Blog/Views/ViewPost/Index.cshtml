@@ -1,0 +1,26 @@
+﻿@model Blog.Models.PostModel
+
+@section Style {
+    <link href="@Url.Content("~/Content/ViewPost/viewpost.css")" rel="stylesheet" type="text/css" />
+}
+
+@{
+    Html.RenderPartial("~/Views/Shared/_SearchBar.cshtml");
+}
+
+<div class="container" id="post-block">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 post-section">
+            <p class="post-title">@Model.Title</p>
+            <h5 class="post-category">About <strong>@Model.PostCategory</strong></h5>
+            <p class="post-author">By <strong>@Model.Author</strong> on <strong>@Model.CreatedDate</strong></p>
+            <p class="post-date">Updated @Model.UpdatedDate</p>
+            <p class="post-summary">@Model.ShortDescription</p>
+            <p class="post-content">@Model.Content</p>
+        </div>
+
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 comment-section">
+            <p class="comment-title">Comments</p>
+        </div>
+    </div>
+</div>

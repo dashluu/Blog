@@ -1,0 +1,40 @@
+﻿@section Style {
+    <link href="@Url.Content("~/Content/Create/create.css")" rel="stylesheet" type="text/css" />
+}
+
+@section scripts{
+    <script src="https://cloud.tinymce.com/stable/tinymce.js"></script>
+    <script src="~/Scripts/TinyMCE/tinymce_app.js"></script>
+}
+
+<div class="container" id="editor-section">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            @using (Html.BeginForm("Index", "Create", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                <div class="editor-component">
+                    <h1>Upload image</h1>
+                    <input type="file" name="ImageFile" />
+                    <input type="submit" class="submit-btn" />
+                </div>
+                <div class="editor-component">
+                    <h1>Blog editor</h1>
+                    @if (Model != null)
+                    {
+                        string htmlImage = "<p><img src='" + Model.BlogImage.Source + "' style='width: 300px;' /></p>";
+                        string blogEditorContent = Model.UploadBlog.Content + htmlImage;
+                        <textarea id="blog-editor" name="Blog.Content">
+                            @blogEditorContent
+                        </textarea>
+                    }
+                    else
+                    {
+                        <textarea id="blog-editor" name="Blog.Content">
+                        </textarea>
+                    }
+                    <input type="submit" class="submit-btn" />
+                </div>
+            }
+        </div>
+    </div>
+</div>
