@@ -23,10 +23,10 @@
             <p class="post-content">@Model.Content</p>
         </div>
 
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 comment-section">
+        <div class="col-xs-12 col-sm-10 col-md-8 col-lg-7 comment-section">
             <p class="comment-title">Comments</p>
             <form class="comment-form master-comment-form" action="/ViewPost" method="post">
-                <input type="text" class="comment-input" placeholder="Comment" />
+                <textarea class="comment-input" placeholder="Comment"></textarea>
                 <input type="hidden" value=@Model.PostId id="post-id" />
                 <button type="submit" class="submit-comment-btn"><span class="glyphicon glyphicon-send"></span></button>
             </form>
@@ -46,7 +46,7 @@
                                 <p class="comment-body">@commentDTO.Content</p>
                             </div>
                             <form class="comment-form child-comment-form" action="/ViewPost" method="post">
-                                <input type="text" class="comment-input" placeholder="Comment" />
+                                <textarea class="comment-input" placeholder="Comment"></textarea>
                                 <input type="hidden" value=@commentDTO.CommentId class="comment-id" />
                                 <button type="submit" class="submit-comment-btn"><span class="glyphicon glyphicon-send"></span></button>
                             </form>
