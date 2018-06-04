@@ -15,7 +15,7 @@
             "<p class='comment-body'>" + commentInput + "</p>" +
             "</div>" +
             "<form class='comment-form child-comment-form' action='/ViewPost' method='post'>" +
-            "<input type='text' class='comment-input' placeholder='Comment' />" +
+            "<textarea class='comment-input' placeholder='Comment'></textarea>" +
             "<input type='hidden' value='" + result.commentId + "' class='comment-id' />" +
             "<button type='submit' class='submit-comment-btn'><span class='glyphicon glyphicon-send'></span></button>" +
             "</form>" +
