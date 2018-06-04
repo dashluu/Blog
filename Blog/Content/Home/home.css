@@ -15,8 +15,8 @@
 }
 
 .post-img {
-    width: 170px;
-    height: 150px;
+    width: 160px;
+    height: 140px;
     border-radius: 3px;
     box-shadow: 0px 2px 10px 1px #9E9E9E;
     margin-top: 10px;
@@ -29,31 +29,27 @@
 .post-title {
     margin-top: 0px;
     font-weight: 800;
-    font-size: 30px;
-}
-
-.post-author {
-    font-size: 17px;
-    font-weight: 600;
+    font-size: 25px;
 }
 
 .post-date {
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 .post-summary {
     font-size: 14px;
     font-weight: 400;
-    padding-right: 20px;
+    padding-right: 10px;
 }
 
 .read-post-btn {
-    border: none;
-    background-color: transparent;
+    border: 1px solid #F5F5F5;
+    background-color: #F5F5F5;
     outline: none;
     color: #0336ff;
-    font-size: medium;
+    font-size: 14px;
     font-weight: 700;
-    padding: 0;
+    padding: 2px 5px 2px 5px;
+    border-radius: 3px;
 }

@@ -1,4 +1,4 @@
-﻿@model List<Blog.Models.PostCardModel>
+﻿@model List<BlogServices.DTO.PostCardDTO>
 
 @section Style {
     <link href="@Url.Content("~/Content/Home/home.css")" rel="stylesheet" type="text/css" />
@@ -19,13 +19,13 @@
                 </div>
                 <div class="col-xs-12 col-sm-9 col-md-9 col-lg-8 post-col-2">
                     <p class="post-title">@postCard.Title</p>
-                    <p class="post-author">By <strong>@postCard.Author</strong> on <strong>@postCard.CreatedDate</strong></p>
+                    <p class="post-date">On <strong>@postCard.CreatedDate</strong></p>
                     <p class="post-date">Updated @postCard.UpdatedDate</p>
                     <p class="post-summary">@postCard.ShortDescription</p>
                     @using (Html.BeginForm())
                     {
                         <input type="hidden" value=@postCard.PostId name="postId" />
-                        <input type="submit" value="Read more" class="read-post-btn" />
+                        <input type="submit" value="Read" class="read-post-btn" />
                     }
                 </div>
             </div>

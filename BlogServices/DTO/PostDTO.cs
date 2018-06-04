@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using System.Text;
 
-namespace Blog.Models
+namespace BlogServices.DTO
 {
-    public class PostCardModel
+    public class PostDTO
     {
         public string PostId { get; set; }
         public string Title { get; set; }
-        public string Author { get; set; }
+        public string PostCategory { get; set; }
         public string CreatedDate { get; set; }
         public string UpdatedDate { get; set; }
         public string ShortDescription { get; set; }
+        public string Content { get; set; }
         public string ThumbnailImageSrc { get; set; }
+        public List<CommentDTO> CommentDTOs { get; set; }
     }
 }
