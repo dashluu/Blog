@@ -148,11 +148,23 @@ namespace BlogServices.Services
             return postCardDTOs;
         }
 
-        public PostDTO GetPost(string id)
+        public PostDTO GetPostDTO(string id)
         {
-            PostEntity postEntity = blogRepository.GetPost(id);
+            PostEntity postEntity = blogRepository.GetPostEntity(id);
             PostDTO postDTO = MapPostEntityToDTO(postEntity);
             return postDTO;
+        }
+
+        public string AddCommentDTO(string postId, string commentContent, string username)
+        {
+            string commentId = blogRepository.AddCommentEntity(postId, commentContent, username);
+            return commentId;
+        }
+
+        public bool AddChildCommentDTO(string postId, string commentId, string commentContent, string username)
+        {
+            bool addSuccessfully = blogRepository.AddChildCommentEntity(postId, commentId, commentContent, username);
+            return addSuccessfully;
         }
     }
 }

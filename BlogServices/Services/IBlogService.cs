@@ -9,6 +9,9 @@ namespace BlogServices.Services
     {
         List<PostCardDTO> GetPostCardDTOs();
         List<PostCardDTO> GetPostCardDTOsWithCategory(string category);
-        PostDTO GetPost(string id);
+        PostDTO GetPostDTO(string id);
+        string AddCommentDTO(string postId, string commentContent, string username);
+        bool AddChildCommentDTO(string postId, string commentId, string commentContent, string username);
+
     }
 }

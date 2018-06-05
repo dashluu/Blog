@@ -23,10 +23,19 @@ namespace Blog.Controllers
             return View(postCardDTOs);
         }
 
+        private bool StrNullOrEmpty(string str)
+        {
+            return str == null || str.Length == 0;
+        }
+
         [HttpPost]
         public ActionResult Index(string postId)
         {
-            TempData["Post"] = blogService.GetPost(postId);
+            if (StrNullOrEmpty(postId))
+            {
+                return RedirectToAction("Index");
+            }
+            TempData["Post"] = blogService.GetPostDTO(postId);
             return RedirectToAction("Index", "ViewPost");
         }
 
@@ -45,7 +54,11 @@ namespace Blog.Controllers
         [HttpPost]
         public ActionResult Life(string postId)
         {
-            TempData["Post"] = blogService.GetPost(postId);
+            if (StrNullOrEmpty(postId))
+            {
+                return RedirectToAction("Life");
+            }
+            TempData["Post"] = blogService.GetPostDTO(postId);
             return RedirectToAction("Index", "ViewPost");
         }
 
@@ -58,7 +71,11 @@ namespace Blog.Controllers
         [HttpPost]
         public ActionResult Travel(string postId)
         {
-            TempData["Post"] = blogService.GetPost(postId);
+            if (StrNullOrEmpty(postId))
+            {
+                return RedirectToAction("Travel");
+            }
+            TempData["Post"] = blogService.GetPostDTO(postId);
             return RedirectToAction("Index", "ViewPost");
         }
 
@@ -71,7 +88,11 @@ namespace Blog.Controllers
         [HttpPost]
         public ActionResult Tech(string postId)
         {
-            TempData["Post"] = blogService.GetPost(postId);
+            if (StrNullOrEmpty(postId))
+            {
+                return RedirectToAction("Tech");
+            }
+            TempData["Post"] = blogService.GetPostDTO(postId);
             return RedirectToAction("Index", "ViewPost");
         }
 
@@ -84,7 +105,11 @@ namespace Blog.Controllers
         [HttpPost]
         public ActionResult Health(string postId)
         {
-            TempData["Post"] = blogService.GetPost(postId);
+            if (StrNullOrEmpty(postId))
+            {
+                return RedirectToAction("Health");
+            }
+            TempData["Post"] = blogService.GetPostDTO(postId);
             return RedirectToAction("Index", "ViewPost");
         }
     }

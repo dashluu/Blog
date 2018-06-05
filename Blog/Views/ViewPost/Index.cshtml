@@ -27,7 +27,7 @@
             <p class="comment-title">Comments</p>
             <form class="comment-form master-comment-form" action="/ViewPost" method="post">
                 <textarea class="comment-input" placeholder="Comment"></textarea>
-                <input type="hidden" value=@Model.PostId id="post-id" />
+                <input type="hidden" value=@Model.PostId class="post-id" />
                 <button type="submit" class="submit-comment-btn"><span class="glyphicon glyphicon-send"></span></button>
             </form>
             @{
@@ -42,12 +42,14 @@
                                 <p class="comment-user-container">
                                     <strong class="comment-user">@commentDTO.Username</strong>
                                     <button class="show-child-comment-btn"><span class='glyphicon glyphicon-list'></span></button>
+                                    <button class="add-child-comment-btn"><span class='glyphicon glyphicon-edit'></span></button>
                                 </p>
                                 <p class="comment-body">@commentDTO.Content</p>
                             </div>
-                            <form class="comment-form child-comment-form" action="/ViewPost" method="post">
+                            <form class="comment-form child-comment-form" action="/ViewPost" method="post" style="display: none">
                                 <textarea class="comment-input" placeholder="Comment"></textarea>
                                 <input type="hidden" value=@commentDTO.CommentId class="comment-id" />
+                                <input type="hidden" value=@Model.PostId class="post-id"/>
                                 <button type="submit" class="submit-comment-btn"><span class="glyphicon glyphicon-send"></span></button>
                             </form>
                             <div class="children-comment-container" style="display: none">

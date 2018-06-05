@@ -9,8 +9,8 @@ namespace BlogDAL.Repository
     {
         List<PostEntity> GetPostEntities();
         List<PostEntity> GetPostEntitiesWithCategory(string category);
-        PostEntity GetPost(string id);
-        List<CommentEntity> GetCommentEntities(PostEntity postEntity);
-        List<CommentEntity> GetCommentEntitiesWithRoot(CommentEntity commentEntity);
+        PostEntity GetPostEntity(string id);
+        string AddCommentEntity(string postId, string commentContent, string username);
+        bool AddChildCommentEntity(string postId, string commentId, string commentContent, string username);
     }
 }

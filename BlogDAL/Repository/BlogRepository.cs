@@ -125,7 +125,7 @@ namespace BlogDAL.Repository
             return "/Image/Index?imageName=" + imageName;
         }
 
-        public PostEntity GetPost(string id)
+        public PostEntity GetPostEntity(string id)
         {
             foreach (PostEntity postEntity in postSampleData)
             {
@@ -155,14 +155,70 @@ namespace BlogDAL.Repository
             return postEntities;
         }
 
-        public List<CommentEntity> GetCommentEntities(PostEntity postEntity)
+        public string AddCommentEntity(string postId, string commentContent, string username)
         {
-            throw new NotImplementedException();
+            string commentId = "xyz";
+            PostEntity postEntity = GetPostEntity(postId);
+            if (postEntity == null)
+            {
+                return null;
+            }
+            if (postEntity.CommentEntities == null)
+            {
+                postEntity.CommentEntities = new List<CommentEntity>();
+            }
+            CommentEntity commentEntity = new CommentEntity()
+            {
+                Username = username,
+                CommentId = commentId,
+                Content = commentContent
+            };
+            postEntity.CommentEntities.Add(commentEntity);
+            return commentId;
         }
 
-        public List<CommentEntity> GetCommentEntitiesWithRoot(CommentEntity commentEntity)
+        private CommentEntity GetCommentEntity(string postId, string commentId)
         {
-            throw new NotImplementedException();
+            PostEntity postEntity = GetPostEntity(postId);
+            if (postEntity == null)
+            {
+                return null;
+            }
+            List<CommentEntity> commentEntities = postEntity.CommentEntities;
+            if (commentEntities == null)
+            {
+                return null;
+            }
+            foreach (CommentEntity commentEntity in commentEntities)
+            {
+                if (commentEntity.CommentId.Equals(commentId))
+                {
+                    return commentEntity;
+                }
+            }
+            return null;
+        }
+
+        public bool AddChildCommentEntity(string postId, string commentId, string commentContent, string username)
+        {
+            string childCommentId = "xyz";
+            CommentEntity commentEntity = GetCommentEntity(postId, commentId);
+            if (commentEntity == null)
+            {
+                return false;
+            }
+            if (commentEntity.ChildCommentEntities == null)
+            {
+                commentEntity.ChildCommentEntities = new List<CommentEntity>();
+            }
+            CommentEntity childCommentEntity = new CommentEntity()
+            {
+                Username = username,
+                Content = commentContent,
+                CommentId = childCommentId
+            };
+            commentEntity.ChildCommentEntities.Add(commentEntity);
+            return true;
         }
     }
 }

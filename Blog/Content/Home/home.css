@@ -44,12 +44,18 @@
 }
 
 .read-post-btn {
-    border: 1px solid #F5F5F5;
-    background-color: #F5F5F5;
+    border: 1px solid #EEEEEE;
+    background-color: #EEEEEE;
     outline: none;
     color: #0336ff;
     font-size: 14px;
     font-weight: 700;
-    padding: 2px 5px 2px 5px;
+    padding-top: 3px;
+    padding-bottom: 3px;
     border-radius: 3px;
+    width: 50px;
+}
+
+.read-post-btn:hover {
+    box-shadow: 0px 0px 4px 1px #E0E0E0;
 }
