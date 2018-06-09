@@ -10,16 +10,16 @@ namespace Blog.Controllers
 {
     public class HomeController : Controller
     {
-        private IBlogService blogService;
+        private IPostService postService;
 
-        public HomeController()
+        public HomeController(IPostService postService)
         {
-            blogService = new BlogService();
+            this.postService = postService;
         }
 
         public ActionResult Index()
         {
-            List<PostCardDTO> postCardDTOs = blogService.GetPostCardDTOs();
+            List<PostCardDTO> postCardDTOs = postService.GetPostCardDTOs();
             return View(postCardDTOs);
         }
 
@@ -35,82 +35,26 @@ namespace Blog.Controllers
             {
                 return RedirectToAction("Index");
             }
-            TempData["Post"] = blogService.GetPostDTO(postId);
-            return RedirectToAction("Index", "ViewPost");
+            object package = new { postId };
+            return RedirectToAction("Index", "Post", package);
         }
 
-        private List<PostCardDTO> GetPostCardDTOsWithCategory(string category)
+        public ActionResult Category(string category)
         {
-            List<PostCardDTO> postCardList = blogService.GetPostCardDTOsWithCategory(category);
-            return postCardList;
-        }
-
-        public ActionResult Life()
-        {
-            List<PostCardDTO> postCardList = GetPostCardDTOsWithCategory("Life");
-            return View("Index", postCardList);
+            List<PostCardDTO> postCardList = postService.GetPostCardDTOsWithCategory(category);
+            return View("Category", postCardList);
         }
 
         [HttpPost]
-        public ActionResult Life(string postId)
+        public ActionResult CategoryPost(string postId)
         {
             if (StrNullOrEmpty(postId))
             {
-                return RedirectToAction("Life");
+                return RedirectToAction("Index");
             }
-            TempData["Post"] = blogService.GetPostDTO(postId);
-            return RedirectToAction("Index", "ViewPost");
+            object package = new { postId };
+            return RedirectToAction("Index", "Post", package);
         }
 
-        public ActionResult Travel()
-        {
-            List<PostCardDTO> postCardList = GetPostCardDTOsWithCategory("Travel");
-            return View("Index", postCardList);
-        }
-
-        [HttpPost]
-        public ActionResult Travel(string postId)
-        {
-            if (StrNullOrEmpty(postId))
-            {
-                return RedirectToAction("Travel");
-            }
-            TempData["Post"] = blogService.GetPostDTO(postId);
-            return RedirectToAction("Index", "ViewPost");
-        }
-
-        public ActionResult Tech()
-        {
-            List<PostCardDTO> postCardList = GetPostCardDTOsWithCategory("Tech");
-            return View("Index", postCardList);
-        }
-
-        [HttpPost]
-        public ActionResult Tech(string postId)
-        {
-            if (StrNullOrEmpty(postId))
-            {
-                return RedirectToAction("Tech");
-            }
-            TempData["Post"] = blogService.GetPostDTO(postId);
-            return RedirectToAction("Index", "ViewPost");
-        }
-
-        public ActionResult Health()
-        {
-            List<PostCardDTO> postCardList = GetPostCardDTOsWithCategory("Health");
-            return View("Index", postCardList);
-        }
-
-        [HttpPost]
-        public ActionResult Health(string postId)
-        {
-            if (StrNullOrEmpty(postId))
-            {
-                return RedirectToAction("Health");
-            }
-            TempData["Post"] = blogService.GetPostDTO(postId);
-            return RedirectToAction("Index", "ViewPost");
-        }
     }
 }

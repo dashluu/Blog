@@ -4,7 +4,7 @@
     <link href="@Url.Content("~/Content/Home/home.css")" rel="stylesheet" type="text/css" />
 }
 
-@{ 
+@{
     Html.RenderPartial("~/Views/Shared/_SearchBar.cshtml");
 }
 
@@ -24,7 +24,7 @@
                             <p class="post-date">On <strong>@postCard.CreatedDate</strong></p>
                             <p class="post-date">Updated @postCard.UpdatedDate</p>
                             <p class="post-summary">@postCard.ShortDescription</p>
-                            @using (Html.BeginForm())
+                            @using (Html.BeginForm("CategoryPost", "Home"))
                             {
                                 <input type="hidden" value=@postCard.PostId name="postId" />
                                 <button type="submit" class="read-post-btn"><span class="glyphicon glyphicon-option-horizontal"></span></button>

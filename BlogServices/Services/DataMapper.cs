@@ -1,21 +1,13 @@
-﻿using System;
+﻿using BlogDAL.Entity;
+using System;
 using System.Collections.Generic;
-using BlogServices.DTO;
-using BlogDAL.Repository;
-using BlogDAL.Entity;
+using System.Text;
 
-namespace BlogServices.Services
+namespace BlogServices.DTO
 {
-    public class BlogService : IBlogService
+    public class DataMapper
     {
-        private IBlogRepository blogRepository;
-
-        public BlogService()
-        {
-            blogRepository = new BlogRepository();
-        }
-
-        private string ComputeUpdateTime(DateTime updateTime)
+        public string ComputeUpdateTime(DateTime updateTime)
         {
             DateTime currentTime = DateTime.Now;
             TimeSpan timeSpan = currentTime.Subtract(updateTime);
@@ -41,19 +33,19 @@ namespace BlogServices.Services
             }
             if (nmin >= 1)
             {
-                internalTime = nmin.ToString() + "min ago";
+                internalTime = nmin.ToString() + " min ago";
                 return internalTime;
             }
-            internalTime = nsec.ToString() + "sec ago";
+            internalTime = nsec.ToString() + " sec ago";
             return internalTime;
         }
 
-        private string FormatTime(DateTime time)
+        public string FormatTime(DateTime time)
         {
             return time.ToString("dd MMMM");
         }
 
-        private List<CommentDTO> MapCommentEntitiesToDTOs(List<CommentEntity> commentEntities)
+        public List<CommentDTO> MapCommentEntitiesToDTOs(List<CommentEntity> commentEntities)
         {
             if (commentEntities == null)
             {
@@ -80,7 +72,7 @@ namespace BlogServices.Services
             return commentDTOs;
         }
 
-        private PostDTO MapPostEntityToDTO(PostEntity postEntity)
+        public PostDTO MapPostEntityToDTO(PostEntity postEntity)
         {
             List<CommentEntity> commentEntities = postEntity.CommentEntities;
             List<CommentDTO> commentDTOs = MapCommentEntitiesToDTOs(commentEntities);
@@ -99,7 +91,22 @@ namespace BlogServices.Services
             return postDTO;
         }
 
-        private PostCardDTO MapPostCardEntityToDTO(PostEntity postEntity)
+        public PostEntity MapEditedPostDTOToEntity(EditedPostDTO editedPostDTO)
+        {
+            PostEntity postEntity = new PostEntity()
+            {
+                PostCategory = editedPostDTO.PostCategory,
+                Title = editedPostDTO.Title,
+                CreatedDate = editedPostDTO.CreatedDate,
+                UpdatedDate = editedPostDTO.UpdatedDate,
+                ShortDescription = editedPostDTO.ShortDescription,
+                Content = editedPostDTO.Content,
+                ThumbnailImageSrc = editedPostDTO.ThumbnailImageSrc
+            };
+            return postEntity;
+        }
+
+        public PostCardDTO MapPostCardEntityToDTO(PostEntity postEntity)
         {
             PostCardDTO postCardDTO = new PostCardDTO()
             {
@@ -113,7 +120,7 @@ namespace BlogServices.Services
             return postCardDTO;
         }
 
-        private CommentDTO MapCommentEntityToDTO(CommentEntity commentEntity)
+        public CommentDTO MapCommentEntityToDTO(CommentEntity commentEntity)
         {
             CommentDTO commentDTO = new CommentDTO()
             {
@@ -122,49 +129,6 @@ namespace BlogServices.Services
                 Content = commentEntity.Content,
             };
             return commentDTO;
-        }
-
-        public List<PostCardDTO> GetPostCardDTOs()
-        {
-            List<PostEntity> postEntities = blogRepository.GetPostEntities();
-            List<PostCardDTO> postCardDTOs = new List<PostCardDTO>();
-            foreach (PostEntity postEntity in postEntities)
-            {
-                PostCardDTO postCardDTO = MapPostCardEntityToDTO(postEntity);
-                postCardDTOs.Add(postCardDTO);
-            }
-            return postCardDTOs;
-        }
-
-        public List<PostCardDTO> GetPostCardDTOsWithCategory(string category)
-        {
-            List<PostEntity> postEntities = blogRepository.GetPostEntitiesWithCategory(category);
-            List<PostCardDTO> postCardDTOs = new List<PostCardDTO>();
-            foreach (PostEntity postEntity in postEntities)
-            {
-                PostCardDTO postCardDTO = MapPostCardEntityToDTO(postEntity);
-                postCardDTOs.Add(postCardDTO);
-            }
-            return postCardDTOs;
-        }
-
-        public PostDTO GetPostDTO(string id)
-        {
-            PostEntity postEntity = blogRepository.GetPostEntity(id);
-            PostDTO postDTO = MapPostEntityToDTO(postEntity);
-            return postDTO;
-        }
-
-        public string AddCommentDTO(string postId, string commentContent, string username)
-        {
-            string commentId = blogRepository.AddCommentEntity(postId, commentContent, username);
-            return commentId;
-        }
-
-        public bool AddChildCommentDTO(string postId, string commentId, string commentContent, string username)
-        {
-            bool addSuccessfully = blogRepository.AddChildCommentEntity(postId, commentId, commentContent, username);
-            return addSuccessfully;
         }
     }
 }

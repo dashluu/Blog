@@ -10,30 +10,13 @@
 <div class="container" id="editor-section">
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            @using (Html.BeginForm("Index", "Create", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            @using (Html.BeginForm("Index", "Create", FormMethod.Post, new { id = "create-form" }))
             {
-                <div class="editor-component">
-                    <h1>Upload image</h1>
-                    <input type="file" name="ImageFile" />
-                    <input type="submit" class="submit-btn" />
-                </div>
-                <div class="editor-component">
-                    <h1>Blog editor</h1>
-                    @if (Model != null)
-                    {
-                        string htmlImage = "<p><img src='" + Model.BlogImage.Source + "' style='width: 300px;' /></p>";
-                        string blogEditorContent = Model.UploadBlog.Content + htmlImage;
-                        <textarea id="blog-editor" name="Blog.Content">
-                            @blogEditorContent
-                        </textarea>
-                    }
-                    else
-                    {
-                        <textarea id="blog-editor" name="Blog.Content">
-                        </textarea>
-                    }
-                    <input type="submit" class="submit-btn" />
-                </div>
+                <input type="text" name="Post.Title" class="create-input" placeholder="Title" />
+                <input type="text" name="Post.ThumbnailImageSrc" class="create-input" placeholder="Thumbnail image" />
+                <textarea name="Post.ShortDescription" class="create-input" placeholder="Short description"></textarea>
+                <textarea name="Post.Content" class="create-input" placeholder="Content"></textarea>
+                <input type="submit" id="submit-btn" />
             }
         </div>
     </div>

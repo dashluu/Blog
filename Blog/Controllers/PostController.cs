@@ -1,26 +1,25 @@
 ﻿using BlogServices.DTO;
 using BlogServices.Services;
+using System;
 using System.Web.Mvc;
 
 namespace Blog.Controllers
 {
-    public class ViewPostController : Controller
+    public class PostController : Controller
     {
-        private IBlogService blogService;
+        private IPostService postService;
+        private ICommentService commentService;
 
-        public ViewPostController()
+        public PostController(IPostService postService, ICommentService commentService)
         {
-            blogService = new BlogService();
+            this.postService = postService;
+            this.commentService = commentService;
         }
 
         // GET: Default
-        public ActionResult Index()
+        public ActionResult Index(string postId)
         {
-            if (TempData["Post"] == null)
-            {
-                return new EmptyResult();
-            }
-            PostDTO postModel = (PostDTO)TempData["Post"];
+            PostDTO postModel = postService.GetPostDTO(postId);
             return View(postModel);
         }
 
@@ -40,7 +39,7 @@ namespace Blog.Controllers
             else
             {
                 string username = "whatever";
-                string commentId = blogService.AddCommentDTO(postId, comment, username);
+                string commentId = commentService.AddCommentDTO(postId, comment, username);
                 if (commentId == null)
                 {
                     jsonObject = new { status = 500 };
@@ -67,7 +66,7 @@ namespace Blog.Controllers
             else
             {
                 string username = "whatever";
-                bool addSuccessfully = blogService.AddChildCommentDTO(postId, commentId, comment, username);
+                bool addSuccessfully = commentService.AddChildCommentDTO(postId, commentId, comment, username);
                 if (!addSuccessfully)
                 {
                     jsonObject = new { status = 500 };

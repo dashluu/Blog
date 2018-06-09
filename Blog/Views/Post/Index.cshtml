@@ -1,11 +1,11 @@
 ﻿@model PostDTO
 
 @section Style {
-    <link href="@Url.Content("~/Content/ViewPost/viewpost.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/Post/post.css")" rel="stylesheet" type="text/css" />
 }
 
 @section scripts {
-    <script src="~/Scripts/viewblog.js"></script>
+    <script src="~/Scripts/post.js"></script>
 }
 
 @{
@@ -25,7 +25,7 @@
 
         <div class="col-xs-12 col-sm-10 col-md-8 col-lg-7 comment-section">
             <p class="comment-title">Comments</p>
-            <form class="comment-form master-comment-form" action="/ViewPost" method="post">
+            <form class="comment-form master-comment-form" action="/Post" method="post">
                 <textarea class="comment-input" placeholder="Comment"></textarea>
                 <input type="hidden" value=@Model.PostId class="post-id" />
                 <button type="submit" class="submit-comment-btn"><span class="glyphicon glyphicon-send"></span></button>
@@ -46,7 +46,7 @@
                                 </p>
                                 <p class="comment-body">@commentDTO.Content</p>
                             </div>
-                            <form class="comment-form child-comment-form" action="/ViewPost" method="post" style="display: none">
+                            <form class="comment-form child-comment-form" action="/Post" method="post" style="display: none">
                                 <textarea class="comment-input" placeholder="Comment"></textarea>
                                 <input type="hidden" value=@commentDTO.CommentId class="comment-id" />
                                 <input type="hidden" value=@Model.PostId class="post-id"/>

@@ -18,7 +18,6 @@
     width: 160px;
     height: 140px;
     border-radius: 3px;
-    box-shadow: 0px 2px 10px 1px #9E9E9E;
     margin-top: 10px;
 }
 
@@ -44,18 +43,22 @@
 }
 
 .read-post-btn {
-    border: 1px solid #EEEEEE;
-    background-color: #EEEEEE;
     outline: none;
-    color: #0336ff;
     font-size: 14px;
     font-weight: 700;
     padding-top: 3px;
     padding-bottom: 3px;
     border-radius: 3px;
     width: 50px;
+    box-shadow: 0px 2px 10px 1px #E0E0E0;
+    color: black;
+    border: 1px solid transparent;
+    background-color: transparent;
 }
 
 .read-post-btn:hover {
-    box-shadow: 0px 0px 4px 1px #E0E0E0;
+    color: white;
+    border: 1px solid black;
+    background-color: black;
+    box-shadow: 0px 2px 10px 1px #BDBDBD;
 }

@@ -5,9 +5,9 @@ VisualStudioVersion = 15.0.27703.2000
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blog", "Blog\Blog.csproj", "{E438258D-2305-4612-B843-7DD11899209F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlogDAL", "BlogDAL\BlogDAL.csproj", "{647FE0ED-3DEE-42CD-9B98-CE0A6B7B1E8A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlogDAL", "BlogDAL\BlogDAL.csproj", "{647FE0ED-3DEE-42CD-9B98-CE0A6B7B1E8A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlogServices", "BlogServices\BlogServices.csproj", "{5A905E72-DF39-4198-8272-0353213929A2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlogServices", "BlogServices\BlogServices.csproj", "{5A905E72-DF39-4198-8272-0353213929A2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,6 +32,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
+		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.0\lib\NET35
 		SolutionGuid = {2C255BB3-8533-4CEF-82EE-C86EE5883B44}
 	EndGlobalSection
 EndGlobal

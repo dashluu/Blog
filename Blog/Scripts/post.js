@@ -9,7 +9,7 @@
     }
     var postInput = form.children(".post-id").eq(0);
     var id = postInput.val();
-    $.post("/ViewPost/MasterComment", { comment: commentInput, postId: id }, function (result) {
+    $.post("/Post/MasterComment", { comment: commentInput, postId: id }, function (result) {
         if (result.status === 200) {
             commentTextBox.val("");
             var newCommentContainer = $("<div class='comment-container' style='display: none'>" +
@@ -48,7 +48,7 @@ $(document).on("submit", ".child-comment-form", function (event) {
     var commentId = commentIdInput.val();
     var postId = postIdInput.val();
     var childrenCommentContainer = form.siblings(".children-comment-container").eq(0);
-    $.post("/ViewPost/ChildComment", { comment: commentInput, commentId: commentId, postId: postId }, function (result) {
+    $.post("/Post/ChildComment", { comment: commentInput, commentId: commentId, postId: postId }, function (result) {
         if (result.status === 200) {
             commentTextBox.val("");
             var newCommentContainer = "<div class='child-comment-container' style='display: none'>" +
