@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using System.Web;
 
-namespace BlogServices.DTO
+namespace Blog.Models
 {
-    public class EditedPostDTO
+    public class EditedPostModel
     {
         public string Title { get; set; }
         public string PostCategory { get; set; }

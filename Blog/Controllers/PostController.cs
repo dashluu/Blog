@@ -1,4 +1,5 @@
-﻿using BlogServices.DTO;
+﻿using Blog.Models;
+using BlogServices.DTO;
 using BlogServices.Services;
 using System;
 using System.Web.Mvc;
@@ -9,17 +10,21 @@ namespace Blog.Controllers
     {
         private IPostService postService;
         private ICommentService commentService;
+        private IModelDataMapper dataMapper;
 
-        public PostController(IPostService postService, ICommentService commentService)
+        public PostController(IPostService postService, ICommentService commentService, IModelDataMapper dataMapper)
         {
             this.postService = postService;
             this.commentService = commentService;
+            this.dataMapper = dataMapper;
         }
 
         // GET: Default
         public ActionResult Index(string postId)
         {
-            PostDTO postModel = postService.GetPostDTO(postId);
+            PostDTO postDTO = postService.GetPostDTO(postId);
+            PostModel postModel = dataMapper.MapPostDTOToModel(postDTO);
+
             return View(postModel);
         }
 
@@ -32,6 +37,7 @@ namespace Blog.Controllers
         public ActionResult MasterComment(string comment, string postId)
         {
             object jsonObject;
+
             if (StrNullOrEmpty(comment) || StrNullOrEmpty(postId))
             {
                 jsonObject = new { status = 500 };
@@ -40,10 +46,12 @@ namespace Blog.Controllers
             {
                 string username = "whatever";
                 string commentId = commentService.AddCommentDTO(postId, comment, username);
+
                 if (commentId == null)
                 {
                     jsonObject = new { status = 500 };
                 }
+
                 jsonObject = new
                 {
                     data = comment,
@@ -52,6 +60,7 @@ namespace Blog.Controllers
                     commentId
                 };
             }
+
             return Json(jsonObject);
         }
 
@@ -59,6 +68,7 @@ namespace Blog.Controllers
         public ActionResult ChildComment(string comment, string commentId, string postId)
         {
             object jsonObject;
+
             if (StrNullOrEmpty(comment) || StrNullOrEmpty(postId) || StrNullOrEmpty(commentId))
             {
                 jsonObject = new { status = 500 };
@@ -67,10 +77,12 @@ namespace Blog.Controllers
             {
                 string username = "whatever";
                 bool addSuccessfully = commentService.AddChildCommentDTO(postId, commentId, comment, username);
+
                 if (!addSuccessfully)
                 {
                     jsonObject = new { status = 500 };
                 }
+
                 jsonObject = new
                 {
                     data = comment,
@@ -78,7 +90,23 @@ namespace Blog.Controllers
                     username
                 };
             }
+
             return Json(jsonObject);
+        }
+
+        public ActionResult CreatePost()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult CreatePost(EditedPostModel Post)
+        {
+            Post.PostCategory = "Life";
+            EditedPostDTO editedPostDTO = dataMapper.MapEditedPostModelToDTO(Post);
+            postService.AddEditedPostDTO(editedPostDTO);
+
+            return RedirectToAction("Index", "Home");
         }
     }
 }

@@ -17,6 +17,8 @@ namespace BlogDAL.Repository
         public override bool Add(PostEntity entity)
         {
             entity.PostId = GenerateId();
+            entity.CreatedDate = DateTime.Now;
+            entity.UpdatedDate = DateTime.Now;
             return base.Add(entity);
         }
 
@@ -43,8 +45,6 @@ namespace BlogDAL.Repository
             {
                 List<PostEntity> postEntities = Context.PostEntities
                     .Where(x => x.PostCategory.Equals(category))
-                    .Include(y => y.CommentEntities
-                                   .Select(z => z.ChildCommentEntities))
                     .ToList();
                 return postEntities;
             }

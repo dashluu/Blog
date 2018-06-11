@@ -5,22 +5,33 @@ using System.Web;
 using System.Web.Mvc;
 using BlogServices.Services;
 using BlogServices.DTO;
+using Blog.Models;
 
 namespace Blog.Controllers
 {
     public class HomeController : Controller
     {
         private IPostService postService;
+        private IModelDataMapper dataMapper;
 
-        public HomeController(IPostService postService)
+        public HomeController(IPostService postService, IModelDataMapper dataMapper)
         {
             this.postService = postService;
+            this.dataMapper = dataMapper;
         }
 
         public ActionResult Index()
         {
             List<PostCardDTO> postCardDTOs = postService.GetPostCardDTOs();
-            return View(postCardDTOs);
+            List<PostCardModel> postCardModels = new List<PostCardModel>();
+
+            foreach (PostCardDTO postCardDTO in postCardDTOs)
+            {
+                PostCardModel postCardModel = dataMapper.MapPostCardDTOToModel(postCardDTO);
+                postCardModels.Add(postCardModel);
+            }
+
+            return View(postCardModels);
         }
 
         private bool StrNullOrEmpty(string str)
@@ -35,14 +46,24 @@ namespace Blog.Controllers
             {
                 return RedirectToAction("Index");
             }
+
             object package = new { postId };
+
             return RedirectToAction("Index", "Post", package);
         }
 
         public ActionResult Category(string category)
         {
-            List<PostCardDTO> postCardList = postService.GetPostCardDTOsWithCategory(category);
-            return View("Category", postCardList);
+            List<PostCardDTO> postCardDTOs = postService.GetPostCardDTOsWithCategory(category);
+            List<PostCardModel> postCardModels = new List<PostCardModel>();
+
+            foreach (PostCardDTO postCardDTO in postCardDTOs)
+            {
+                PostCardModel postCardModel = dataMapper.MapPostCardDTOToModel(postCardDTO);
+                postCardModels.Add(postCardModel);
+            }
+
+            return View("Category", postCardModels);
         }
 
         [HttpPost]
@@ -52,7 +73,9 @@ namespace Blog.Controllers
             {
                 return RedirectToAction("Index");
             }
+
             object package = new { postId };
+
             return RedirectToAction("Index", "Post", package);
         }
 

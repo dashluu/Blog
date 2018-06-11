@@ -1,5 +1,5 @@
 ﻿@section Style {
-    <link href="@Url.Content("~/Content/Create/create.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/Post/createpost.css")" rel="stylesheet" type="text/css" />
 }
 
 @section scripts{
@@ -10,7 +10,7 @@
 <div class="container" id="editor-section">
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            @using (Html.BeginForm("Index", "Create", FormMethod.Post, new { id = "create-form" }))
+            @using (Html.BeginForm("CreatePost", "Post", FormMethod.Post, new { id = "create-form" }))
             {
                 <input type="text" name="Post.Title" class="create-input" placeholder="Title" />
                 <input type="text" name="Post.ThumbnailImageSrc" class="create-input" placeholder="Thumbnail image" />

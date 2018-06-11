@@ -9,7 +9,7 @@ namespace BlogDAL.Repository
 {
     public class CommentRepository : BaseRepository<CommentEntity, BlogDBContext>, ICommentRepository
     {
-        IPostRepository postRepository;
+        private IPostRepository postRepository;
 
         public CommentRepository(IPostRepository postRepository)
         {

@@ -1,4 +1,5 @@
-﻿@model PostDTO
+﻿@using Blog.Models
+@model PostModel
 
 @section Style {
     <link href="@Url.Content("~/Content/Post/post.css")" rel="stylesheet" type="text/css" />
@@ -31,36 +32,36 @@
                 <button type="submit" class="submit-comment-btn"><span class="glyphicon glyphicon-send"></span></button>
             </form>
             @{
-                List<CommentDTO> commentDTOs = Model.CommentDTOs;
-                if (commentDTOs != null)
+                List<CommentModel> commentModels = Model.CommentModels;
+                if (commentModels != null)
                 {
-                    foreach (CommentDTO commentDTO in commentDTOs)
+                    foreach (CommentModel commentModel in commentModels)
                     {
-                        List<CommentDTO> childCommentDTOs = commentDTO.ChildCommentDTOs;
+                        List<CommentModel> childCommentModels = commentModel.ChildCommentModels;
                         <div class="comment-container">
                             <div class="master-comment-container">
                                 <p class="comment-user-container">
-                                    <strong class="comment-user">@commentDTO.Username</strong>
+                                    <strong class="comment-user">@commentModel.Username</strong>
                                     <button class="show-child-comment-btn"><span class='glyphicon glyphicon-list'></span></button>
                                     <button class="add-child-comment-btn"><span class='glyphicon glyphicon-edit'></span></button>
                                 </p>
-                                <p class="comment-body">@commentDTO.Content</p>
+                                <p class="comment-body">@commentModel.Content</p>
                             </div>
                             <form class="comment-form child-comment-form" action="/Post" method="post" style="display: none">
                                 <textarea class="comment-input" placeholder="Comment"></textarea>
-                                <input type="hidden" value=@commentDTO.CommentId class="comment-id" />
+                                <input type="hidden" value=@commentModel.CommentId class="comment-id" />
                                 <input type="hidden" value=@Model.PostId class="post-id"/>
                                 <button type="submit" class="submit-comment-btn"><span class="glyphicon glyphicon-send"></span></button>
                             </form>
                             <div class="children-comment-container" style="display: none">
                                 @{
-                                    if (childCommentDTOs != null)
+                                    if (childCommentModels != null)
                                     {
-                                        foreach (CommentDTO childCommentDTO in childCommentDTOs)
+                                        foreach (CommentModel childCommentModel in childCommentModels)
                                         {
                                             <div class="child-comment-container">
-                                                <p class="comment-user-section"><strong class="comment-user">@childCommentDTO.Username</strong></p>
-                                                <p class="comment-body">@childCommentDTO.Content</p>
+                                                <p class="comment-user-section"><strong class="comment-user">@childCommentModel.Username</strong></p>
+                                                <p class="comment-body">@childCommentModel.Content</p>
                                             </div>
                                         }
                                     }

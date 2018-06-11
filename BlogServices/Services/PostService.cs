@@ -9,12 +9,12 @@ namespace BlogServices.Services
     public class PostService : IPostService
     {
         private IPostRepository postRepository;
-        private DataMapper dataMapper;
+        private IServiceDataMapper dataMapper;
 
-        public PostService()
+        public PostService(IPostRepository postRepository, IServiceDataMapper dataMapper)
         {
-            postRepository = new PostRepository();
-            dataMapper = new DataMapper();
+            this.postRepository = postRepository;
+            this.dataMapper = dataMapper;
         }
 
         public bool AddEditedPostDTO(EditedPostDTO editedPostDTO)

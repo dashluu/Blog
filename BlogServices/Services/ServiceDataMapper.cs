@@ -1,11 +1,12 @@
 ﻿using BlogDAL.Entity;
+using BlogServices.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace BlogServices.DTO
 {
-    public class DataMapper
+    public class ServiceDataMapper : IServiceDataMapper
     {
         public string ComputeUpdateTime(DateTime updateTime)
         {
@@ -16,27 +17,33 @@ namespace BlogServices.DTO
             int nmin = timeSpan.Minutes;
             int nsec = timeSpan.Seconds;
             string internalTime;
+
             if (nday > 7)
             {
                 internalTime = " on " + FormatTime(updateTime);
                 return internalTime;
             }
+
             if (nday >= 1)
             {
                 internalTime = nday.ToString() + ((nday > 1) ? " days" : " day") + " ago";
                 return internalTime;
             }
+
             if (nhour >= 1)
             {
                 internalTime = nhour.ToString() + ((nhour > 1) ? " hours" : " hour") + " ago";
                 return internalTime;
             }
+
             if (nmin >= 1)
             {
                 internalTime = nmin.ToString() + " min ago";
                 return internalTime;
             }
+
             internalTime = nsec.ToString() + " sec ago";
+
             return internalTime;
         }
 
@@ -51,24 +58,31 @@ namespace BlogServices.DTO
             {
                 return null;
             }
+
             List<CommentDTO> commentDTOs = new List<CommentDTO>();
+
             foreach (CommentEntity commentEntity in commentEntities)
             {
                 CommentDTO commentDTO = MapCommentEntityToDTO(commentEntity);
                 commentDTOs.Add(commentDTO);
                 List<CommentEntity> childCommentEntities = commentEntity.ChildCommentEntities;
+
                 if (childCommentEntities == null)
                 {
                     continue;
                 }
+
                 List<CommentDTO> childCommentDTOs = new List<CommentDTO>();
+
                 foreach (CommentEntity childCommentEntity in childCommentEntities)
                 {
                     CommentDTO childCommentDTO = MapCommentEntityToDTO(childCommentEntity);
                     childCommentDTOs.Add(childCommentDTO);
                 }
+
                 commentDTO.ChildCommentDTOs = childCommentDTOs;
             }
+
             return commentDTOs;
         }
 
@@ -76,6 +90,7 @@ namespace BlogServices.DTO
         {
             List<CommentEntity> commentEntities = postEntity.CommentEntities;
             List<CommentDTO> commentDTOs = MapCommentEntitiesToDTOs(commentEntities);
+
             PostDTO postDTO = new PostDTO()
             {
                 PostId = postEntity.PostId,
@@ -88,6 +103,7 @@ namespace BlogServices.DTO
                 ThumbnailImageSrc = postEntity.ThumbnailImageSrc,
                 CommentDTOs = commentDTOs
             };
+
             return postDTO;
         }
 
@@ -97,12 +113,11 @@ namespace BlogServices.DTO
             {
                 PostCategory = editedPostDTO.PostCategory,
                 Title = editedPostDTO.Title,
-                CreatedDate = editedPostDTO.CreatedDate,
-                UpdatedDate = editedPostDTO.UpdatedDate,
                 ShortDescription = editedPostDTO.ShortDescription,
                 Content = editedPostDTO.Content,
                 ThumbnailImageSrc = editedPostDTO.ThumbnailImageSrc
             };
+
             return postEntity;
         }
 
@@ -117,6 +132,7 @@ namespace BlogServices.DTO
                 ShortDescription = postEntity.ShortDescription,
                 ThumbnailImageSrc = postEntity.ThumbnailImageSrc
             };
+
             return postCardDTO;
         }
 
@@ -128,6 +144,7 @@ namespace BlogServices.DTO
                 Username = commentEntity.Username,
                 Content = commentEntity.Content,
             };
+
             return commentDTO;
         }
     }

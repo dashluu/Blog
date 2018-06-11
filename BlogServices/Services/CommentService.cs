@@ -11,13 +11,13 @@ namespace BlogServices.Services
     {
         private IPostRepository postRepository;
         private ICommentRepository commentRepository;
-        private DataMapper dataMapper;
+        private IServiceDataMapper dataMapper;
 
-        public CommentService()
+        public CommentService(IPostRepository postRepository, ICommentRepository commentRepository, IServiceDataMapper dataMapper)
         {
-            postRepository = new PostRepository();
-            commentRepository = new CommentRepository(postRepository);
-            dataMapper = new DataMapper();
+            this.postRepository = postRepository;
+            this.commentRepository = commentRepository;
+            this.dataMapper = dataMapper;
         }
 
         public string AddCommentDTO(string postId, string commentContent, string username)

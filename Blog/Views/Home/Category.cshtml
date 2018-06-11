@@ -1,7 +1,11 @@
-﻿@model List<BlogServices.DTO.PostCardDTO>
+﻿@model List<Blog.Models.PostCardModel>
 
 @section Style {
     <link href="@Url.Content("~/Content/Home/home.css")" rel="stylesheet" type="text/css" />
+}
+
+@section scripts {
+    <script src="~/Scripts/home.js"></script>
 }
 
 @{
@@ -27,7 +31,6 @@
                             @using (Html.BeginForm("CategoryPost", "Home"))
                             {
                                 <input type="hidden" value=@postCard.PostId name="postId" />
-                                <button type="submit" class="read-post-btn"><span class="glyphicon glyphicon-option-horizontal"></span></button>
                             }
                         </div>
                     </div>
