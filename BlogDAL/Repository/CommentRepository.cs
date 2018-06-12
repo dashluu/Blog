@@ -9,12 +9,10 @@ namespace BlogDAL.Repository
 {
     public class CommentRepository : BaseRepository<CommentEntity, BlogDBContext>, ICommentRepository
     {
-        private IPostRepository postRepository;
         private Pagination pagination;
 
-        public CommentRepository(IPostRepository postRepository, Pagination pagination)
+        public CommentRepository(Pagination pagination)
         {
-            this.postRepository = postRepository;
             this.pagination = pagination;
         }
 
@@ -30,9 +28,15 @@ namespace BlogDAL.Repository
                 string commentId = GenerateId();
                 commentEntity.CommentId = commentId;
                 commentEntity.CreatedDate = DateTime.Now;
-                commentEntity.Post = postRepository.GetPostEntity(postId);
-                Add(commentEntity);
-                Context.SaveChanges();
+                commentEntity.Post = Context.PostEntities
+                    .Where(x => x.PostId.Equals(postId))
+                    .First();
+                bool addSuccessfully = Add(commentEntity);
+
+                if (!addSuccessfully)
+                {
+                    return null;
+                }
 
                 return commentId;
             }
@@ -66,8 +70,12 @@ namespace BlogDAL.Repository
                 childCommentEntity.CommentId = childCommentId;
                 childCommentEntity.CreatedDate = DateTime.Now;
                 childCommentEntity.RootComment = GetCommentEntity(postId, commentId);
-                Add(childCommentEntity);
-                Context.SaveChanges();
+                bool addSuccessfully = Add(childCommentEntity);
+
+                if (!addSuccessfully)
+                {
+                    return false;
+                }
 
                 return true;
             }

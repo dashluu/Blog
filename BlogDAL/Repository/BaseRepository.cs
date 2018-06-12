@@ -44,18 +44,5 @@ namespace BlogDAL.Repository
                 return null;
             }
         }
-
-        public bool SaveChanges()
-        {
-            try
-            {
-                Context.SaveChanges();
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
     }
 }

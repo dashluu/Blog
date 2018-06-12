@@ -8,6 +8,5 @@ namespace BlogDAL.Repository
     {
         bool Add(T entity);
         List<T> GetAll();
-        bool SaveChanges();
     }
 }

@@ -61,18 +61,24 @@ $(document).on("submit", ".child-comment-form", function (event) {
 });
 
 $(document).on("click", ".show-child-comment-btn", function () {
+    var thisBtn = $(this);
+    var childCommentContainer = thisBtn.parent().parent().siblings(".children-comment-container").eq(0);
+
+    if (childCommentContainer.children().length > 0) {
+        childCommentContainer.toggle("fast");
+        return;
+    }
+
     var commentIdInput = $(this).parent()
         .parent()
         .siblings(".child-comment-form").eq(0)
         .children(".comment-id").eq(0);
     var commentId = commentIdInput.val();
-    var thisBtn = $(this);
 
     $.post("/Post/ChildComments", { commentId: commentId }, function (result) {
         if (result.status === 200) {
             var childComments = result.data;
             var nChildComment = childComments.length;
-            var childCommentContainer = thisBtn.parent().parent().siblings(".children-comment-container").eq(0);
             childCommentContainer.show("fast");
 
             for (var i = 0; i < nChildComment; i++) {

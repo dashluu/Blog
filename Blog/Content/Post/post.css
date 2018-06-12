@@ -67,7 +67,6 @@
 }
 
 .submit-comment-btn, .expand-comment-btn {
-    margin-top: 8px;
     outline: none;
     font-weight: bold;
     font-size: 14px;
@@ -82,6 +81,7 @@
     border: 1px solid black;
     background-color: black;
     border-radius: 3px;
+    margin-top: 8px;
 }
 
 .expand-comment-btn {
@@ -89,6 +89,7 @@
     border: 1px solid transparent;
     background-color: transparent;
     border-radius: 3px;
+    margin-top: 20px;
 }
 
 .comment-container {
