@@ -11,6 +11,7 @@ namespace BlogDAL.Entity
         public string CommentId { get; set; }
         public string Username { get; set; }
         public string Content { get; set; }
+        public DateTime CreatedDate { get; set; }
         public List<CommentEntity> ChildCommentEntities { get; set; }
         public PostEntity Post { get; set; }
         public CommentEntity RootComment { get; set; }

@@ -44,6 +44,11 @@ namespace Blog.Models
 
         public CommentModel MapCommentDTOToModel(CommentDTO commentDTO)
         {
+            if (commentDTO == null)
+            {
+                return null;
+            }
+
             CommentModel commentModel = new CommentModel()
             {
                 CommentId = commentDTO.CommentId,
@@ -56,6 +61,11 @@ namespace Blog.Models
 
         public EditedPostDTO MapEditedPostModelToDTO(EditedPostModel editedPostModel)
         {
+            if (editedPostModel == null)
+            {
+                return null;
+            }
+
             EditedPostDTO editedPostDTO = new EditedPostDTO()
             {
                 Title = editedPostModel.Title,
@@ -69,6 +79,11 @@ namespace Blog.Models
 
         public PostCardModel MapPostCardDTOToModel(PostCardDTO postCardDTO)
         {
+            if (postCardDTO == null)
+            {
+                return null;
+            }
+
             PostCardModel postCardModel = new PostCardModel()
             {
                 PostId = postCardDTO.PostId,
@@ -84,6 +99,11 @@ namespace Blog.Models
 
         public PostModel MapPostDTOToModel(PostDTO postDTO)
         {
+            if (postDTO == null)
+            {
+                return null;
+            }
+
             List<CommentDTO> commentDTOs = postDTO.CommentDTOs;
             List<CommentModel> commentModels = MapCommentDTOsToModels(commentDTOs);
 

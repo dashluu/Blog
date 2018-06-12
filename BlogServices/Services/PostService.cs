@@ -27,6 +27,12 @@ namespace BlogServices.Services
         public List<PostCardDTO> GetPostCardDTOs()
         {
             List<PostEntity> postEntities = postRepository.GetAll();
+
+            if (postEntities == null)
+            {
+                return null;
+            }
+
             List<PostCardDTO> postCardDTOs = new List<PostCardDTO>();
 
             foreach (PostEntity postEntity in postEntities)
@@ -41,6 +47,12 @@ namespace BlogServices.Services
         public List<PostCardDTO> GetPostCardDTOsWithCategory(string category)
         {
             List<PostEntity> postEntities = postRepository.GetPostEntitiesWithCategory(category);
+
+            if (postEntities == null)
+            {
+                return null;
+            }
+
             List<PostCardDTO> postCardDTOs = new List<PostCardDTO>();
 
             foreach (PostEntity postEntity in postEntities)
@@ -54,7 +66,7 @@ namespace BlogServices.Services
 
         public PostDTO GetPostDTO(string id)
         {
-            PostEntity postEntity = postRepository.GetPostEntity(id);
+            PostEntity postEntity = postRepository.GetPostEntityWithPagination(id);
             PostDTO postDTO = dataMapper.MapPostEntityToDTO(postEntity);
             return postDTO;
         }

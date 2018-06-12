@@ -8,5 +8,6 @@ namespace BlogDAL.Entity
     public class BlogDBContext : DbContext
     {
         public DbSet<PostEntity> PostEntities { get; set; }
+        public DbSet<CommentEntity> CommentEntities { get; set; }
     }
 }

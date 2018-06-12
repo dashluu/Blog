@@ -28,7 +28,7 @@
             <p class="comment-title">Comments</p>
             <form class="comment-form master-comment-form" action="/Post" method="post">
                 <textarea class="comment-input" placeholder="Comment"></textarea>
-                <input type="hidden" value=@Model.PostId class="post-id" />
+                <input type="hidden" value=@Model.PostId class="post-id" id="post-id"/>
                 <button type="submit" class="submit-comment-btn"><span class="glyphicon glyphicon-send"></span></button>
             </form>
             @{
@@ -53,24 +53,14 @@
                                 <input type="hidden" value=@Model.PostId class="post-id"/>
                                 <button type="submit" class="submit-comment-btn"><span class="glyphicon glyphicon-send"></span></button>
                             </form>
-                            <div class="children-comment-container" style="display: none">
-                                @{
-                                    if (childCommentModels != null)
-                                    {
-                                        foreach (CommentModel childCommentModel in childCommentModels)
-                                        {
-                                            <div class="child-comment-container">
-                                                <p class="comment-user-section"><strong class="comment-user">@childCommentModel.Username</strong></p>
-                                                <p class="comment-body">@childCommentModel.Content</p>
-                                            </div>
-                                        }
-                                    }
-                                }
-                            </div>
+                            <div class="children-comment-container" ></div>
                         </div>
                     }
                 }
             }
+     </div>
+     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+         <button id="expand-master-comment-btn" class="expand-comment-btn"><span class="glyphicon glyphicon-option-horizontal"></span></button>
      </div>
 </div>
 </div>

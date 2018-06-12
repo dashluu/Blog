@@ -45,5 +45,22 @@ namespace BlogServices.Services
 
             return addSuccessfully;
         }
+
+        public (List<CommentDTO> commentDTOs, bool end) PaginateComment(string postId, int skip)
+        {
+            (List<CommentEntity> commentEntities, bool end) pagination = commentRepository.Paginate(postId, skip);
+            List<CommentEntity> commentEntities = pagination.commentEntities;
+            List<CommentDTO> commentDTOs = dataMapper.MapCommentEntitiesToDTOs(commentEntities);
+
+            return (commentDTOs, pagination.end);
+        }
+
+        public List<CommentDTO> GetChildCommentDTOs(string commentId)
+        {
+            List<CommentEntity> childCommentEntities = commentRepository.GetChildCommentEntities(commentId);
+            List<CommentDTO> childCommentDTOs = dataMapper.MapCommentEntitiesToDTOs(childCommentEntities);
+
+            return childCommentDTOs;
+        }
     }
 }

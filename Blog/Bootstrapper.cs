@@ -26,6 +26,7 @@ namespace Blog
 
             // e.g. container.RegisterType<ITestService, TestService>();
 
+            container.RegisterType<Pagination>();
             container.RegisterType<IModelDataMapper, ModelDataMapper>();
             container.RegisterType<IServiceDataMapper, ServiceDataMapper>();
             container.RegisterType<IPostRepository, PostRepository>();

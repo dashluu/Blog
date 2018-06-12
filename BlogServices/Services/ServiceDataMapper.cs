@@ -88,6 +88,11 @@ namespace BlogServices.DTO
 
         public PostDTO MapPostEntityToDTO(PostEntity postEntity)
         {
+            if (postEntity == null)
+            {
+                return null;
+            }
+
             List<CommentEntity> commentEntities = postEntity.CommentEntities;
             List<CommentDTO> commentDTOs = MapCommentEntitiesToDTOs(commentEntities);
 
@@ -109,6 +114,11 @@ namespace BlogServices.DTO
 
         public PostEntity MapEditedPostDTOToEntity(EditedPostDTO editedPostDTO)
         {
+            if (editedPostDTO == null)
+            {
+                return null;
+            }
+
             PostEntity postEntity = new PostEntity()
             {
                 PostCategory = editedPostDTO.PostCategory,
@@ -123,6 +133,11 @@ namespace BlogServices.DTO
 
         public PostCardDTO MapPostCardEntityToDTO(PostEntity postEntity)
         {
+            if (postEntity == null)
+            {
+                return null;
+            }
+
             PostCardDTO postCardDTO = new PostCardDTO()
             {
                 PostId = postEntity.PostId,
@@ -138,6 +153,11 @@ namespace BlogServices.DTO
 
         public CommentDTO MapCommentEntityToDTO(CommentEntity commentEntity)
         {
+            if (commentEntity == null)
+            {
+                return null;
+            }
+
             CommentDTO commentDTO = new CommentDTO()
             {
                 CommentId = commentEntity.CommentId,

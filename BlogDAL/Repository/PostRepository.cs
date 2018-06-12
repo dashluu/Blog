@@ -9,6 +9,13 @@ namespace BlogDAL.Repository
 {
     public class PostRepository : BaseRepository<PostEntity, BlogDBContext>, IPostRepository
     {
+        private Pagination pagination;
+
+        public PostRepository(Pagination pagination)
+        {
+            this.pagination = pagination;
+        }
+
         private string GenerateId()
         {
             return Guid.NewGuid().ToString();
@@ -22,15 +29,22 @@ namespace BlogDAL.Repository
             return base.Add(entity);
         }
 
-        public PostEntity GetPostEntity(string id)
+        public PostEntity GetPostEntityWithPagination(string id)
         {
             try
             {
                 PostEntity postEntity = Context.PostEntities
                     .Where(x => x.PostId.Equals(id))
-                    .Include(y => y.CommentEntities
-                                   .Select(z => z.ChildCommentEntities))
                     .First();
+
+                List<CommentEntity> commentEntities = Context.CommentEntities
+                    .Where(x => x.Post.PostId.Equals(id))
+                    .OrderByDescending(x => x.CreatedDate)
+                    .Take(pagination.CommentPageSize)
+                    .ToList();
+
+                postEntity.CommentEntities = commentEntities;
+
                 return postEntity;
             }
             catch (Exception)
@@ -47,6 +61,22 @@ namespace BlogDAL.Repository
                     .Where(x => x.PostCategory.Equals(category))
                     .ToList();
                 return postEntities;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public PostEntity GetPostEntity(string id)
+        {
+            try
+            {
+                PostEntity postEntity = Context.PostEntities
+                    .Where(x => x.PostId.Equals(id))
+                    .First();
+
+                return postEntity;
             }
             catch (Exception)
             {
