@@ -10,7 +10,7 @@ namespace BlogDAL.Entity
         [Key]
         public string PostId { get; set; }
         public string Title { get; set; }
-        public string PostCategory { get; set; }
+        public CategoryEntity PostCategory { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
         public string ShortDescription { get; set; }

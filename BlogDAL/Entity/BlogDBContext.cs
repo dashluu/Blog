@@ -9,5 +9,6 @@ namespace BlogDAL.Entity
     {
         public DbSet<PostEntity> PostEntities { get; set; }
         public DbSet<CommentEntity> CommentEntities { get; set; }
+        public DbSet<CategoryEntity> CategoryEntities { get; set; }
     }
 }

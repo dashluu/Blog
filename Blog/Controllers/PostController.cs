@@ -11,22 +11,30 @@ namespace Blog.Controllers
     {
         private IPostService postService;
         private ICommentService commentService;
+        private ICategoryService categoryService;
         private IModelDataMapper dataMapper;
 
-        public PostController(IPostService postService, ICommentService commentService, IModelDataMapper dataMapper)
+        public PostController(IPostService postService, ICommentService commentService, ICategoryService categoryService, IModelDataMapper dataMapper)
         {
             this.postService = postService;
             this.commentService = commentService;
+            this.categoryService = categoryService;
             this.dataMapper = dataMapper;
         }
 
         // GET: Default
         public ActionResult Index(string postId)
         {
-            PostDTO postDTO = postService.GetPostDTO(postId);
-            PostModel postModel = dataMapper.MapPostDTOToModel(postDTO);
+            (PostDTO postDTO, bool end) postDTOWithCommentPagination = postService.GetPostDTOWithCommentPagination(postId);
+            PostModel postModel = dataMapper.MapPostDTOToModel(postDTOWithCommentPagination.postDTO);
+            bool end = postDTOWithCommentPagination.end;
+            PostWrapper postWrapper = new PostWrapper()
+            {
+                Post = postModel,
+                End = end
+            };
 
-            return View(postModel);
+            return View(postWrapper);
         }
 
         private bool StrNullOrEmpty(string str)
@@ -162,13 +170,21 @@ namespace Blog.Controllers
 
         public ActionResult CreatePost()
         {
-            return View();
+            List<CategoryDTO> categoryDTOs = categoryService.GetCategoryDTOs();
+            List<CategoryModel> categoryModels = new List<CategoryModel>();
+
+            foreach (CategoryDTO categoryDTO in categoryDTOs)
+            {
+                CategoryModel categoryModel = dataMapper.MapCategoryDTOToModel(categoryDTO);
+                categoryModels.Add(categoryModel);
+            }
+
+            return View(categoryModels);
         }
 
         [HttpPost]
         public ActionResult CreatePost(EditedPostModel Post)
         {
-            Post.PostCategory = "Life";
             EditedPostDTO editedPostDTO = dataMapper.MapEditedPostModelToDTO(Post);
             postService.AddEditedPostDTO(editedPostDTO);
 

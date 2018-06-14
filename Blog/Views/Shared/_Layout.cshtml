@@ -10,8 +10,9 @@
 </head>
 <body>
     @{
-        Html.RenderPartial("~/Views/Shared/_NavBar.cshtml");
+        Html.RenderAction("NavBar", "Home");
     }
+
     <div class="container body-content">
         @RenderBody()
     </div>

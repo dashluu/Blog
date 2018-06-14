@@ -26,30 +26,45 @@ namespace BlogDAL.Repository
             entity.PostId = GenerateId();
             entity.CreatedDate = DateTime.Now;
             entity.UpdatedDate = DateTime.Now;
+
+            CategoryEntity categoryEntity = Context.CategoryEntities
+                .Where(x => x.Name.Equals(entity.PostCategory.Name))
+                .First();
+
+            categoryEntity.Statistics++;
+
+            entity.PostCategory = categoryEntity;
+
             return base.Add(entity);
         }
 
-        public PostEntity GetPostEntityWithPagination(string id)
+        public (PostEntity postEntity, bool end) GetPostEntityWithCommentPagination(string id)
         {
             try
             {
                 PostEntity postEntity = Context.PostEntities
                     .Where(x => x.PostId.Equals(id))
+                    .Include(x => x.PostCategory)
                     .First();
 
-                List<CommentEntity> commentEntities = Context.CommentEntities
-                    .Where(x => x.Post.PostId.Equals(id))
+                IQueryable<CommentEntity> commentQuery = Context.CommentEntities
+                    .Where(x => x.Post.PostId.Equals(id));
+
+                List<CommentEntity> commentEntities = commentQuery
                     .OrderByDescending(x => x.CreatedDate)
                     .Take(pagination.CommentPageSize)
                     .ToList();
 
+                int countComment = commentQuery.Count();
+                bool end = countComment <= pagination.CommentPageSize;
+
                 postEntity.CommentEntities = commentEntities;
 
-                return postEntity;
+                return (postEntity, end);
             }
             catch (Exception)
             {
-                return null;
+                return (null, false);
             }
         }
 
@@ -58,7 +73,8 @@ namespace BlogDAL.Repository
             try
             {
                 List<PostEntity> postEntities = Context.PostEntities
-                    .Where(x => x.PostCategory.Equals(category))
+                    .Where(x => x.PostCategory.Name.Equals(category))
+                    .Include(x => x.PostCategory)
                     .ToList();
                 return postEntities;
             }

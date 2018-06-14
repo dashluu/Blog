@@ -42,4 +42,5 @@
     font-weight: 400;
     padding-right: 10px;
     height: 60px;
+    overflow-wrap: break-word;
 }

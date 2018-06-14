@@ -64,11 +64,13 @@ namespace BlogServices.Services
             return postCardDTOs;
         }
 
-        public PostDTO GetPostDTO(string id)
+        public (PostDTO postDTO, bool end) GetPostDTOWithCommentPagination(string id)
         {
-            PostEntity postEntity = postRepository.GetPostEntityWithPagination(id);
-            PostDTO postDTO = dataMapper.MapPostEntityToDTO(postEntity);
-            return postDTO;
+            (PostEntity postEntity, bool end) postEntityWithCommentPagination = postRepository.GetPostEntityWithCommentPagination(id);
+            PostDTO postDTO = dataMapper.MapPostEntityToDTO(postEntityWithCommentPagination.postEntity);
+            bool end = postEntityWithCommentPagination.end;
+
+            return (postDTO, end);
         }
     }
 }

@@ -12,11 +12,13 @@ namespace Blog.Controllers
     public class HomeController : Controller
     {
         private IPostService postService;
+        private ICategoryService categoryService;
         private IModelDataMapper dataMapper;
 
-        public HomeController(IPostService postService, IModelDataMapper dataMapper)
+        public HomeController(IPostService postService, ICategoryService categoryService, IModelDataMapper dataMapper)
         {
             this.postService = postService;
+            this.categoryService = categoryService;
             this.dataMapper = dataMapper;
         }
 
@@ -77,6 +79,21 @@ namespace Blog.Controllers
             object package = new { postId };
 
             return RedirectToAction("Index", "Post", package);
+        }
+
+        [ChildActionOnly]
+        public ActionResult NavBar()
+        {
+            List<CategoryDTO> categoryDTOs = categoryService.GetCategoryDTOs();
+            List<CategoryModel> categoryModels = new List<CategoryModel>();
+
+            foreach (CategoryDTO categoryDTO in categoryDTOs)
+            {
+                CategoryModel categoryModel = dataMapper.MapCategoryDTOToModel(categoryDTO);
+                categoryModels.Add(categoryModel);
+            }
+
+            return PartialView("_NavBar", categoryModels);
         }
 
     }

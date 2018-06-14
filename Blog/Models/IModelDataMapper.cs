@@ -13,5 +13,8 @@ namespace Blog.Models
         EditedPostDTO MapEditedPostModelToDTO(EditedPostModel editedPostModel);
         PostCardModel MapPostCardDTOToModel(PostCardDTO postCardDTO);
         CommentModel MapCommentDTOToModel(CommentDTO commentDTO);
+        CategoryModel MapCategoryDTOToModel(CategoryDTO categoryDTO);
+        EditedCategoryDTO MapEditedCategoryModelToDTO(EditedCategoryModel editedCategoryModel);
+        CategoryDTO MapCategoryModelToDTO(CategoryModel categoryModel);
     }
 }

@@ -9,7 +9,7 @@ namespace BlogServices.Services
     {
         List<PostCardDTO> GetPostCardDTOs();
         List<PostCardDTO> GetPostCardDTOsWithCategory(string category);
-        PostDTO GetPostDTO(string id);
+        (PostDTO postDTO, bool end) GetPostDTOWithCommentPagination(string id);
         bool AddEditedPostDTO(EditedPostDTO editedPostDTO);
     }
 }

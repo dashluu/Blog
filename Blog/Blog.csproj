@@ -168,7 +168,9 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Controllers\ImageController.cs" />
+    <Compile Include="Models\CategoryModel.cs" />
     <Compile Include="Models\CommentModel.cs" />
+    <Compile Include="Models\EditedCategoryModel.cs" />
     <Compile Include="Models\EditedPostModel.cs" />
     <Compile Include="Models\IModelDataMapper.cs" />
     <Compile Include="Controllers\PostController.cs" />
@@ -178,6 +180,7 @@
     </Compile>
     <Compile Include="Models\ModelDataMapper.cs" />
     <Compile Include="Models\PostCardModel.cs" />
+    <Compile Include="Models\PostWrapper.cs" />
     <Compile Include="Models\PostModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

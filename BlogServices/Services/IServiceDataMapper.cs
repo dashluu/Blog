@@ -13,5 +13,8 @@ namespace BlogServices.Services
         PostEntity MapEditedPostDTOToEntity(EditedPostDTO editedPostDTO);
         PostCardDTO MapPostCardEntityToDTO(PostEntity postEntity);
         CommentDTO MapCommentEntityToDTO(CommentEntity commentEntity);
+        CategoryDTO MapCategoryEntityToDTO(CategoryEntity categoryEntity);
+        CategoryEntity MapEditedCategoryDTOToEntity(EditedCategoryDTO editedCategoryDTO);
+        CategoryEntity MapCategoryDTOToEntity(CategoryDTO categoryDTO);
     }
 }

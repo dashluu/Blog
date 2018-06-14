@@ -9,7 +9,7 @@ namespace BlogDAL.Repository
     public interface IPostRepository : IBaseRepository<PostEntity>
     {
         List<PostEntity> GetPostEntitiesWithCategory(string category);
-        PostEntity GetPostEntityWithPagination(string id);
+        (PostEntity postEntity, bool end) GetPostEntityWithCommentPagination(string id);
         PostEntity GetPostEntity(string id);
     }
 }

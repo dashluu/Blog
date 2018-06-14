@@ -99,7 +99,7 @@ namespace BlogServices.DTO
             PostDTO postDTO = new PostDTO()
             {
                 PostId = postEntity.PostId,
-                PostCategory = postEntity.PostCategory,
+                PostCategory = MapCategoryEntityToDTO(postEntity.PostCategory),
                 Title = postEntity.Title,
                 CreatedDate = FormatTime(postEntity.CreatedDate),
                 UpdatedDate = ComputeUpdateTime(postEntity.UpdatedDate),
@@ -121,7 +121,7 @@ namespace BlogServices.DTO
 
             PostEntity postEntity = new PostEntity()
             {
-                PostCategory = editedPostDTO.PostCategory,
+                PostCategory = MapCategoryDTOToEntity(editedPostDTO.PostCategory),
                 Title = editedPostDTO.Title,
                 ShortDescription = editedPostDTO.ShortDescription,
                 Content = editedPostDTO.Content,
@@ -166,6 +166,52 @@ namespace BlogServices.DTO
             };
 
             return commentDTO;
+        }
+
+        public CategoryDTO MapCategoryEntityToDTO(CategoryEntity categoryEntity)
+        {
+            if (categoryEntity == null)
+            {
+                return null;
+            }
+
+            CategoryDTO categoryDTO = new CategoryDTO()
+            {
+                Name = categoryEntity.Name
+            };
+
+            return categoryDTO;
+        }
+
+        public CategoryEntity MapEditedCategoryDTOToEntity(EditedCategoryDTO editedCategoryDTO)
+        {
+            if (editedCategoryDTO == null)
+            {
+                return null;
+            }
+
+            CategoryEntity categoryEntity = new CategoryEntity()
+            {
+                Name = editedCategoryDTO.Name,
+                Description = editedCategoryDTO.Description
+            };
+
+            return categoryEntity;
+        }
+
+        public CategoryEntity MapCategoryDTOToEntity(CategoryDTO categoryDTO)
+        {
+            if (categoryDTO == null)
+            {
+                return null;
+            }
+
+            CategoryEntity categoryEntity = new CategoryEntity()
+            {
+                Name = categoryDTO.Name
+            };
+
+            return categoryEntity;
         }
     }
 }

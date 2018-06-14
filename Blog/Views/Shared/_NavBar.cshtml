@@ -1,4 +1,9 @@
-﻿<link rel="stylesheet" type="text/css" href="~/Content/Bar/nav-bar.css" />
+﻿@using Blog.Models
+@using System.Globalization
+@using System.Threading
+@model List<CategoryModel>
+
+<link rel="stylesheet" type="text/css" href="~/Content/Bar/nav-bar.css" />
 
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
@@ -12,10 +17,12 @@
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li>@Html.ActionLink("Life", "Category", "Home", new { category = "Life" }, new { })</li>
-                <li>@Html.ActionLink("Travel", "Category", "Home", new { category = "Travel" }, new { })</li>
-                <li>@Html.ActionLink("Tech", "Category", "Home", new { category = "Tech" }, new { })</li>
-                <li>@Html.ActionLink("Health", "Category", "Home", new { category = "Health" }, new { })</li>
+                @foreach (CategoryModel categoryModel in Model)
+                {
+                    CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
+                    TextInfo textInfo = cultureInfo.TextInfo;
+                    <li>@Html.ActionLink(textInfo.ToTitleCase(categoryModel.Name), "Category", "Home", new { category = categoryModel.Name }, new { })</li>
+                }
             </ul>
         </div>
     </div>

@@ -8,6 +8,36 @@ namespace Blog.Models
 {
     public class ModelDataMapper : IModelDataMapper
     {
+        public CategoryModel MapCategoryDTOToModel(CategoryDTO categoryDTO)
+        {
+            if (categoryDTO == null)
+            {
+                return null;
+            }
+
+            CategoryModel categoryModel = new CategoryModel()
+            {
+                Name = categoryDTO.Name
+            };
+
+            return categoryModel;
+        }
+
+        public CategoryDTO MapCategoryModelToDTO(CategoryModel categoryModel)
+        {
+            if (categoryModel == null)
+            {
+                return null;
+            }
+
+            CategoryDTO categoryDTO = new CategoryDTO()
+            {
+                Name = categoryModel.Name
+            };
+
+            return categoryDTO;
+        }
+
         public List<CommentModel> MapCommentDTOsToModels(List<CommentDTO> commentDTOs)
         {
             if (commentDTOs == null)
@@ -59,6 +89,22 @@ namespace Blog.Models
             return commentModel;
         }
 
+        public EditedCategoryDTO MapEditedCategoryModelToDTO(EditedCategoryModel editedCategoryModel)
+        {
+            if (editedCategoryModel == null)
+            {
+                return null;
+            }
+
+            EditedCategoryDTO editedCategoryDTO = new EditedCategoryDTO()
+            {
+                Name = editedCategoryModel.Name,
+                Description = editedCategoryModel.Description
+            };
+
+            return editedCategoryDTO;
+        }
+
         public EditedPostDTO MapEditedPostModelToDTO(EditedPostModel editedPostModel)
         {
             if (editedPostModel == null)
@@ -69,7 +115,7 @@ namespace Blog.Models
             EditedPostDTO editedPostDTO = new EditedPostDTO()
             {
                 Title = editedPostModel.Title,
-                PostCategory = editedPostModel.PostCategory,
+                PostCategory = MapCategoryModelToDTO(editedPostModel.PostCategory),
                 ShortDescription = editedPostModel.ShortDescription,
                 ThumbnailImageSrc = editedPostModel.ThumbnailImageSrc
             };
@@ -111,7 +157,7 @@ namespace Blog.Models
             {
                 PostId = postDTO.PostId,
                 Title = postDTO.Title,
-                PostCategory = postDTO.PostCategory,
+                PostCategory = MapCategoryDTOToModel(postDTO.PostCategory),
                 ShortDescription = postDTO.ShortDescription,
                 ThumbnailImageSrc = postDTO.ThumbnailImageSrc,
                 Content = postDTO.Content,

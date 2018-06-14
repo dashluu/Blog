@@ -1,4 +1,9 @@
-﻿@section Style {
+﻿@using Blog.Models
+@using System.Globalization
+@using System.Threading
+@model List<CategoryModel>
+
+@section Style {
     <link href="@Url.Content("~/Content/Post/createpost.css")" rel="stylesheet" type="text/css" />
 }
 
@@ -13,6 +18,14 @@
             @using (Html.BeginForm("CreatePost", "Post", FormMethod.Post, new { id = "create-form" }))
             {
                 <input type="text" name="Post.Title" class="create-input" placeholder="Title" />
+                <select name="Post.PostCategory.Name">
+                    @foreach (CategoryModel categoryModel in Model)
+                    {
+                        CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
+                        TextInfo textInfo = cultureInfo.TextInfo;
+                        <option value=@categoryModel.Name>@textInfo.ToTitleCase(categoryModel.Name)</option>
+                    }
+                </select>
                 <input type="text" name="Post.ThumbnailImageSrc" class="create-input" placeholder="Thumbnail image" />
                 <textarea name="Post.ShortDescription" class="create-input" placeholder="Short description"></textarea>
                 <textarea name="Post.Content" class="create-input" placeholder="Content"></textarea>

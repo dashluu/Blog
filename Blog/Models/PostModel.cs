@@ -9,7 +9,7 @@ namespace Blog.Models
     {
         public string PostId { get; set; }
         public string Title { get; set; }
-        public string PostCategory { get; set; }
+        public CategoryModel PostCategory { get; set; }
         public string CreatedDate { get; set; }
         public string UpdatedDate { get; set; }
         public string ShortDescription { get; set; }

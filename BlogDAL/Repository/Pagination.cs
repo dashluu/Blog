@@ -13,7 +13,7 @@ namespace BlogDAL.Repository
         public Pagination()
         {
             PostPageSize = 20;
-            CommentPageSize = 30;
+            CommentPageSize = 1;
             ChildCommentPageSize = 20;
         }
     }

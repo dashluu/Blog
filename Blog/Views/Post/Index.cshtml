@@ -1,5 +1,7 @@
 ﻿@using Blog.Models
-@model PostModel
+@using System.Globalization
+@using System.Threading
+@model PostWrapper
 
 @section Style {
     <link href="@Url.Content("~/Content/Post/post.css")" rel="stylesheet" type="text/css" />
@@ -16,23 +18,27 @@
 <div class="container" id="post-block">
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 post-section">
-            <p class="post-title">@Model.Title</p>
-            <p class="post-category">About <strong>@Model.PostCategory</strong></p>
-            <p class="post-date">On <strong>@Model.CreatedDate</strong></p>
-            <p class="post-date">Updated @Model.UpdatedDate</p>
-            <p class="post-summary">@Model.ShortDescription</p>
-            <p class="post-content">@Model.Content</p>
+            <p class="post-title">@Model.Post.Title</p>
+            @{ 
+                CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
+                TextInfo textInfo = cultureInfo.TextInfo;
+            }
+            <p class="post-category">About <strong>@textInfo.ToTitleCase(Model.Post.PostCategory.Name)</strong></p>
+            <p class="post-date">On <strong>@Model.Post.CreatedDate</strong></p>
+            <p class="post-date">Updated @Model.Post.UpdatedDate</p>
+            <p class="post-summary">@Model.Post.ShortDescription</p>
+            <p class="post-content">@Model.Post.Content</p>
         </div>
 
         <div class="col-xs-12 col-sm-10 col-md-8 col-lg-7 comment-section">
             <p class="comment-title">Comments</p>
             <form class="comment-form master-comment-form" action="/Post" method="post">
                 <textarea class="comment-input" placeholder="Comment"></textarea>
-                <input type="hidden" value=@Model.PostId class="post-id" id="post-id"/>
+                <input type="hidden" value=@Model.Post.PostId class="post-id" id="post-id" />
                 <button type="submit" class="submit-comment-btn"><span class="glyphicon glyphicon-send"></span></button>
             </form>
             @{
-                List<CommentModel> commentModels = Model.CommentModels;
+                List<CommentModel> commentModels = Model.Post.CommentModels;
                 if (commentModels != null)
                 {
                     foreach (CommentModel commentModel in commentModels)
@@ -50,17 +56,20 @@
                             <form class="comment-form child-comment-form" action="/Post" method="post" style="display: none">
                                 <textarea class="comment-input" placeholder="Comment"></textarea>
                                 <input type="hidden" value=@commentModel.CommentId class="comment-id" />
-                                <input type="hidden" value=@Model.PostId class="post-id"/>
+                                <input type="hidden" value=@Model.Post.PostId class="post-id" />
                                 <button type="submit" class="submit-comment-btn"><span class="glyphicon glyphicon-send"></span></button>
                             </form>
-                            <div class="children-comment-container" ></div>
+                            <div class="children-comment-container"></div>
                         </div>
                     }
                 }
             }
-     </div>
-     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-         <button id="expand-master-comment-btn" class="expand-comment-btn"><span class="glyphicon glyphicon-option-horizontal"></span></button>
-     </div>
-</div>
+        </div>
+        @if (!Model.End)
+        {
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <button id="expand-master-comment-btn" class="expand-comment-btn"><span class="glyphicon glyphicon-option-horizontal"></span></button>
+            </div>
+        }
+    </div>
 </div>

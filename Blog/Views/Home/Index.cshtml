@@ -8,7 +8,7 @@
     <script src="~/Scripts/home.js"></script>
 }
 
-@{ 
+@{
     Html.RenderPartial("~/Views/Shared/_SearchBar.cshtml");
 }
 
@@ -30,7 +30,7 @@
                             <p class="post-summary">@postCard.ShortDescription</p>
                             @using (Html.BeginForm())
                             {
-                                <input type="hidden" value=@postCard.PostId name="postId"/>
+                                <input type="hidden" value=@postCard.PostId name="postId" />
                             }
                         </div>
                     </div>
