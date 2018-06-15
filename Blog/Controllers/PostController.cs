@@ -168,7 +168,7 @@ namespace Blog.Controllers
             return Json(jsonObject);
         }
 
-        public ActionResult CreatePost()
+        private List<CategoryModel> GetCategoryModelsHelper()
         {
             List<CategoryDTO> categoryDTOs = categoryService.GetCategoryDTOs();
             List<CategoryModel> categoryModels = new List<CategoryModel>();
@@ -179,16 +179,64 @@ namespace Blog.Controllers
                 categoryModels.Add(categoryModel);
             }
 
+            return categoryModels;
+        }
+
+        public ActionResult CreatePost()
+        {
+            List<CategoryModel> categoryModels = GetCategoryModelsHelper();
             return View(categoryModels);
         }
 
         [HttpPost]
         public ActionResult CreatePost(EditedPostModel Post)
         {
+            List<CategoryModel> categoryModels = GetCategoryModelsHelper();
+
+            if (!ModelState.IsValid)
+            {
+                return View(categoryModels);
+            }
+
             EditedPostDTO editedPostDTO = dataMapper.MapEditedPostModelToDTO(Post);
             postService.AddEditedPostDTO(editedPostDTO);
 
-            return RedirectToAction("Index", "Home");
+            return View(categoryModels);
+        }
+
+        [HttpPost]
+        public ActionResult CreateCategory(string name, string description)
+        {
+            object jsonObject;
+
+            if (StrNullOrEmpty(name) || StrNullOrEmpty(description))
+            {
+                jsonObject = new { status = 500 };
+                return Json(jsonObject);
+            }
+
+            EditedCategoryDTO editedCategoryDTO = new EditedCategoryDTO()
+            {
+                Name = name,
+                Description = description
+            };
+
+            bool addSuccessfully = categoryService.AddEditedCategoryDTO(editedCategoryDTO);
+
+            if (!addSuccessfully)
+            {
+                jsonObject = new { status = 500 };
+            }
+            else
+            {
+                jsonObject = new
+                {
+                    status = 200,
+                    name
+                };
+            }
+
+            return Json(jsonObject);
         }
     }
 }

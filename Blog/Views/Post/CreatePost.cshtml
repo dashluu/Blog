@@ -10,26 +10,58 @@
 @section scripts{
     <script src="https://cloud.tinymce.com/stable/tinymce.js"></script>
     <script src="~/Scripts/TinyMCE/tinymce_app.js"></script>
+    <script src="~/Scripts/Post/createpost.js"></script>
 }
 
 <div class="container" id="editor-section">
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            @using (Html.BeginForm("CreatePost", "Post", FormMethod.Post, new { id = "create-form" }))
+            <div class="row" id="category-form">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <p class="title">Edit category</p>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                    <input type="text" class="post-input" placeholder="Name" id="category-name" />
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <textarea class="post-input post-textarea" placeholder="Description" id="category-description"></textarea>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <button type="button" id="add-category-btn"><span class="glyphicon glyphicon-cloud-upload"></span></button>
+                </div>
+            </div>
+            @using (Html.BeginForm("CreatePost", "Post", FormMethod.Post, new { id = "post-form" }))
             {
-                <input type="text" name="Post.Title" class="create-input" placeholder="Title" />
-                <select name="Post.PostCategory.Name">
-                    @foreach (CategoryModel categoryModel in Model)
-                    {
-                        CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
-                        TextInfo textInfo = cultureInfo.TextInfo;
-                        <option value=@categoryModel.Name>@textInfo.ToTitleCase(categoryModel.Name)</option>
-                    }
-                </select>
-                <input type="text" name="Post.ThumbnailImageSrc" class="create-input" placeholder="Thumbnail image" />
-                <textarea name="Post.ShortDescription" class="create-input" placeholder="Short description"></textarea>
-                <textarea name="Post.Content" class="create-input" placeholder="Content"></textarea>
-                <input type="submit" id="submit-btn" />
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <p class="title">Edit post</p>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                        <input type="text" name="Post.Title" class="post-input" placeholder="Title" />
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                        <select name="Post.PostCategory.Name" class="post-input" id="post-category">
+                            @foreach (CategoryModel categoryModel in Model)
+                            {
+                                CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
+                                TextInfo textInfo = cultureInfo.TextInfo;
+                                <option value=@categoryModel.Name>@textInfo.ToTitleCase(categoryModel.Name)</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <input type="text" name="Post.ThumbnailImageSrc" class="post-input" placeholder="Thumbnail image" />
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <textarea name="Post.ShortDescription" class="post-input post-textarea" placeholder="Short description"></textarea>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <textarea name="Post.Content" class="post-input post-textarea" placeholder="Content"></textarea>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <button type="submit" id="submit-btn"><span class="glyphicon glyphicon-cloud-upload"></span></button>
+                    </div>
+                </div>
             }
         </div>
     </div>

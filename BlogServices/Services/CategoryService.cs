@@ -18,6 +18,14 @@ namespace BlogServices.Services
             this.dataMapper = dataMapper;
         }
 
+        public bool AddEditedCategoryDTO(EditedCategoryDTO editedCategoryDTO)
+        {
+            CategoryEntity categoryEntity = dataMapper.MapEditedCategoryDTOToEntity(editedCategoryDTO);
+            bool addSuccessfully = categoryRepository.Add(categoryEntity);
+
+            return addSuccessfully;
+        }
+
         public List<CategoryDTO> GetCategoryDTOs()
         {
             List<CategoryEntity> categoryEntities = categoryRepository.GetAll();
