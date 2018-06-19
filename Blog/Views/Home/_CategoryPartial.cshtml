@@ -1,0 +1,52 @@
+﻿@using Blog.Models
+@model PaginationModel<PostCardModel>
+
+@{ 
+    if (Model == null || Model.Models == null || Model.Pages == 0)
+    {
+        return;
+    }
+
+    string category = Model.Models[0].PostCategory.Name;
+}
+
+<div class="container">
+    <div class="row">
+
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            @{
+                bool hasNext = Model.HasNext;
+                string displayNext = hasNext ? "" : "display:none";
+            }
+            <button class="page-nav-btn previous-page-btn" style="display:none">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+            </button>
+            <span class="page-indicator">Page <strong class="page-number">1</strong> of <strong class="page-count">@Model.Pages</strong></span>
+            <button class="page-nav-btn next-page-btn" style=@displayNext>
+                <span class="glyphicon glyphicon-chevron-right"></span>
+            </button>
+            <input type="hidden" class="post-category" value=@category />
+        </div>
+
+        @foreach (PostCardModel postCard in Model.Models)
+        {
+            <div class="post-card container col-xs-12 col-sm-12 col-md-12 col-lg-6">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-4 post-col-1">
+                        <img class="post-img" src=@postCard.ThumbnailImageSrc />
+                    </div>
+                    <div class="col-xs-12 col-sm-9 col-md-9 col-lg-8 post-col-2">
+                        <p class="post-title">@postCard.Title</p>
+                        <p class="post-date">On <strong>@postCard.CreatedDate</strong></p>
+                        <p class="post-date">Updated @postCard.UpdatedDate</p>
+                        <p class="post-summary">@postCard.ShortDescription</p>
+                        @using (Html.BeginForm("CategoryPost", "Home"))
+                        {
+                            <input type="hidden" value=@postCard.PostId name="postId" />
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

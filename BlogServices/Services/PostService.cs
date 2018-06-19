@@ -26,20 +26,8 @@ namespace BlogServices.Services
 
         public List<PostCardDTO> GetPostCardDTOs()
         {
-            List<PostEntity> postEntities = postRepository.GetAll();
-
-            if (postEntities == null)
-            {
-                return null;
-            }
-
-            List<PostCardDTO> postCardDTOs = new List<PostCardDTO>();
-
-            foreach (PostEntity postEntity in postEntities)
-            {
-                PostCardDTO postCardDTO = dataMapper.MapPostCardEntityToDTO(postEntity);
-                postCardDTOs.Add(postCardDTO);
-            }
+            List<PostEntity> postEntities = postRepository.GetEntities();
+            List<PostCardDTO> postCardDTOs = dataMapper.MapPostCardEntitiesToDTOs(postEntities);
 
             return postCardDTOs;
         }
@@ -47,30 +35,33 @@ namespace BlogServices.Services
         public List<PostCardDTO> GetPostCardDTOsWithCategory(string category)
         {
             List<PostEntity> postEntities = postRepository.GetPostEntitiesWithCategory(category);
-
-            if (postEntities == null)
-            {
-                return null;
-            }
-
-            List<PostCardDTO> postCardDTOs = new List<PostCardDTO>();
-
-            foreach (PostEntity postEntity in postEntities)
-            {
-                PostCardDTO postCardDTO = dataMapper.MapPostCardEntityToDTO(postEntity);
-                postCardDTOs.Add(postCardDTO);
-            }
+            List<PostCardDTO> postCardDTOs = dataMapper.MapPostCardEntitiesToDTOs(postEntities);
 
             return postCardDTOs;
         }
 
-        public (PostDTO postDTO, bool end) GetPostDTOWithCommentPagination(string id)
+        public PaginationDTO<PostCardDTO> GetPostCardPaginationDTOWithCategory(string category, int pageNumber, int pageSize)
         {
-            (PostEntity postEntity, bool end) postEntityWithCommentPagination = postRepository.GetPostEntityWithCommentPagination(id);
-            PostDTO postDTO = dataMapper.MapPostEntityToDTO(postEntityWithCommentPagination.postEntity);
-            bool end = postEntityWithCommentPagination.end;
+            PaginationEntity<PostEntity> postPaginationEntity = postRepository.GetPostPaginationEntityWithCategory(category, pageNumber, pageSize);
+            PaginationDTO<PostCardDTO> postCardPaginationDTO = dataMapper.MapPostCardPaginationEntityToDTO(postPaginationEntity);
 
-            return (postDTO, end);
+            return postCardPaginationDTO;
+        }
+
+        public PostDTOWithPaginatedComments GetPostDTOWithPaginatedComments(string id, int pageSize)
+        {
+            PostEntityWithPaginatedComments postEntityWithPaginatedComments = postRepository.GetPostEntityWithPaginatedComments(id, pageSize);
+            PostDTOWithPaginatedComments postDTOWithPaginatedComments = dataMapper.MapPostEntityToDTOWithPaginatedComments(postEntityWithPaginatedComments);
+
+            return postDTOWithPaginatedComments;
+        }
+
+        public List<PaginationDTO<PostCardDTO>> GetPostCardPaginationDTOs(int pageSize)
+        {
+            List<PaginationEntity<PostEntity>> postPaginationEntities = postRepository.GetPostPaginationEntities(pageSize);
+            List<PaginationDTO<PostCardDTO>> postCardPaginationDTOs = dataMapper.MapPostCardPaginationEntitiesToDTOs(postPaginationEntities);
+
+            return postCardPaginationDTOs;
         }
     }
 }

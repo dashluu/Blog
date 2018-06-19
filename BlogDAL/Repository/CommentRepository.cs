@@ -3,19 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace BlogDAL.Repository
 {
     public class CommentRepository : BaseRepository<CommentEntity, BlogDBContext>, ICommentRepository
     {
-        private Pagination pagination;
-
-        public CommentRepository(Pagination pagination)
-        {
-            this.pagination = pagination;
-        }
-
         private string GenerateId()
         {
             return Guid.NewGuid().ToString();
@@ -85,32 +79,6 @@ namespace BlogDAL.Repository
             }
         }
 
-        public (List<CommentEntity> commentEntities, bool end) Paginate(string postId, int skip)
-        {
-            try
-            {
-                IQueryable<CommentEntity> query = Context.CommentEntities
-                    .Where(x => x.Post.PostId.Equals(postId));
-
-                int commentPageSize = pagination.CommentPageSize;
-
-                List<CommentEntity> commentEntities = query
-                    .OrderByDescending(x => x.CreatedDate)
-                    .Skip(() => skip)
-                    .Take(() => commentPageSize)
-                    .ToList();
-
-                int countComment = query.Count();
-                bool end = (skip + commentPageSize) >= countComment;
-
-                return (commentEntities, end);
-            }
-            catch (Exception)
-            {
-                return (null, false);
-            }
-        }
-
         public List<CommentEntity> GetChildCommentEntities(string commentId)
         {
             try
@@ -121,6 +89,25 @@ namespace BlogDAL.Repository
                     .ToList();
 
                 return commentEntities;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public PaginationEntity<CommentEntity> GetCommentPaginationEntityWithPost(string postId, int skip, int pageSize)
+        {
+            try
+            {
+                Expression<Func<CommentEntity, DateTime>> commentOrderByExpression = (x => x.CreatedDate);
+
+                IQueryable<CommentEntity> commentQueryable = Context.CommentEntities
+                    .Where(x => x.Post.PostId.Equals(postId));
+
+                PaginationEntity<CommentEntity> commentPaginationEntity = GetPaginationEntity(commentQueryable, isDesc: true, commentOrderByExpression, skip, pageSize);
+
+                return commentPaginationEntity;
             }
             catch (Exception)
             {

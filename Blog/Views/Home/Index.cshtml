@@ -1,41 +1,38 @@
-﻿@model List<Blog.Models.PostCardModel>
+﻿@using Blog.Models
+@using System.Globalization
+@using System.Threading
+@model List<PaginationModel<PostCardModel>>
 
-@section Style {
+@section styles {
+    <link rel="stylesheet" type="text/css" href="~/Content/Bar/nav-bar.css" />
     <link href="@Url.Content("~/Content/Home/home.css")" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="~/Content/Home/category_partial.css" />
 }
 
 @section scripts {
-    <script src="~/Scripts/home.js"></script>
+    <script src="~/Scripts/Home/home.js"></script>
+    <script src="~/Scripts/Home/category_partial.js"></script>
 }
 
 @{
     Html.RenderPartial("~/Views/Shared/_SearchBar.cshtml");
 }
 
+@if (Model == null || Model.Count == 0)
+{
+    return;
+}
+
 <div class="container" id="post-block">
     <div class="row">
-        @if (Model != null)
+        @foreach (PaginationModel<PostCardModel> postCardPaginationModel in Model)
         {
-            foreach (var postCard in Model)
-            {
-                <div class="post-card container col-xs-12 col-sm-12 col-md-12 col-lg-6">
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-4 post-col-1">
-                            <img class="post-img" src=@postCard.ThumbnailImageSrc />
-                        </div>
-                        <div class="col-xs-12 col-sm-9 col-md-9 col-lg-8 post-col-2">
-                            <p class="post-title">@postCard.Title</p>
-                            <p class="post-date">On <strong>@postCard.CreatedDate</strong></p>
-                            <p class="post-date">Updated @postCard.UpdatedDate</p>
-                            <p class="post-summary">@postCard.ShortDescription</p>
-                            @using (Html.BeginForm())
-                            {
-                                <input type="hidden" value=@postCard.PostId name="postId" />
-                            }
-                        </div>
-                    </div>
-                </div>
-            }
+            string category = postCardPaginationModel.Models[0].PostCategory.Name;
+            CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
+            TextInfo textInfo = cultureInfo.TextInfo;
+
+            <p class="post-category">@textInfo.ToTitleCase(category)</p>
+            Html.RenderPartial("~/Views/Home/_CategoryPartial.cshtml", postCardPaginationModel);
         }
     </div>
 </div>

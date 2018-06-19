@@ -1,10 +1,11 @@
 ﻿@using Blog.Models
 @using System.Globalization
 @using System.Threading
-@model PostWrapper
+@model PostModelWithPaginatedComments
 
-@section Style {
-    <link href="@Url.Content("~/Content/Post/post.css")" rel="stylesheet" type="text/css" />
+@section styles {
+    <link rel="stylesheet" type="text/css" href="~/Content/Bar/nav-bar.css" />
+    <link href="@Url.Content("~/Content/Post/viewpost.css")" rel="stylesheet" type="text/css" />
 }
 
 @section scripts {
@@ -38,7 +39,7 @@
                 <button type="submit" class="submit-comment-btn"><span class="glyphicon glyphicon-send"></span></button>
             </form>
             @{
-                List<CommentModel> commentModels = Model.Post.CommentModels;
+                List<CommentModel> commentModels = Model.CommentPaginationModel.Models;
                 if (commentModels != null)
                 {
                     foreach (CommentModel commentModel in commentModels)
@@ -65,7 +66,7 @@
                 }
             }
         </div>
-        @if (!Model.End)
+        @if (Model.CommentPaginationModel.HasNext)
         {
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <button id="expand-master-comment-btn" class="expand-comment-btn"><span class="glyphicon glyphicon-option-horizontal"></span></button>

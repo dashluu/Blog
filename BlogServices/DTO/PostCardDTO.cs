@@ -12,5 +12,6 @@ namespace BlogServices.DTO
         public string UpdatedDate { get; set; }
         public string ShortDescription { get; set; }
         public string ThumbnailImageSrc { get; set; }
+        public CategoryDTO PostCategory { get; set; }
     }
 }

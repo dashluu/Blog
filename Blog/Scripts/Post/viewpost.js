@@ -149,7 +149,7 @@ $("#expand-master-comment-btn").click(function () {
                 newCommentContainer.show("fast");
             }
 
-            if (result.end) {
+            if (!result.hasNext) {
                 $("#expand-master-comment-btn").hide();
             }
         }

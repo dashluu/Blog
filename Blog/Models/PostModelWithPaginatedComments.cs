@@ -5,9 +5,9 @@ using System.Web;
 
 namespace Blog.Models
 {
-    public class PostWrapper
+    public class PostModelWithPaginatedComments
     {
         public PostModel Post { get; set; }
-        public bool End { get; set; }
+        public PaginationModel<CommentModel> CommentPaginationModel { get; set; }
     }
 }

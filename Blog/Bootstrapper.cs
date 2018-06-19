@@ -26,14 +26,19 @@ namespace Blog
 
             // e.g. container.RegisterType<ITestService, TestService>();
 
-            container.RegisterType<Pagination>();
+            int homePostPageSize = 2;
+            int postPageSize = 2;
+            int commentPageSize = 1;
+            int childCommentPageSize = 1;
+
+            container.RegisterType<Pagination>(new InjectionConstructor(homePostPageSize, postPageSize, commentPageSize, childCommentPageSize));
 
             container.RegisterType<IModelDataMapper, ModelDataMapper>();
             container.RegisterType<IServiceDataMapper, ServiceDataMapper>();
 
             container.RegisterType<ICategoryRepository, CategoryRepository>();
-            container.RegisterType<IPostRepository, PostRepository>();
             container.RegisterType<ICommentRepository, CommentRepository>();
+            container.RegisterType<IPostRepository, PostRepository>();
 
             container.RegisterType<ICategoryService, CategoryService>();
             container.RegisterType<IPostService, PostService>();

@@ -8,6 +8,24 @@ namespace Blog.Models
 {
     public class ModelDataMapper : IModelDataMapper
     {
+        public List<CategoryModel> MapCategoryDTOsToModels(List<CategoryDTO> categoryDTOs)
+        {
+            if (categoryDTOs == null)
+            {
+                return null;
+            }
+
+            List<CategoryModel> categoryModels = new List<CategoryModel>();
+
+            foreach (CategoryDTO categoryDTO in categoryDTOs)
+            {
+                CategoryModel categoryModel = MapCategoryDTOToModel(categoryDTO);
+                categoryModels.Add(categoryModel);
+            }
+
+            return categoryModels;
+        }
+
         public CategoryModel MapCategoryDTOToModel(CategoryDTO categoryDTO)
         {
             if (categoryDTO == null)
@@ -123,12 +141,32 @@ namespace Blog.Models
             return editedPostDTO;
         }
 
+        public List<PostCardModel> MapPostCardDTOsToModels(List<PostCardDTO> postCardDTOs)
+        {
+            if (postCardDTOs == null)
+            {
+                return null;
+            }
+
+            List<PostCardModel> postCardModels = new List<PostCardModel>();
+
+            foreach (PostCardDTO postCardDTO in postCardDTOs)
+            {
+                PostCardModel postCardModel = MapPostCardDTOToModel(postCardDTO);
+                postCardModels.Add(postCardModel);
+            }
+
+            return postCardModels;
+        }
+
         public PostCardModel MapPostCardDTOToModel(PostCardDTO postCardDTO)
         {
             if (postCardDTO == null)
             {
                 return null;
             }
+
+            CategoryDTO categoryDTO = postCardDTO.PostCategory;
 
             PostCardModel postCardModel = new PostCardModel()
             {
@@ -137,10 +175,47 @@ namespace Blog.Models
                 ShortDescription = postCardDTO.ShortDescription,
                 ThumbnailImageSrc = postCardDTO.ThumbnailImageSrc,
                 CreatedDate = postCardDTO.CreatedDate,
-                UpdatedDate = postCardDTO.UpdatedDate
+                UpdatedDate = postCardDTO.UpdatedDate,
+                PostCategory = MapCategoryDTOToModel(categoryDTO)
             };
 
             return postCardModel;
+        }
+
+        public List<PaginationModel<PostCardModel>> MapPostCardPaginationDTOsToModels(List<PaginationDTO<PostCardDTO>> postCardPaginationDTOs)
+        {
+            if (postCardPaginationDTOs == null)
+            {
+                return null;
+            }
+
+            List<PaginationModel<PostCardModel>> postCardPaginationModels = new List<PaginationModel<PostCardModel>>();
+
+            foreach (PaginationDTO<PostCardDTO> postCardPaginationDTO in postCardPaginationDTOs)
+            {
+                PaginationModel<PostCardModel> postCardPaginationModel = MapPostCardPaginationDTOToModel(postCardPaginationDTO);
+                postCardPaginationModels.Add(postCardPaginationModel);
+            }
+
+            return postCardPaginationModels;
+        }
+
+        public PaginationModel<PostCardModel> MapPostCardPaginationDTOToModel(PaginationDTO<PostCardDTO> postCardPaginationDTO)
+        {
+            if (postCardPaginationDTO == null)
+            {
+                return null;
+            }
+
+            PaginationModel<PostCardModel> postCardPaginationModel = new PaginationModel<PostCardModel>
+            {
+                Models = MapPostCardDTOsToModels(postCardPaginationDTO.DTOs),
+                HasNext = postCardPaginationDTO.HasNext,
+                HasPrevious = postCardPaginationDTO.HasPrevious,
+                Pages = postCardPaginationDTO.Pages
+            };
+
+            return postCardPaginationModel;
         }
 
         public PostModel MapPostDTOToModel(PostDTO postDTO)
@@ -167,6 +242,44 @@ namespace Blog.Models
             };
 
             return postModel;
+        }
+
+        public PostModelWithPaginatedComments MapPostDTOToModelWithPaginatedComments(PostDTOWithPaginatedComments postDTOWithPaginatedComments)
+        {
+            if (postDTOWithPaginatedComments == null)
+            {
+                return null;
+            }
+
+            PostDTO postDTO = postDTOWithPaginatedComments.Post;
+            PaginationDTO<CommentDTO> commentPaginationDTO = postDTOWithPaginatedComments.CommentPaginationDTO;
+
+            PostModelWithPaginatedComments postModelWithPaginatedComments = new PostModelWithPaginatedComments()
+            {
+                Post = MapPostDTOToModel(postDTO),
+                CommentPaginationModel = MapCommentPaginationDTOToModel(commentPaginationDTO)
+            };
+
+            return postModelWithPaginatedComments;
+        }
+
+        public PaginationModel<CommentModel> MapCommentPaginationDTOToModel(PaginationDTO<CommentDTO> commentPaginationDTO)
+        {
+            if (commentPaginationDTO == null)
+            {
+                return null;
+            }
+
+            List<CommentDTO> commentDTOs = commentPaginationDTO.DTOs;
+            List<CommentModel> commentModels = MapCommentDTOsToModels(commentDTOs);
+
+            PaginationModel<CommentModel> commentPaginationModel = new PaginationModel<CommentModel>()
+            {
+                Models = commentModels,
+                HasNext = commentPaginationDTO.HasNext
+            };
+
+            return commentPaginationModel;
         }
     }
 }

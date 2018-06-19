@@ -35,6 +35,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -44,6 +45,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
@@ -168,6 +170,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Controllers\ImageController.cs" />
+    <Compile Include="Models\PaginationModel.cs" />
     <Compile Include="Models\CategoryModel.cs" />
     <Compile Include="Models\CommentModel.cs" />
     <Compile Include="Models\EditedCategoryModel.cs" />
@@ -179,8 +182,9 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\ModelDataMapper.cs" />
+    <Compile Include="Models\Pagination.cs" />
     <Compile Include="Models\PostCardModel.cs" />
-    <Compile Include="Models\PostWrapper.cs" />
+    <Compile Include="Models\PostModelWithPaginatedComments.cs" />
     <Compile Include="Models\PostModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -191,10 +195,13 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Home\category.css" />
+    <Content Include="Content\Home\category_partial.css" />
     <Content Include="Content\Home\home.css" />
     <Content Include="Content\Post\createpost.css" />
-    <Content Include="Content\Post\post.css" />
-    <Content Include="Scripts\home.js" />
+    <Content Include="Content\Post\viewpost.css" />
+    <Content Include="Scripts\Home\category_partial.js" />
+    <Content Include="Scripts\Home\home.js" />
     <Content Include="Scripts\Post\createpost.js" />
     <Content Include="Scripts\TinyMCE\tinymce_app.js" />
     <Content Include="favicon.ico" />
@@ -238,6 +245,7 @@
     <Content Include="Views\Shared\_NavBar.cshtml" />
     <Content Include="Views\Home\Category.cshtml" />
     <Content Include="Views\Post\CreatePost.cshtml" />
+    <Content Include="Views\Home\_CategoryPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -28,7 +28,7 @@ namespace BlogServices.Services
 
         public List<CategoryDTO> GetCategoryDTOs()
         {
-            List<CategoryEntity> categoryEntities = categoryRepository.GetAll();
+            List<CategoryEntity> categoryEntities = categoryRepository.GetEntities();
 
             if (categoryEntities == null)
             {

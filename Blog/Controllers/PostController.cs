@@ -3,6 +3,7 @@ using BlogServices.DTO;
 using BlogServices.Services;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Web.Mvc;
 
 namespace Blog.Controllers
@@ -13,28 +14,34 @@ namespace Blog.Controllers
         private ICommentService commentService;
         private ICategoryService categoryService;
         private IModelDataMapper dataMapper;
+        private Pagination pagination;
 
-        public PostController(IPostService postService, ICommentService commentService, ICategoryService categoryService, IModelDataMapper dataMapper)
+        public PostController(IPostService postService, ICommentService commentService, ICategoryService categoryService, IModelDataMapper dataMapper, Pagination pagination)
         {
             this.postService = postService;
             this.commentService = commentService;
             this.categoryService = categoryService;
             this.dataMapper = dataMapper;
+            this.pagination = pagination;
         }
 
         // GET: Default
         public ActionResult Index(string postId)
         {
-            (PostDTO postDTO, bool end) postDTOWithCommentPagination = postService.GetPostDTOWithCommentPagination(postId);
-            PostModel postModel = dataMapper.MapPostDTOToModel(postDTOWithCommentPagination.postDTO);
-            bool end = postDTOWithCommentPagination.end;
-            PostWrapper postWrapper = new PostWrapper()
+            if (StrNullOrEmpty(postId))
             {
-                Post = postModel,
-                End = end
-            };
+                //Do something with this exception.
+            }
 
-            return View(postWrapper);
+            PostDTOWithPaginatedComments postDTOWithPaginatedComments = postService.GetPostDTOWithPaginatedComments(postId, pageSize: pagination.CommentPageSize);
+            PostModelWithPaginatedComments postModelWithPaginatedComments = dataMapper.MapPostDTOToModelWithPaginatedComments(postDTOWithPaginatedComments);
+
+            if (postModelWithPaginatedComments == null || postModelWithPaginatedComments.Post == null)
+            {
+                //Do something with this exception.
+            }
+
+            return View(postModelWithPaginatedComments);
         }
 
         private bool StrNullOrEmpty(string str)
@@ -110,16 +117,16 @@ namespace Blog.Controllers
         {
             object jsonObject;
 
-            if (StrNullOrEmpty(postId))
+            if (StrNullOrEmpty(postId) || skip < 0)
             {
                 jsonObject = new { status = 500 };
                 return Json(jsonObject);
             }
 
-            (List<CommentDTO> commentDTOs, bool end) commentPagination = commentService.PaginateComment(postId, skip);
-            List<CommentDTO> commentDTOs = commentPagination.commentDTOs;
+            PaginationDTO<CommentDTO> commentPaginationDTO = commentService.GetCommentPaginationDTOWithPost(postId, skip, pageSize: pagination.CommentPageSize);
+            List<CommentDTO> commentDTOs = commentPaginationDTO.DTOs;
             List<CommentModel> commentModels = dataMapper.MapCommentDTOsToModels(commentDTOs);
-            bool end = commentPagination.end;
+            bool hasNext = commentPaginationDTO.HasNext;
 
             if (commentModels == null)
             {
@@ -131,7 +138,7 @@ namespace Blog.Controllers
                 {
                     status = 200,
                     data = commentModels,
-                    end
+                    hasNext
                 };
             }
 
@@ -171,13 +178,7 @@ namespace Blog.Controllers
         private List<CategoryModel> GetCategoryModelsHelper()
         {
             List<CategoryDTO> categoryDTOs = categoryService.GetCategoryDTOs();
-            List<CategoryModel> categoryModels = new List<CategoryModel>();
-
-            foreach (CategoryDTO categoryDTO in categoryDTOs)
-            {
-                CategoryModel categoryModel = dataMapper.MapCategoryDTOToModel(categoryDTO);
-                categoryModels.Add(categoryModel);
-            }
+            List<CategoryModel> categoryModels = dataMapper.MapCategoryDTOsToModels(categoryDTOs);
 
             return categoryModels;
         }
@@ -195,6 +196,7 @@ namespace Blog.Controllers
 
             if (!ModelState.IsValid)
             {
+                //Do something with this exception.
                 return View(categoryModels);
             }
 

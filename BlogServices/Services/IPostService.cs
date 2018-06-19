@@ -1,4 +1,5 @@
-﻿using BlogServices.DTO;
+﻿using BlogDAL.Entity;
+using BlogServices.DTO;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,7 +10,9 @@ namespace BlogServices.Services
     {
         List<PostCardDTO> GetPostCardDTOs();
         List<PostCardDTO> GetPostCardDTOsWithCategory(string category);
-        (PostDTO postDTO, bool end) GetPostDTOWithCommentPagination(string id);
+        PostDTOWithPaginatedComments GetPostDTOWithPaginatedComments(string id, int pageSize);
         bool AddEditedPostDTO(EditedPostDTO editedPostDTO);
+        PaginationDTO<PostCardDTO> GetPostCardPaginationDTOWithCategory(string category, int pageNumber, int pageSize);
+        List<PaginationDTO<PostCardDTO>> GetPostCardPaginationDTOs(int pageSize);
     }
 }

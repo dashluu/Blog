@@ -13,5 +13,6 @@ namespace Blog.Models
         public string UpdatedDate { get; set; }
         public string ShortDescription { get; set; }
         public string ThumbnailImageSrc { get; set; }
+        public CategoryModel PostCategory { get; set; }
     }
 }

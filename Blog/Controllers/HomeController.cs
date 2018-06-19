@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using BlogServices.Services;
 using BlogServices.DTO;
 using Blog.Models;
+using Newtonsoft.Json;
 
 namespace Blog.Controllers
 {
@@ -14,26 +15,22 @@ namespace Blog.Controllers
         private IPostService postService;
         private ICategoryService categoryService;
         private IModelDataMapper dataMapper;
+        private Pagination pagination;
 
-        public HomeController(IPostService postService, ICategoryService categoryService, IModelDataMapper dataMapper)
+        public HomeController(IPostService postService, ICategoryService categoryService, IModelDataMapper dataMapper, Pagination pagination)
         {
             this.postService = postService;
             this.categoryService = categoryService;
             this.dataMapper = dataMapper;
+            this.pagination = pagination;
         }
 
         public ActionResult Index()
         {
-            List<PostCardDTO> postCardDTOs = postService.GetPostCardDTOs();
-            List<PostCardModel> postCardModels = new List<PostCardModel>();
+            List<PaginationDTO<PostCardDTO>> postCardPaginationDTOs = postService.GetPostCardPaginationDTOs(pageSize: pagination.HomePostPageSize);
+            List<PaginationModel<PostCardModel>> postCardPaginationModels = dataMapper.MapPostCardPaginationDTOsToModels(postCardPaginationDTOs);
 
-            foreach (PostCardDTO postCardDTO in postCardDTOs)
-            {
-                PostCardModel postCardModel = dataMapper.MapPostCardDTOToModel(postCardDTO);
-                postCardModels.Add(postCardModel);
-            }
-
-            return View(postCardModels);
+            return View(postCardPaginationModels);
         }
 
         private bool StrNullOrEmpty(string str)
@@ -46,7 +43,7 @@ namespace Blog.Controllers
         {
             if (StrNullOrEmpty(postId))
             {
-                return RedirectToAction("Index");
+                //Do something with this exception.
             }
 
             object package = new { postId };
@@ -56,16 +53,73 @@ namespace Blog.Controllers
 
         public ActionResult Category(string category)
         {
-            List<PostCardDTO> postCardDTOs = postService.GetPostCardDTOsWithCategory(category);
-            List<PostCardModel> postCardModels = new List<PostCardModel>();
-
-            foreach (PostCardDTO postCardDTO in postCardDTOs)
+            if (StrNullOrEmpty(category))
             {
-                PostCardModel postCardModel = dataMapper.MapPostCardDTOToModel(postCardDTO);
-                postCardModels.Add(postCardModel);
+                //Do something with this exception.
             }
 
-            return View("Category", postCardModels);
+            ViewBag.Category = category;
+            return View();
+        }
+
+        [ChildActionOnly]
+        public ActionResult CategoryPartial(string category)
+        {
+            if (StrNullOrEmpty(category))
+            {
+                //Do something with this exception.
+            }
+
+            PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.GetPostCardPaginationDTOWithCategory(category, pageNumber: 1, pageSize: pagination.PostPageSize);
+            PaginationModel<PostCardModel> postCardPaginationModel = dataMapper.MapPostCardPaginationDTOToModel(postCardPaginationDTO);
+
+            return PartialView("_CategoryPartial", postCardPaginationModel);
+        }
+
+        [HttpPost]
+        public ActionResult CategoryPartial(string category, int pageNumber, bool nextPage)
+        {
+            object jsonObject;
+
+            if (pageNumber <= 0 || StrNullOrEmpty(category))
+            {
+                jsonObject = new { status = 500 };
+                return Json(jsonObject);
+            }
+
+            if (nextPage)
+            {
+                pageNumber++;
+            }
+            else
+            {
+                pageNumber--;
+            }
+
+            PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.GetPostCardPaginationDTOWithCategory(category, pageNumber, pageSize: pagination.PostPageSize);
+            List<PostCardDTO> postCardDTOs = postCardPaginationDTO.DTOs;
+            List<PostCardModel> postCardModels = dataMapper.MapPostCardDTOsToModels(postCardDTOs);
+            bool hasNext = postCardPaginationDTO.HasNext;
+            bool hasPrevious = postCardPaginationDTO.HasPrevious;
+            int pages = postCardPaginationDTO.Pages;
+
+            if (postCardModels == null)
+            {
+                jsonObject = new { status = 500 };
+            }
+            else
+            {
+                jsonObject = new
+                {
+                    status = 200,
+                    data = postCardModels,
+                    hasNext,
+                    hasPrevious,
+                    pages
+                };
+            }
+
+            return Json(jsonObject);
         }
 
         [HttpPost]
@@ -73,7 +127,7 @@ namespace Blog.Controllers
         {
             if (StrNullOrEmpty(postId))
             {
-                return RedirectToAction("Index");
+                //Do something with this exception.
             }
 
             object package = new { postId };
@@ -85,13 +139,7 @@ namespace Blog.Controllers
         public ActionResult NavBar()
         {
             List<CategoryDTO> categoryDTOs = categoryService.GetCategoryDTOs();
-            List<CategoryModel> categoryModels = new List<CategoryModel>();
-
-            foreach (CategoryDTO categoryDTO in categoryDTOs)
-            {
-                CategoryModel categoryModel = dataMapper.MapCategoryDTOToModel(categoryDTO);
-                categoryModels.Add(categoryModel);
-            }
+            List<CategoryModel> categoryModels = dataMapper.MapCategoryDTOsToModels(categoryDTOs);
 
             return PartialView("_NavBar", categoryModels);
         }

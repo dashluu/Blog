@@ -138,6 +138,8 @@ namespace BlogServices.DTO
                 return null;
             }
 
+            CategoryEntity categoryEntity = postEntity.PostCategory;
+
             PostCardDTO postCardDTO = new PostCardDTO()
             {
                 PostId = postEntity.PostId,
@@ -145,7 +147,8 @@ namespace BlogServices.DTO
                 CreatedDate = FormatTime(postEntity.CreatedDate),
                 UpdatedDate = ComputeUpdateTime(postEntity.UpdatedDate),
                 ShortDescription = postEntity.ShortDescription,
-                ThumbnailImageSrc = postEntity.ThumbnailImageSrc
+                ThumbnailImageSrc = postEntity.ThumbnailImageSrc,
+                PostCategory = MapCategoryEntityToDTO(categoryEntity)
             };
 
             return postCardDTO;
@@ -212,6 +215,101 @@ namespace BlogServices.DTO
             };
 
             return categoryEntity;
+        }
+
+        public PaginationDTO<PostCardDTO> MapPostCardPaginationEntityToDTO(PaginationEntity<PostEntity> postPaginationEntity)
+        {
+            if (postPaginationEntity == null)
+            {
+                return null;
+            }
+
+            List<PostEntity> postEntities = postPaginationEntity.Entities;
+            List<PostCardDTO> postCardDTOs = MapPostCardEntitiesToDTOs(postEntities);
+
+            PaginationDTO<PostCardDTO> postCardPaginationDTO = new PaginationDTO<PostCardDTO>()
+            {
+                DTOs = postCardDTOs,
+                HasNext = postPaginationEntity.HasNext,
+                HasPrevious = postPaginationEntity.HasPrevious,
+                Pages = postPaginationEntity.Pages,
+            };
+
+            return postCardPaginationDTO;
+        }
+
+        public List<PostCardDTO> MapPostCardEntitiesToDTOs(List<PostEntity> postEntities)
+        {
+            if (postEntities == null)
+            {
+                return null;
+            }
+
+            List<PostCardDTO> postCardDTOs = new List<PostCardDTO>();
+
+            foreach (PostEntity postEntity in postEntities)
+            {
+                PostCardDTO postCardDTO = MapPostCardEntityToDTO(postEntity);
+                postCardDTOs.Add(postCardDTO);
+            }
+
+            return postCardDTOs;
+        }
+
+        public PaginationDTO<CommentDTO> MapCommentPaginationEntityToDTO(PaginationEntity<CommentEntity> commentPaginationEntity)
+        {
+            if (commentPaginationEntity == null)
+            {
+                return null;
+            }
+
+            List<CommentEntity> commentEntities = commentPaginationEntity.Entities;
+            List<CommentDTO> commentDTOs = MapCommentEntitiesToDTOs(commentEntities);
+
+            PaginationDTO<CommentDTO> commentPaginationDTO = new PaginationDTO<CommentDTO>()
+            {
+                DTOs = commentDTOs,
+                HasNext = commentPaginationEntity.HasNext
+            };
+
+            return commentPaginationDTO;
+        }
+
+        public PostDTOWithPaginatedComments MapPostEntityToDTOWithPaginatedComments(PostEntityWithPaginatedComments postEntityWithPaginatedComments)
+        {
+            if (postEntityWithPaginatedComments == null)
+            {
+                return null;
+            }
+
+            PostEntity postEntity = postEntityWithPaginatedComments.Post;
+            PaginationEntity<CommentEntity> commentPaginationEntity = postEntityWithPaginatedComments.CommentPaginationEntity;
+
+            PostDTOWithPaginatedComments postDTOWithPaginatedComments = new PostDTOWithPaginatedComments()
+            {
+                Post = MapPostEntityToDTO(postEntity),
+                CommentPaginationDTO = MapCommentPaginationEntityToDTO(commentPaginationEntity)
+            };
+
+            return postDTOWithPaginatedComments;
+        }
+
+        public List<PaginationDTO<PostCardDTO>> MapPostCardPaginationEntitiesToDTOs(List<PaginationEntity<PostEntity>> postPaginationEntities)
+        {
+            if (postPaginationEntities == null)
+            {
+                return null;
+            }
+
+            List<PaginationDTO<PostCardDTO>> postCardPaginationDTOs = new List<PaginationDTO<PostCardDTO>>();
+
+            foreach (PaginationEntity<PostEntity> postPaginationEntity in postPaginationEntities)
+            {
+                PaginationDTO<PostCardDTO> postCardPaginationDTO = MapPostCardPaginationEntityToDTO(postPaginationEntity);
+                postCardPaginationDTOs.Add(postCardPaginationDTO);
+            }
+
+            return postCardPaginationDTOs;
         }
     }
 }

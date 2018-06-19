@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using BlogDAL.Entity;
 
@@ -9,11 +10,11 @@ namespace BlogDAL.Repository
 {
     public class PostRepository : BaseRepository<PostEntity, BlogDBContext>, IPostRepository
     {
-        private Pagination pagination;
+        private ICommentRepository commentRepository;
 
-        public PostRepository(Pagination pagination)
+        public PostRepository(ICommentRepository commentRepository)
         {
-            this.pagination = pagination;
+            this.commentRepository = commentRepository;
         }
 
         private string GenerateId()
@@ -38,7 +39,7 @@ namespace BlogDAL.Repository
             return base.Add(entity);
         }
 
-        public (PostEntity postEntity, bool end) GetPostEntityWithCommentPagination(string id)
+        public PostEntityWithPaginatedComments GetPostEntityWithPaginatedComments(string id, int pageSize)
         {
             try
             {
@@ -47,24 +48,24 @@ namespace BlogDAL.Repository
                     .Include(x => x.PostCategory)
                     .First();
 
-                IQueryable<CommentEntity> commentQuery = Context.CommentEntities
+                IQueryable<CommentEntity> commentQueryable = Context.CommentEntities
                     .Where(x => x.Post.PostId.Equals(id));
 
-                List<CommentEntity> commentEntities = commentQuery
-                    .OrderByDescending(x => x.CreatedDate)
-                    .Take(pagination.CommentPageSize)
-                    .ToList();
+                Expression<Func<CommentEntity, DateTime>> commentOrderByExpression = (x => x.CreatedDate);
 
-                int countComment = commentQuery.Count();
-                bool end = countComment <= pagination.CommentPageSize;
+                PaginationEntity<CommentEntity> commentPaginationEntity = commentRepository.GetPaginationEntity(commentQueryable, isDesc: true, commentOrderByExpression, skip: 0, pageSize);
 
-                postEntity.CommentEntities = commentEntities;
+                PostEntityWithPaginatedComments postEntityWithPaginatedComments = new PostEntityWithPaginatedComments()
+                {
+                    Post = postEntity,
+                    CommentPaginationEntity = commentPaginationEntity
+                };
 
-                return (postEntity, end);
+                return postEntityWithPaginatedComments;
             }
             catch (Exception)
             {
-                return (null, false);
+                return null;
             }
         }
 
@@ -95,6 +96,50 @@ namespace BlogDAL.Repository
                 return postEntity;
             }
             catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public PaginationEntity<PostEntity> GetPostPaginationEntityWithCategory(string category, int pageNumber, int pageSize)
+        {
+            try
+            {
+                int skip = (pageNumber - 1) * pageSize;
+
+                IQueryable<PostEntity> postQueryable = Context.PostEntities
+                    .Where(x => x.PostCategory.Name.Equals(category))
+                    .Include(x => x.PostCategory);
+
+                Expression<Func<PostEntity, DateTime>> postOrderByExpression = (x => x.CreatedDate);
+
+                PaginationEntity<PostEntity> postPaginationEntity = GetPaginationEntity(postQueryable, isDesc: true, postOrderByExpression, skip, pageSize);
+
+                return postPaginationEntity;
+            }
+            catch(Exception)
+            {
+                return null;
+            }
+        }
+
+        public List<PaginationEntity<PostEntity>> GetPostPaginationEntities(int pageSize)
+        {
+            try
+            {
+                List<CategoryEntity> categoryEntities = Context.CategoryEntities.ToList();
+                int categoryCount = categoryEntities.Count;
+                List<PaginationEntity<PostEntity>> postPaginationEntities = new List<PaginationEntity<PostEntity>>(categoryCount);
+
+                foreach (CategoryEntity categoryEntity in categoryEntities)
+                {
+                    PaginationEntity<PostEntity> postPaginationEntity = GetPostPaginationEntityWithCategory(category: categoryEntity.Name, pageNumber: 1, pageSize);
+                    postPaginationEntities.Add(postPaginationEntity);
+                }
+
+                return postPaginationEntities;
+            }
+            catch(Exception)
             {
                 return null;
             }

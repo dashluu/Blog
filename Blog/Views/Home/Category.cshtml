@@ -1,11 +1,11 @@
-﻿@model List<Blog.Models.PostCardModel>
-
-@section Style {
-    <link href="@Url.Content("~/Content/Home/home.css")" rel="stylesheet" type="text/css" />
+﻿@section styles {
+    <link rel="stylesheet" type="text/css" href="~/Content/Bar/nav-bar.css" />
+    <link href="@Url.Content("~/Content/Home/category.css")" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="~/Content/Home/category_partial.css" />
 }
 
 @section scripts {
-    <script src="~/Scripts/home.js"></script>
+    <script src="~/Scripts/Home/category_partial.js"></script>
 }
 
 @{
@@ -14,28 +14,9 @@
 
 <div class="container" id="post-block">
     <div class="row">
-        @if (Model != null)
-        {
-            foreach (var postCard in Model)
-            {
-                <div class="post-card container col-xs-12 col-sm-12 col-md-12 col-lg-6">
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-4 post-col-1">
-                            <img class="post-img" src=@postCard.ThumbnailImageSrc />
-                        </div>
-                        <div class="col-xs-12 col-sm-9 col-md-9 col-lg-8 post-col-2">
-                            <p class="post-title">@postCard.Title</p>
-                            <p class="post-date">On <strong>@postCard.CreatedDate</strong></p>
-                            <p class="post-date">Updated @postCard.UpdatedDate</p>
-                            <p class="post-summary">@postCard.ShortDescription</p>
-                            @using (Html.BeginForm("CategoryPost", "Home"))
-                            {
-                                <input type="hidden" value=@postCard.PostId name="postId" />
-                            }
-                        </div>
-                    </div>
-                </div>
-            }
+        @{
+            string category = ViewBag.Category;
+            Html.RenderAction("CategoryPartial", "Home", category);
         }
     </div>
 </div>
