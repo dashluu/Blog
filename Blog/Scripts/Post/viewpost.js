@@ -2,13 +2,25 @@
     event.preventDefault();
 
     var form = $(this);
-    var commentTextBox = form.children(".comment-input").eq(0);
-    var commentInput = commentTextBox.val();
+    form.validate();
 
-    if (commentInput === "") {
-        alert("Your comment is empty.");
+    jQuery.validator.addMethod("commentRequired",
+        jQuery.validator.methods.required,
+        "Comment field is empty.");
+
+    jQuery.validator.addClassRules("comment-input", {
+        commentRequired: true,
+        normalizer: function (value) {
+            return $.trim(value);
+        }
+    });
+
+    if (!form.valid()) {
         return;
     }
+
+    var commentTextBox = form.children(".comment-input").eq(0);
+    var commentInput = commentTextBox.val();
 
     var postInput = form.children(".post-id").eq(0);
     var id = postInput.val();
@@ -27,13 +39,25 @@ $(document).on("submit", ".child-comment-form", function (event) {
     event.preventDefault();
 
     var form = $(this);
-    var commentTextBox = form.children(".comment-input").eq(0);
-    var commentInput = commentTextBox.val();
+    form.validate();
 
-    if (commentInput === "") {
-        alert("Your comment is empty.");
+    jQuery.validator.addMethod("commentRequired",
+        jQuery.validator.methods.required,
+        "Comment field is empty.");
+
+    jQuery.validator.addClassRules("comment-input", {
+        commentRequired: true,
+        normalizer: function (value) {
+            return $.trim(value);
+        }
+    });
+
+    if (!form.valid()) {
         return;
     }
+
+    var commentTextBox = form.children(".comment-input").eq(0);
+    var commentInput = commentTextBox.val();
 
     var commentIdInput = form.children(".comment-id").eq(0);
     var postIdInput = form.children(".post-id").eq(0);
@@ -62,10 +86,20 @@ $(document).on("submit", ".child-comment-form", function (event) {
 
 $(document).on("click", ".show-child-comment-btn", function () {
     var thisBtn = $(this);
-    var childCommentContainer = thisBtn.parent().parent().siblings(".children-comment-container").eq(0);
 
-    if (childCommentContainer.children().length > 0) {
-        childCommentContainer.toggle("fast");
+    var childrenCommentContainer = thisBtn.parent()
+        .parent()
+        .siblings(".children-comment-container")
+        .eq(0);
+
+    var loadChildrenCommentInput = thisBtn.parent()
+        .siblings(".load-children-comment")
+        .eq(0);
+
+    var loadChildrenComment = loadChildrenCommentInput.val();
+
+    if (loadChildrenComment === "1") {
+        childrenCommentContainer.toggle("fast");
         return;
     }
 
@@ -73,19 +107,22 @@ $(document).on("click", ".show-child-comment-btn", function () {
         .parent()
         .siblings(".child-comment-form").eq(0)
         .children(".comment-id").eq(0);
-    var commentId = commentIdInput.val();
 
-    $.post("/Post/ChildComments", { commentId: commentId }, function (result) {
+    var commentId = commentIdInput.val();
+    var skip = childrenCommentContainer.children().length;
+
+    $.post("/Post/ShowChildComments", { commentId: commentId, skip: skip }, function (result) {
         if (result.status === 200) {
+            loadChildrenCommentInput.val("1");
             var childComments = result.data;
             var nChildComment = childComments.length;
-            childCommentContainer.show("fast");
+            childrenCommentContainer.show("fast");
 
             for (var i = 0; i < nChildComment; i++) {
                 var childComment = childComments[i];
                 var newChildCommentContainerSelector = createChildCommentContainerSelector(childComment.Username, childComment.Content);
                 var newChildCommentContainer = $(newChildCommentContainerSelector);
-                newChildCommentContainer.appendTo(childCommentContainer);
+                newChildCommentContainer.appendTo(childrenCommentContainer);
                 newChildCommentContainer.show("fast");
             }
         }
@@ -109,6 +146,7 @@ function createCommentContainerSelector(username, content, commentId, postId) {
         "<button class='add-child-comment-btn'><span class='glyphicon glyphicon-edit'></span></button>" +
         "</p>" +
         "<p class='comment-body'>" + content + "</p>" +
+        "<input type='hidden' class='load-children-comment' value='0' />" +
         "</div>" +
         "<form class='comment-form child-comment-form' action='/ViewPost' method='post' style='display: none'>" +
         "<textarea class='comment-input' placeholder='Comment'></textarea>" +

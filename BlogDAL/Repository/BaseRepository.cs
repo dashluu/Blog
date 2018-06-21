@@ -71,6 +71,11 @@ namespace BlogDAL.Repository
                         .ToList();
                 }
 
+                if (entities.Count == 0)
+                {
+                    return null;
+                }
+
                 int count = queryable.Count();
 
                 PaginationEntity<T> paginationEntity = new PaginationEntity<T>()

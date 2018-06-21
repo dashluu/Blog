@@ -28,7 +28,7 @@ namespace Blog.Controllers
         // GET: Default
         public ActionResult Index(string postId)
         {
-            if (StrNullOrEmpty(postId))
+            if (string.IsNullOrWhiteSpace(postId))
             {
                 //Do something with this exception.
             }
@@ -36,17 +36,7 @@ namespace Blog.Controllers
             PostDTOWithPaginatedComments postDTOWithPaginatedComments = postService.GetPostDTOWithPaginatedComments(postId, pageSize: pagination.CommentPageSize);
             PostModelWithPaginatedComments postModelWithPaginatedComments = dataMapper.MapPostDTOToModelWithPaginatedComments(postDTOWithPaginatedComments);
 
-            if (postModelWithPaginatedComments == null || postModelWithPaginatedComments.Post == null)
-            {
-                //Do something with this exception.
-            }
-
             return View(postModelWithPaginatedComments);
-        }
-
-        private bool StrNullOrEmpty(string str)
-        {
-            return str == null || str.Length == 0;
         }
 
         [HttpPost]
@@ -54,7 +44,7 @@ namespace Blog.Controllers
         {
             object jsonObject;
 
-            if (StrNullOrEmpty(comment) || StrNullOrEmpty(postId))
+            if (string.IsNullOrWhiteSpace(comment) || string.IsNullOrWhiteSpace(postId))
             {
                 jsonObject = new { status = 500 };
                 return Json(jsonObject);
@@ -86,7 +76,7 @@ namespace Blog.Controllers
         {
             object jsonObject;
 
-            if (StrNullOrEmpty(comment) || StrNullOrEmpty(postId) || StrNullOrEmpty(commentId))
+            if (string.IsNullOrWhiteSpace(comment) || string.IsNullOrWhiteSpace(postId) || string.IsNullOrWhiteSpace(commentId))
             {
                 jsonObject = new { status = 500 };
                 return Json(jsonObject);
@@ -117,46 +107,46 @@ namespace Blog.Controllers
         {
             object jsonObject;
 
-            if (StrNullOrEmpty(postId) || skip < 0)
+            if (string.IsNullOrWhiteSpace(postId) || skip < 0)
             {
                 jsonObject = new { status = 500 };
                 return Json(jsonObject);
             }
 
             PaginationDTO<CommentDTO> commentPaginationDTO = commentService.GetCommentPaginationDTOWithPost(postId, skip, pageSize: pagination.CommentPageSize);
-            List<CommentDTO> commentDTOs = commentPaginationDTO.DTOs;
-            List<CommentModel> commentModels = dataMapper.MapCommentDTOsToModels(commentDTOs);
-            bool hasNext = commentPaginationDTO.HasNext;
 
-            if (commentModels == null)
-            {
-                jsonObject = new { status = 500 };
-            }
-            else
-            {
-                jsonObject = new
-                {
-                    status = 200,
-                    data = commentModels,
-                    hasNext
-                };
-            }
-
-            return Json(jsonObject);
-        }
-
-        [HttpPost]
-        public ActionResult ChildComments(string commentId)
-        {
-            object jsonObject;
-
-            if (StrNullOrEmpty(commentId))
+            if (commentPaginationDTO == null)
             {
                 jsonObject = new { status = 500 };
                 return Json(jsonObject);
             }
 
-            List<CommentDTO> childCommentDTOs = commentService.GetChildCommentDTOs(commentId);
+            List<CommentDTO> commentDTOs = commentPaginationDTO.DTOs;
+            List<CommentModel> commentModels = dataMapper.MapCommentDTOsToModels(commentDTOs);
+            bool hasNext = commentPaginationDTO.HasNext;
+
+            jsonObject = new
+            {
+                status = 200,
+                data = commentModels,
+                hasNext
+            };
+
+            return Json(jsonObject);
+        }
+
+        [HttpPost]
+        public ActionResult ShowChildComments(string commentId, int skip)
+        {
+            object jsonObject;
+
+            if (string.IsNullOrWhiteSpace(commentId) || skip < 0)
+            {
+                jsonObject = new { status = 500 };
+                return Json(jsonObject);
+            }
+
+            List<CommentDTO> childCommentDTOs = commentService.GetChildCommentDTOs(commentId, skip);
             List<CommentModel> childCommentModels = dataMapper.MapCommentDTOsToModels(childCommentDTOs);
 
             if (childCommentModels == null)
@@ -190,13 +180,13 @@ namespace Blog.Controllers
         }
 
         [HttpPost]
+        [ValidateInput(false)]
         public ActionResult CreatePost(EditedPostModel Post)
         {
             List<CategoryModel> categoryModels = GetCategoryModelsHelper();
 
             if (!ModelState.IsValid)
             {
-                //Do something with this exception.
                 return View(categoryModels);
             }
 
@@ -211,7 +201,7 @@ namespace Blog.Controllers
         {
             object jsonObject;
 
-            if (StrNullOrEmpty(name) || StrNullOrEmpty(description))
+            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(description))
             {
                 jsonObject = new { status = 500 };
                 return Json(jsonObject);

@@ -135,7 +135,8 @@ namespace Blog.Models
                 Title = editedPostModel.Title,
                 PostCategory = MapCategoryModelToDTO(editedPostModel.PostCategory),
                 ShortDescription = editedPostModel.ShortDescription,
-                ThumbnailImageSrc = editedPostModel.ThumbnailImageSrc
+                ThumbnailImageSrc = editedPostModel.ThumbnailImageSrc,
+                Content = editedPostModel.Content
             };
 
             return editedPostDTO;

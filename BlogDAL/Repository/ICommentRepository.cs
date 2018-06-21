@@ -13,7 +13,7 @@ namespace BlogDAL.Repository
 
         bool AddChildCommentEntity(string postId, string commentId, CommentEntity childCommentEntity);
 
-        List<CommentEntity> GetChildCommentEntities(string commentId);
+        List<CommentEntity> GetChildCommentEntities(string commentId, int skip);
 
         PaginationEntity<CommentEntity> GetCommentPaginationEntityWithPost(string postId, int skip, int pageSize);
     }

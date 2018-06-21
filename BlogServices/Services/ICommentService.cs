@@ -9,7 +9,7 @@ namespace BlogServices.Services
     {
         string AddCommentDTO(string postId, string commentContent, string username);
         bool AddChildCommentDTO(string postId, string commentId, string commentContent, string username);
-        List<CommentDTO> GetChildCommentDTOs(string commentId);
+        List<CommentDTO> GetChildCommentDTOs(string commentId, int skip);
         PaginationDTO<CommentDTO> GetCommentPaginationDTOWithPost(string postId, int skip, int pageSize);
     }
 }

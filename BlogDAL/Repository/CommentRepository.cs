@@ -79,13 +79,14 @@ namespace BlogDAL.Repository
             }
         }
 
-        public List<CommentEntity> GetChildCommentEntities(string commentId)
+        public List<CommentEntity> GetChildCommentEntities(string commentId, int skip)
         {
             try
             {
                 List<CommentEntity> commentEntities = Context.CommentEntities
                     .Where(x => x.RootComment.CommentId.Equals(commentId))
                     .OrderByDescending(x => x.CreatedDate)
+                    .Skip(skip)
                     .ToList();
 
                 return commentEntities;

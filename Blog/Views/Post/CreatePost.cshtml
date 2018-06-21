@@ -17,19 +17,21 @@
 <div class="container" id="editor-section">
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <div class="row" id="category-form">
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <p class="title">Edit category</p>
-                </div>
-                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                    <input type="text" class="post-input" placeholder="Name" id="category-name" />
-                </div>
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <textarea class="post-input post-textarea" placeholder="Description" id="category-description"></textarea>
-                </div>
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <button type="button" id="add-category-btn"><span class="glyphicon glyphicon-cloud-upload"></span></button>
-                </div>
+            <div class="row" id="category-form-container">
+                <form id="category-form">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <p class="title">Edit category</p>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                        <input type="text" class="post-input" placeholder="Name" id="category-name" name="CategoryName"/>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <textarea class="post-input post-textarea" placeholder="Description" id="category-description" name="CategoryDescription"></textarea>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <button type="button" id="add-category-btn"><span class="glyphicon glyphicon-cloud-upload"></span></button>
+                    </div>
+                </form>
             </div>
             @using (Html.BeginForm("CreatePost", "Post", FormMethod.Post, new { id = "post-form" }))
             {
@@ -39,6 +41,7 @@
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                         <input type="text" name="Post.Title" class="post-input" placeholder="Title" />
+                        @Html.ValidationMessage("Title")
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                         <select name="Post.PostCategory.Name" class="post-input" id="post-category">
@@ -52,12 +55,15 @@
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <input type="text" name="Post.ThumbnailImageSrc" class="post-input" placeholder="Thumbnail image" />
+                        @Html.ValidationMessage("Thumbnail")
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <textarea name="Post.ShortDescription" class="post-input post-textarea" placeholder="Short description"></textarea>
+                        @Html.ValidationMessage("ShortDescription")
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <textarea name="Post.Content" class="post-input post-textarea" placeholder="Content"></textarea>
+                        <textarea name="Post.Content" placeholder="Content" id="post-content"></textarea>
+                        @Html.ValidationMessage("Content")
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <button type="submit" id="submit-btn"><span class="glyphicon glyphicon-cloud-upload"></span></button>

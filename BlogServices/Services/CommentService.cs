@@ -9,13 +9,11 @@ namespace BlogServices.Services
 {
     public class CommentService : ICommentService
     {
-        private IPostRepository postRepository;
         private ICommentRepository commentRepository;
         private IServiceDataMapper dataMapper;
 
-        public CommentService(IPostRepository postRepository, ICommentRepository commentRepository, IServiceDataMapper dataMapper)
+        public CommentService(ICommentRepository commentRepository, IServiceDataMapper dataMapper)
         {
-            this.postRepository = postRepository;
             this.commentRepository = commentRepository;
             this.dataMapper = dataMapper;
         }
@@ -46,9 +44,9 @@ namespace BlogServices.Services
             return addSuccessfully;
         }
 
-        public List<CommentDTO> GetChildCommentDTOs(string commentId)
+        public List<CommentDTO> GetChildCommentDTOs(string commentId, int skip)
         {
-            List<CommentEntity> childCommentEntities = commentRepository.GetChildCommentEntities(commentId);
+            List<CommentEntity> childCommentEntities = commentRepository.GetChildCommentEntities(commentId, skip);
             List<CommentDTO> childCommentDTOs = dataMapper.MapCommentEntitiesToDTOs(childCommentEntities);
 
             return childCommentDTOs;

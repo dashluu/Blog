@@ -48,12 +48,7 @@ namespace BlogDAL.Repository
                     .Include(x => x.PostCategory)
                     .First();
 
-                IQueryable<CommentEntity> commentQueryable = Context.CommentEntities
-                    .Where(x => x.Post.PostId.Equals(id));
-
-                Expression<Func<CommentEntity, DateTime>> commentOrderByExpression = (x => x.CreatedDate);
-
-                PaginationEntity<CommentEntity> commentPaginationEntity = commentRepository.GetPaginationEntity(commentQueryable, isDesc: true, commentOrderByExpression, skip: 0, pageSize);
+                PaginationEntity<CommentEntity> commentPaginationEntity = commentRepository.GetCommentPaginationEntityWithPost(postId: id, skip: 0, pageSize);
 
                 PostEntityWithPaginatedComments postEntityWithPaginatedComments = new PostEntityWithPaginatedComments()
                 {
@@ -128,12 +123,17 @@ namespace BlogDAL.Repository
             try
             {
                 List<CategoryEntity> categoryEntities = Context.CategoryEntities.ToList();
-                int categoryCount = categoryEntities.Count;
-                List<PaginationEntity<PostEntity>> postPaginationEntities = new List<PaginationEntity<PostEntity>>(categoryCount);
+                List<PaginationEntity<PostEntity>> postPaginationEntities = new List<PaginationEntity<PostEntity>>();
 
                 foreach (CategoryEntity categoryEntity in categoryEntities)
                 {
                     PaginationEntity<PostEntity> postPaginationEntity = GetPostPaginationEntityWithCategory(category: categoryEntity.Name, pageNumber: 1, pageSize);
+
+                    if (postPaginationEntity == null)
+                    {
+                        continue;
+                    }
+
                     postPaginationEntities.Add(postPaginationEntity);
                 }
 
