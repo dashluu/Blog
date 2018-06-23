@@ -185,6 +185,26 @@ namespace Blog.Controllers
         {
             List<CategoryModel> categoryModels = GetCategoryModelsHelper();
 
+            if (string.IsNullOrWhiteSpace(Post.Title))
+            {
+                ModelState.AddModelError("Title", "Title field is required.");
+            }
+
+            if (string.IsNullOrWhiteSpace(Post.ThumbnailImageSrc))
+            {
+                ModelState.AddModelError("Thumbnail", "Thumbnail image field is required.");
+            }
+
+            if (string.IsNullOrWhiteSpace(Post.ShortDescription))
+            {
+                ModelState.AddModelError("ShortDescription", "Short description field is required.");
+            }
+
+            if (string.IsNullOrWhiteSpace(Post.Content))
+            {
+                ModelState.AddModelError("Content", "Content field is required.");
+            }
+
             if (!ModelState.IsValid)
             {
                 return View(categoryModels);

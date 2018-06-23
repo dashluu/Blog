@@ -99,7 +99,9 @@ $(document).on("click", ".show-child-comment-btn", function () {
     var loadChildrenComment = loadChildrenCommentInput.val();
 
     if (loadChildrenComment === "1") {
-        childrenCommentContainer.toggle("fast");
+        if (childrenCommentContainer.children().length > 0) {
+            childrenCommentContainer.toggle("fast");
+        }
         return;
     }
 
