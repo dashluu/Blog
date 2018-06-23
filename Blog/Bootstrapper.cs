@@ -4,6 +4,7 @@ using BlogDAL.Repository;
 using BlogServices.DTO;
 using BlogServices.Services;
 using Microsoft.Practices.Unity;
+using Unity.Injection;
 using Unity.Mvc3;
 
 namespace Blog
@@ -31,7 +32,7 @@ namespace Blog
             int commentPageSize = 1;
             int childCommentPageSize = 1;
 
-            container.RegisterType<Pagination>(new InjectionConstructor(homePostPageSize, postPageSize, commentPageSize, childCommentPageSize));
+            container.RegisterType<Pagination>(new Microsoft.Practices.Unity.InjectionConstructor(homePostPageSize, postPageSize, commentPageSize, childCommentPageSize));
 
             container.RegisterType<IModelDataMapper, ModelDataMapper>();
             container.RegisterType<IServiceDataMapper, ServiceDataMapper>();
