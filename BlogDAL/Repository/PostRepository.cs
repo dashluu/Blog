@@ -17,11 +17,6 @@ namespace BlogDAL.Repository
             this.commentRepository = commentRepository;
         }
 
-        private string GenerateId()
-        {
-            return Guid.NewGuid().ToString();
-        }
-
         public override bool Add(PostEntity entity)
         {
             entity.PostId = GenerateId();

@@ -180,7 +180,9 @@ namespace BlogServices.DTO
 
             CategoryDTO categoryDTO = new CategoryDTO()
             {
-                Name = categoryEntity.Name
+                Name = categoryEntity.Name,
+                Description = categoryEntity.Description,
+                Statistics = categoryEntity.Statistics
             };
 
             return categoryDTO;

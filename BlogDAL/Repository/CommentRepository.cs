@@ -10,11 +10,6 @@ namespace BlogDAL.Repository
 {
     public class CommentRepository : BaseRepository<CommentEntity, BlogDBContext>, ICommentRepository
     {
-        private string GenerateId()
-        {
-            return Guid.NewGuid().ToString();
-        }
-
         public string AddCommentEntity(string postId, CommentEntity commentEntity)
         {
             try

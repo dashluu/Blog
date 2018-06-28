@@ -1,3 +1,4 @@
+using Blog.Models;
 using BlogDAL.Repository;
 using BlogServices.DTO;
 using BlogServices.Services;
@@ -17,11 +18,14 @@ namespace Blog
             // it is NOT necessary to register your controllers
 
             // e.g. container.RegisterType<ITestService, TestService>();
+            container.RegisterType<IModelDataMapper, ModelDataMapper>();
             container.RegisterType<IServiceDataMapper, ServiceDataMapper>();
 
+            container.RegisterType<ICategoryRepository, CategoryRepository>();
             container.RegisterType<ICommentRepository, CommentRepository>();
             container.RegisterType<IPostRepository, PostRepository>();
 
+            container.RegisterType<ICategoryService, CategoryService>();
             container.RegisterType<IPostService, PostService>();
             container.RegisterType<ICommentService, CommentService>();
 

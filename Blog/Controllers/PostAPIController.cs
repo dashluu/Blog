@@ -7,9 +7,11 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Cors;
 
 namespace Blog.Controllers
 {
+    [EnableCors(origins: "http://localhost:4200", headers: "*", methods: "*")]
     public class PostAPIController : ApiController
     {
         private IPostService postService;
@@ -17,12 +19,6 @@ namespace Blog.Controllers
         public PostAPIController(IPostService postService)
         {
             this.postService = postService;
-        }
-
-        public IHttpActionResult Get()
-        {
-            List<PostCardDTO> postCardDTOs = postService.GetPostCardDTOs();
-            return Json(postCardDTOs);
         }
     }
 }

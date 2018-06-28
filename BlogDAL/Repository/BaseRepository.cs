@@ -19,6 +19,11 @@ namespace BlogDAL.Repository
             Context = new C();
         }
 
+        public string GenerateId()
+        {
+            return Guid.NewGuid().ToString();
+        }
+
         public virtual bool Add(T entity)
         {
             try
@@ -91,6 +96,36 @@ namespace BlogDAL.Repository
             catch (Exception)
             {
                 return null;
+            }
+        }
+
+        public bool Remove(T entity)
+        {
+            try
+            {
+                Context.Set<T>().Remove(entity);
+                Context.SaveChanges();
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public bool Update(T entity)
+        {
+            try
+            {
+                Context.Entry(entity).State = EntityState.Modified;
+                Context.SaveChanges();
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
     }
