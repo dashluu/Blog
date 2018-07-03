@@ -27,7 +27,7 @@ namespace BlogDAL.Repository
                 .Where(x => x.Name.Equals(entity.PostCategory.Name))
                 .First();
 
-            categoryEntity.Statistics++;
+            categoryEntity.PostCount++;
 
             entity.PostCategory = categoryEntity;
 
@@ -43,7 +43,7 @@ namespace BlogDAL.Repository
                     .Include(x => x.PostCategory)
                     .First();
 
-                PaginationEntity<CommentEntity> commentPaginationEntity = commentRepository.GetCommentPaginationEntityWithPost(postId: id, skip: 0, pageSize);
+                PaginationEntity<CommentEntity> commentPaginationEntity = commentRepository.GetCommentPaginationEntityWithPost(postId: id, commentCount: postEntity.CommentCount, skip: 0, pageSize);
 
                 PostEntityWithPaginatedComments postEntityWithPaginatedComments = new PostEntityWithPaginatedComments()
                 {
@@ -52,38 +52,6 @@ namespace BlogDAL.Repository
                 };
 
                 return postEntityWithPaginatedComments;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
-        public List<PostEntity> GetPostEntitiesWithCategory(string category)
-        {
-            try
-            {
-                List<PostEntity> postEntities = Context.PostEntities
-                    .Where(x => x.PostCategory.Name.Equals(category))
-                    .Include(x => x.PostCategory)
-                    .ToList();
-                return postEntities;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
-        public PostEntity GetPostEntity(string id)
-        {
-            try
-            {
-                PostEntity postEntity = Context.PostEntities
-                    .Where(x => x.PostId.Equals(id))
-                    .First();
-
-                return postEntity;
             }
             catch (Exception)
             {
@@ -133,6 +101,23 @@ namespace BlogDAL.Repository
                 }
 
                 return postPaginationEntities;
+            }
+            catch(Exception)
+            {
+                return null;
+            }
+        }
+
+        public PostEntity GetPostEntity(string id)
+        {
+            try
+            {
+                PostEntity postEntity = Context.PostEntities
+                    .Where(x => x.PostId.Equals(id))
+                    .Include(x => x.PostCategory)
+                    .First();
+
+                return postEntity;
             }
             catch(Exception)
             {

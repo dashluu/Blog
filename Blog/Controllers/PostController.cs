@@ -103,17 +103,17 @@ namespace Blog.Controllers
         }
 
         [HttpPost]
-        public JsonResult PaginateComment(string postId, int skip)
+        public JsonResult PaginateComment(string postId, int skip, int commentCount)
         {
             object jsonObject;
 
-            if (string.IsNullOrWhiteSpace(postId) || skip < 0)
+            if (string.IsNullOrWhiteSpace(postId) || skip < 0 || commentCount < 0)
             {
                 jsonObject = new { status = 500 };
                 return Json(jsonObject);
             }
 
-            PaginationDTO<CommentDTO> commentPaginationDTO = commentService.GetCommentPaginationDTOWithPost(postId, skip, pageSize: pagination.CommentPageSize);
+            PaginationDTO<CommentDTO> commentPaginationDTO = commentService.GetCommentPaginationDTOWithPost(postId, commentCount, skip, pageSize: pagination.CommentPageSize);
 
             if (commentPaginationDTO == null)
             {

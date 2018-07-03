@@ -24,22 +24,6 @@ namespace BlogServices.Services
             return addSuccessfully;
         }
 
-        public List<PostCardDTO> GetPostCardDTOs()
-        {
-            List<PostEntity> postEntities = postRepository.GetEntities();
-            List<PostCardDTO> postCardDTOs = dataMapper.MapPostCardEntitiesToDTOs(postEntities);
-
-            return postCardDTOs;
-        }
-
-        public List<PostCardDTO> GetPostCardDTOsWithCategory(string category)
-        {
-            List<PostEntity> postEntities = postRepository.GetPostEntitiesWithCategory(category);
-            List<PostCardDTO> postCardDTOs = dataMapper.MapPostCardEntitiesToDTOs(postEntities);
-
-            return postCardDTOs;
-        }
-
         public PaginationDTO<PostCardDTO> GetPostCardPaginationDTOWithCategory(string category, int pageNumber, int pageSize)
         {
             PaginationEntity<PostEntity> postPaginationEntity = postRepository.GetPostPaginationEntityWithCategory(category, pageNumber, pageSize);

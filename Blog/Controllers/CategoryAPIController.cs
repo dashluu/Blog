@@ -15,12 +15,10 @@ namespace Blog.Controllers
     public class CategoryAPIController : ApiController
     {
         private ICategoryService categoryService;
-        private IModelDataMapper dataMapper;
 
-        public CategoryAPIController(ICategoryService categoryService, IModelDataMapper dataMapper)
+        public CategoryAPIController(ICategoryService categoryService)
         {
             this.categoryService = categoryService;
-            this.dataMapper = dataMapper;
         }
 
         public IHttpActionResult GetCategories()
@@ -32,31 +30,30 @@ namespace Blog.Controllers
             if (categoryDTOs == null)
             {
                 jsonObject = new { status = 500 };
-                return Json(jsonObject);
             }
-
-            jsonObject = new
+            else
             {
-                status = 200,
-                data = categoryDTOs
-            };
+                jsonObject = new
+                {
+                    status = 200,
+                    data = categoryDTOs
+                };
+            }
 
             return Json(jsonObject);
         }
 
         [HttpPost]
-        public IHttpActionResult AddCategory([FromBody]EditedCategoryModel editedCategoryModel)
+        public IHttpActionResult AddCategory([FromBody]EditedCategoryDTO editedCategoryDTO)
         {
             object jsonObject;
 
-            if (string.IsNullOrWhiteSpace(editedCategoryModel.Name) 
-                || string.IsNullOrWhiteSpace(editedCategoryModel.Description))
+            if (string.IsNullOrWhiteSpace(editedCategoryDTO.Name) 
+                || string.IsNullOrWhiteSpace(editedCategoryDTO.Description))
             {
                 jsonObject = new { status = 500 };
                 return Json(jsonObject);
             }
-
-            EditedCategoryDTO editedCategoryDTO = dataMapper.MapEditedCategoryModelToDTO(editedCategoryModel);
 
             bool addSuccessfully = categoryService.AddEditedCategoryDTO(editedCategoryDTO);
 
@@ -66,25 +63,27 @@ namespace Blog.Controllers
             }
             else
             {
-                jsonObject = new { status = 200 };
+                jsonObject = new {
+                    status = 200,
+                    data = editedCategoryDTO.CategoryId
+                };
             }
 
             return Json(jsonObject);
         }
 
         [HttpPost]
-        public IHttpActionResult UpdateCategory([FromBody]EditedCategoryModel editedCategoryModel)
+        public IHttpActionResult UpdateCategory([FromBody]EditedCategoryDTO editedCategoryDTO)
         {
             object jsonObject;
 
-            if (string.IsNullOrWhiteSpace(editedCategoryModel.Name)
-                || string.IsNullOrWhiteSpace(editedCategoryModel.Description))
+            if (string.IsNullOrWhiteSpace(editedCategoryDTO.CategoryId)
+                || string.IsNullOrWhiteSpace(editedCategoryDTO.Name)
+                || string.IsNullOrWhiteSpace(editedCategoryDTO.Description))
             {
                 jsonObject = new { status = 500 };
                 return Json(jsonObject);
             }
-
-            EditedCategoryDTO editedCategoryDTO = dataMapper.MapEditedCategoryModelToDTO(editedCategoryModel);
 
             bool updateSuccessfully = categoryService.UpdateEditedCategoryDTO(editedCategoryDTO);
 

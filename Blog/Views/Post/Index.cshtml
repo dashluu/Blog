@@ -37,7 +37,8 @@
         </div>
 
         <div class="col-xs-12 col-sm-10 col-md-8 col-lg-7 comment-section">
-            <p class="comment-title">Comments</p>
+            <div class="comment-title">Comments</div>
+            <div class="comment-count">@Model.Post.CommentCount</div>
             <form class="comment-form master-comment-form" action="/Post" method="post">
                 <textarea class="comment-input" placeholder="Comment"></textarea>
                 <input type="hidden" value=@Model.Post.PostId class="post-id" id="post-id" />

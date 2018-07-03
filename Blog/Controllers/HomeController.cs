@@ -29,6 +29,7 @@ namespace Blog.Controllers
         {
             List<PaginationDTO<PostCardDTO>> postCardPaginationDTOs = postService.GetPostCardPaginationDTOs(pageSize: pagination.HomePostPageSize);
             List<PaginationModel<PostCardModel>> postCardPaginationModels = dataMapper.MapPostCardPaginationDTOsToModels(postCardPaginationDTOs);
+
             return View(postCardPaginationModels);
         }
 
@@ -53,6 +54,7 @@ namespace Blog.Controllers
             }
 
             ViewBag.Category = category;
+
             return View();
         }
 

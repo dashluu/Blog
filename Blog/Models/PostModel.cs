@@ -16,5 +16,6 @@ namespace Blog.Models
         public string Content { get; set; }
         public string ThumbnailImageSrc { get; set; }
         public List<CommentModel> CommentModels { get; set; }
+        public int CommentCount { get; set; }
     }
 }

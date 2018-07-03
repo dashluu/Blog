@@ -25,9 +25,16 @@
     var postInput = form.children(".post-id").eq(0);
     var id = postInput.val();
 
+    var commentCountInput = $(".comment-count").eq(0);
+    var commentCount = commentCountInput.html();
+
     $.post("/Post/MasterComment", { comment: commentInput, postId: id }, function (result) {
         if (result.status === 200) {
             commentTextBox.val("");
+
+            var updatedCommentCount = parseInt(commentCount) + 1;
+            commentCountInput.html(updatedCommentCount.toString());
+
             var newCommentContainerSelector = createCommentContainerSelector(result.username, commentInput, result.commentId, id);
             var newCommentContainer = $(newCommentContainerSelector);
             newCommentContainer.insertAfter(form).show("fast");
@@ -174,8 +181,9 @@ function createChildCommentContainerSelector(username, content) {
 $("#expand-master-comment-btn").click(function () {
     var postId = $("#post-id").val();
     var skip = $(".comment-container").length;
+    var commentCount = $(".comment-count").eq(0).html();
 
-    $.post("/Post/PaginateComment", { postId: postId, skip: skip }, function (result) {
+    $.post("/Post/PaginateComment", { postId: postId, skip: skip, commentCount: commentCount }, function (result) {
         if (result.status === 200) {
             var comments = result.data;
             var commentSection = $(".comment-section").eq(0);

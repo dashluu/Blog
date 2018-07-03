@@ -17,6 +17,7 @@
 
 .post-title, .post-summary, .post-author, .post-date, .post-category {
     color: black;
+    overflow-wrap: break-word;
 }
 
 .post-category {
@@ -41,7 +42,6 @@
     font-weight: 400;
     padding-right: 10px;
     height: 60px;
-    overflow-wrap: break-word;
 }
 
 .page-nav-btn {

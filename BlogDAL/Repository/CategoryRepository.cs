@@ -12,5 +12,22 @@ namespace BlogDAL.Repository
             entity.CategoryId = GenerateId();
             return base.Add(entity);
         }
+
+        public override bool Update(CategoryEntity categoryEntity)
+        {
+            try
+            {
+                Context.CategoryEntities.Attach(categoryEntity);
+                Context.Entry(categoryEntity).Property(x => x.Description).IsModified = true;
+
+                Context.SaveChanges();
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
     }
 }

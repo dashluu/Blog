@@ -46,14 +46,6 @@ namespace BlogServices.Services
             return categoryDTOs;
         }
 
-        public bool RemoveEditedCategoryDTO(EditedCategoryDTO editedCategoryDTO)
-        {
-            CategoryEntity categoryEntity = dataMapper.MapEditedCategoryDTOToEntity(editedCategoryDTO);
-            bool removeSuccessfully = categoryRepository.Remove(categoryEntity);
-
-            return removeSuccessfully;
-        }
-
         public bool UpdateEditedCategoryDTO(EditedCategoryDTO editedCategoryDTO)
         {
             CategoryEntity categoryEntity = dataMapper.MapEditedCategoryDTOToEntity(editedCategoryDTO);

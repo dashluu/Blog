@@ -9,7 +9,6 @@ namespace BlogServices.Services
     {
         List<CategoryDTO> GetCategoryDTOs();
         bool AddEditedCategoryDTO(EditedCategoryDTO editedCategoryDTO);
-        bool RemoveEditedCategoryDTO(EditedCategoryDTO editedCategoryDTO);
         bool UpdateEditedCategoryDTO(EditedCategoryDTO editedCategoryDTO);
     }
 }

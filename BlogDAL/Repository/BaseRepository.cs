@@ -32,9 +32,8 @@ namespace BlogDAL.Repository
                 Context.SaveChanges();
                 return true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                System.Diagnostics.Debug.WriteLine(e);
                 return false;
             }
         }
@@ -63,18 +62,14 @@ namespace BlogDAL.Repository
 
                 if (isDesc)
                 {
-                    entities = queryable.OrderByDescending(orderByExpression)
-                        .Skip(skip)
-                        .Take(pageSize)
-                        .ToList();
+                    queryable = queryable.OrderByDescending(orderByExpression);
                 }
                 else
                 {
-                    entities = queryable.OrderBy(orderByExpression)
-                        .Skip(skip)
-                        .Take(pageSize)
-                        .ToList();
+                    queryable = queryable.OrderBy(orderByExpression);
                 }
+
+                entities = queryable.Skip(skip).Take(pageSize).ToList();
 
                 if (entities.Count == 0)
                 {
@@ -103,7 +98,9 @@ namespace BlogDAL.Repository
         {
             try
             {
-                Context.Set<T>().Remove(entity);
+                DbSet<T> set = Context.Set<T>();
+                set.Attach(entity);
+                set.Remove(entity);
                 Context.SaveChanges();
 
                 return true;
@@ -114,10 +111,12 @@ namespace BlogDAL.Repository
             }
         }
 
-        public bool Update(T entity)
+        public virtual bool Update(T entity)
         {
             try
             {
+                DbSet<T> set = Context.Set<T>();
+                set.Attach(entity);
                 Context.Entry(entity).State = EntityState.Modified;
                 Context.SaveChanges();
 
@@ -126,6 +125,47 @@ namespace BlogDAL.Repository
             catch (Exception)
             {
                 return false;
+            }
+        }
+
+        public PaginationEntity<T> GetPaginationEntityWithPreservedFetch<TKey>
+            (IQueryable<T> queryable, bool isDesc, 
+            Expression<Func<T, TKey>> orderByExpression,
+            int count, int skip, int pageSize)
+        {
+            try
+            {
+                List<T> entities = null;
+                int updatedCount = queryable.Count();
+                int updatedSkip = skip + (updatedCount - count);
+
+                if (isDesc)
+                {
+                    queryable = queryable.OrderByDescending(orderByExpression);
+                }
+                else
+                {
+                    queryable = queryable.OrderBy(orderByExpression);
+                }
+
+                entities = queryable.Skip(updatedSkip).Take(pageSize).ToList();
+
+                if (entities.Count == 0)
+                {
+                    return null;
+                }
+
+                PaginationEntity<T> paginationEntity = new PaginationEntity<T>()
+                {
+                    Entities = entities,
+                    HasNext = (updatedSkip + pageSize) < updatedCount
+                };
+
+                return paginationEntity;
+            }
+            catch (Exception)
+            {
+                return null;
             }
         }
     }

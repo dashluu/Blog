@@ -209,6 +209,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Controllers\CategoryAPIController.cs" />
+    <Compile Include="Controllers\CommentAPIController.cs" />
     <Compile Include="Controllers\ImageController.cs" />
     <Compile Include="Controllers\PostAPIController.cs" />
     <Compile Include="Models\PaginationModel.cs" />
@@ -227,6 +228,7 @@
     <Compile Include="Models\PostCardModel.cs" />
     <Compile Include="Models\PostModelWithPaginatedComments.cs" />
     <Compile Include="Models\PostModel.cs" />
+    <Compile Include="Models\DataAPIModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

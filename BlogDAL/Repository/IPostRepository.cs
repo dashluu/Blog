@@ -8,9 +8,8 @@ namespace BlogDAL.Repository
 {
     public interface IPostRepository : IBaseRepository<PostEntity>
     {
-        List<PostEntity> GetPostEntitiesWithCategory(string category);
-        PostEntityWithPaginatedComments GetPostEntityWithPaginatedComments(string id, int pageSize);
         PostEntity GetPostEntity(string id);
+        PostEntityWithPaginatedComments GetPostEntityWithPaginatedComments(string id, int pageSize);
         PaginationEntity<PostEntity> GetPostPaginationEntityWithCategory(string category, int pageNumber, int pageSize);
         List<PaginationEntity<PostEntity>> GetPostPaginationEntities(int pageSize);
     }

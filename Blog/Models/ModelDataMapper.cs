@@ -8,6 +8,50 @@ namespace Blog.Models
 {
     public class ModelDataMapper : IModelDataMapper
     {
+        private string ComputeUpdateTime(DateTime updateTime)
+        {
+            DateTime currentTime = DateTime.Now;
+            TimeSpan timeSpan = currentTime.Subtract(updateTime);
+            int nday = timeSpan.Days;
+            int nhour = timeSpan.Hours;
+            int nmin = timeSpan.Minutes;
+            int nsec = timeSpan.Seconds;
+            string internalTime;
+
+            if (nday > 7)
+            {
+                internalTime = " on " + FormatTime(updateTime);
+                return internalTime;
+            }
+
+            if (nday >= 1)
+            {
+                internalTime = nday.ToString() + ((nday > 1) ? " days" : " day") + " ago";
+                return internalTime;
+            }
+
+            if (nhour >= 1)
+            {
+                internalTime = nhour.ToString() + ((nhour > 1) ? " hours" : " hour") + " ago";
+                return internalTime;
+            }
+
+            if (nmin >= 1)
+            {
+                internalTime = nmin.ToString() + " min ago";
+                return internalTime;
+            }
+
+            internalTime = nsec.ToString() + " sec ago";
+
+            return internalTime;
+        }
+
+        private string FormatTime(DateTime time)
+        {
+            return time.ToString("dd MMMM");
+        }
+
         public List<CategoryModel> MapCategoryDTOsToModels(List<CategoryDTO> categoryDTOs)
         {
             if (categoryDTOs == null)
@@ -175,8 +219,8 @@ namespace Blog.Models
                 Title = postCardDTO.Title,
                 ShortDescription = postCardDTO.ShortDescription,
                 ThumbnailImageSrc = postCardDTO.ThumbnailImageSrc,
-                CreatedDate = postCardDTO.CreatedDate,
-                UpdatedDate = postCardDTO.UpdatedDate,
+                CreatedDate = FormatTime(postCardDTO.CreatedDate),
+                UpdatedDate = ComputeUpdateTime(postCardDTO.UpdatedDate),
                 PostCategory = MapCategoryDTOToModel(categoryDTO)
             };
 
@@ -237,9 +281,10 @@ namespace Blog.Models
                 ShortDescription = postDTO.ShortDescription,
                 ThumbnailImageSrc = postDTO.ThumbnailImageSrc,
                 Content = postDTO.Content,
-                CreatedDate = postDTO.CreatedDate,
-                UpdatedDate = postDTO.UpdatedDate,
-                CommentModels = commentModels
+                CreatedDate = FormatTime(postDTO.CreatedDate),
+                UpdatedDate = ComputeUpdateTime(postDTO.UpdatedDate),
+                CommentModels = commentModels,
+                CommentCount = postDTO.CommentCount
             };
 
             return postModel;

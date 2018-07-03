@@ -17,5 +17,6 @@ namespace BlogDAL.Entity
         public string Content { get; set; }
         public string ThumbnailImageSrc { get; set; }
         public List<CommentEntity> CommentEntities { get; set; }
+        public int CommentCount { get; set; }
     }
 }

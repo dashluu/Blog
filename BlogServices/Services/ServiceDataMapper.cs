@@ -8,50 +8,6 @@ namespace BlogServices.DTO
 {
     public class ServiceDataMapper : IServiceDataMapper
     {
-        public string ComputeUpdateTime(DateTime updateTime)
-        {
-            DateTime currentTime = DateTime.Now;
-            TimeSpan timeSpan = currentTime.Subtract(updateTime);
-            int nday = timeSpan.Days;
-            int nhour = timeSpan.Hours;
-            int nmin = timeSpan.Minutes;
-            int nsec = timeSpan.Seconds;
-            string internalTime;
-
-            if (nday > 7)
-            {
-                internalTime = " on " + FormatTime(updateTime);
-                return internalTime;
-            }
-
-            if (nday >= 1)
-            {
-                internalTime = nday.ToString() + ((nday > 1) ? " days" : " day") + " ago";
-                return internalTime;
-            }
-
-            if (nhour >= 1)
-            {
-                internalTime = nhour.ToString() + ((nhour > 1) ? " hours" : " hour") + " ago";
-                return internalTime;
-            }
-
-            if (nmin >= 1)
-            {
-                internalTime = nmin.ToString() + " min ago";
-                return internalTime;
-            }
-
-            internalTime = nsec.ToString() + " sec ago";
-
-            return internalTime;
-        }
-
-        public string FormatTime(DateTime time)
-        {
-            return time.ToString("dd MMMM");
-        }
-
         public List<CommentDTO> MapCommentEntitiesToDTOs(List<CommentEntity> commentEntities)
         {
             if (commentEntities == null)
@@ -101,12 +57,13 @@ namespace BlogServices.DTO
                 PostId = postEntity.PostId,
                 PostCategory = MapCategoryEntityToDTO(postEntity.PostCategory),
                 Title = postEntity.Title,
-                CreatedDate = FormatTime(postEntity.CreatedDate),
-                UpdatedDate = ComputeUpdateTime(postEntity.UpdatedDate),
+                CreatedDate = postEntity.CreatedDate,
+                UpdatedDate = postEntity.UpdatedDate,
                 ShortDescription = postEntity.ShortDescription,
                 Content = postEntity.Content,
                 ThumbnailImageSrc = postEntity.ThumbnailImageSrc,
-                CommentDTOs = commentDTOs
+                CommentDTOs = commentDTOs,
+                CommentCount = postEntity.CommentCount
             };
 
             return postDTO;
@@ -144,8 +101,8 @@ namespace BlogServices.DTO
             {
                 PostId = postEntity.PostId,
                 Title = postEntity.Title,
-                CreatedDate = FormatTime(postEntity.CreatedDate),
-                UpdatedDate = ComputeUpdateTime(postEntity.UpdatedDate),
+                CreatedDate = postEntity.CreatedDate,
+                UpdatedDate = postEntity.UpdatedDate,
                 ShortDescription = postEntity.ShortDescription,
                 ThumbnailImageSrc = postEntity.ThumbnailImageSrc,
                 PostCategory = MapCategoryEntityToDTO(categoryEntity)
@@ -180,9 +137,10 @@ namespace BlogServices.DTO
 
             CategoryDTO categoryDTO = new CategoryDTO()
             {
+                CategoryId = categoryEntity.CategoryId,
                 Name = categoryEntity.Name,
                 Description = categoryEntity.Description,
-                Statistics = categoryEntity.Statistics
+                PostCount = categoryEntity.PostCount
             };
 
             return categoryDTO;
@@ -197,6 +155,7 @@ namespace BlogServices.DTO
 
             CategoryEntity categoryEntity = new CategoryEntity()
             {
+                CategoryId = editedCategoryDTO.CategoryId,
                 Name = editedCategoryDTO.Name,
                 Description = editedCategoryDTO.Description
             };
@@ -271,7 +230,9 @@ namespace BlogServices.DTO
             PaginationDTO<CommentDTO> commentPaginationDTO = new PaginationDTO<CommentDTO>()
             {
                 DTOs = commentDTOs,
-                HasNext = commentPaginationEntity.HasNext
+                HasNext = commentPaginationEntity.HasNext,
+                HasPrevious = commentPaginationEntity.HasPrevious,
+                Pages = commentPaginationEntity.Pages
             };
 
             return commentPaginationDTO;
