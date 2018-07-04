@@ -92,7 +92,7 @@ namespace BlogDAL.Repository
                 {
                     PaginationEntity<PostEntity> postPaginationEntity = GetPostPaginationEntityWithCategory(category: categoryEntity.Name, pageNumber: 1, pageSize);
 
-                    if (postPaginationEntity == null)
+                    if (postPaginationEntity == null || postPaginationEntity.Entities == null || postPaginationEntity.Pages == 0)
                     {
                         continue;
                     }

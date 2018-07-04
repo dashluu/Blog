@@ -70,12 +70,6 @@ namespace BlogDAL.Repository
                 }
 
                 entities = queryable.Skip(skip).Take(pageSize).ToList();
-
-                if (entities.Count == 0)
-                {
-                    return null;
-                }
-
                 int count = queryable.Count();
 
                 PaginationEntity<T> paginationEntity = new PaginationEntity<T>()
@@ -149,11 +143,6 @@ namespace BlogDAL.Repository
                 }
 
                 entities = queryable.Skip(updatedSkip).Take(pageSize).ToList();
-
-                if (entities.Count == 0)
-                {
-                    return null;
-                }
 
                 PaginationEntity<T> paginationEntity = new PaginationEntity<T>()
                 {

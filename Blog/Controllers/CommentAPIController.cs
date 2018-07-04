@@ -21,6 +21,7 @@ namespace Blog.Controllers
             this.commentService = commentService;
         }
 
+        [Route("api/Comments")]
         public IHttpActionResult GetComments(int pageNumber, int pageSize)
         {
             object jsonObject;
@@ -49,6 +50,7 @@ namespace Blog.Controllers
             return Json(jsonObject);
         }
 
+        [Route("api/Comments/{commentId}/ChildComments")]
         public IHttpActionResult GetChildComments(string commentId, int pageNumber, int pageSize)
         {
             object jsonObject;
@@ -78,12 +80,11 @@ namespace Blog.Controllers
         }
 
         [HttpPost]
-        public IHttpActionResult SearchComment([FromBody]DataAPIModel dataAPIModel)
+        [Route("api/Comments/Search")]
+        public IHttpActionResult SearchComment([FromBody]APISearchModel searchModel, int pageNumber, int pageSize)
         {
             object jsonObject;
-            string searchQuery = dataAPIModel.Data;
-            int pageNumber = dataAPIModel.PageNumber;
-            int pageSize = dataAPIModel.PageSize;
+            string searchQuery = searchModel.Query;
 
             if (string.IsNullOrWhiteSpace(searchQuery) || pageNumber <= 0 || pageSize <= 0)
             {
@@ -128,10 +129,7 @@ namespace Blog.Controllers
             }
             else
             {
-                jsonObject = new
-                {
-                    status = 200
-                };
+                jsonObject = new { status = 200 };
             }
 
             return Json(jsonObject);

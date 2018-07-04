@@ -228,7 +228,7 @@
     <Compile Include="Models\PostCardModel.cs" />
     <Compile Include="Models\PostModelWithPaginatedComments.cs" />
     <Compile Include="Models\PostModel.cs" />
-    <Compile Include="Models\DataAPIModel.cs" />
+    <Compile Include="Models\APISearchModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -12,6 +12,7 @@ using System.Web.Http.Cors;
 namespace Blog.Controllers
 {
     [EnableCors(origins: "http://localhost:4200", headers: "*", methods: "*")]
+    [Route("api/Categories")]
     public class CategoryAPIController : ApiController
     {
         private ICategoryService categoryService;
