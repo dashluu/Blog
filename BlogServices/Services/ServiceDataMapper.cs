@@ -123,6 +123,7 @@ namespace BlogServices.DTO
                 CommentId = commentEntity.CommentId,
                 Username = commentEntity.Username,
                 Content = commentEntity.Content,
+                CreatedDate = commentEntity.CreatedDate
             };
 
             return commentDTO;
@@ -193,6 +194,8 @@ namespace BlogServices.DTO
                 DTOs = postCardDTOs,
                 HasNext = postPaginationEntity.HasNext,
                 HasPrevious = postPaginationEntity.HasPrevious,
+                PageNumber = postPaginationEntity.PageNumber,
+                PageSize = postPaginationEntity.PageSize,
                 Pages = postPaginationEntity.Pages,
             };
 
@@ -232,6 +235,8 @@ namespace BlogServices.DTO
                 DTOs = commentDTOs,
                 HasNext = commentPaginationEntity.HasNext,
                 HasPrevious = commentPaginationEntity.HasPrevious,
+                PageNumber = commentPaginationEntity.PageNumber,
+                PageSize = commentPaginationEntity.PageSize,
                 Pages = commentPaginationEntity.Pages
             };
 

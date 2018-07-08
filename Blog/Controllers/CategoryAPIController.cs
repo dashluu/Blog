@@ -12,16 +12,18 @@ using System.Web.Http.Cors;
 namespace Blog.Controllers
 {
     [EnableCors(origins: "http://localhost:4200", headers: "*", methods: "*")]
-    [Route("api/Categories")]
     public class CategoryAPIController : ApiController
     {
         private ICategoryService categoryService;
+        private IModelDataMapper dataMapper;
 
-        public CategoryAPIController(ICategoryService categoryService)
+        public CategoryAPIController(ICategoryService categoryService, IModelDataMapper dataMapper)
         {
             this.categoryService = categoryService;
+            this.dataMapper = dataMapper;
         }
 
+        [Route("api/Categories")]
         public IHttpActionResult GetCategories()
         {
             object jsonObject;
@@ -45,6 +47,7 @@ namespace Blog.Controllers
         }
 
         [HttpPost]
+        [Route("api/Categories")]
         public IHttpActionResult AddCategory([FromBody]EditedCategoryDTO editedCategoryDTO)
         {
             object jsonObject;
@@ -74,17 +77,18 @@ namespace Blog.Controllers
         }
 
         [HttpPost]
-        public IHttpActionResult UpdateCategory([FromBody]EditedCategoryDTO editedCategoryDTO)
+        [Route("api/Categories/{categoryId}")]
+        public IHttpActionResult UpdateCategory(string categoryId, [FromBody]EditedCategoryDTO editedCategoryDTO)
         {
             object jsonObject;
 
-            if (string.IsNullOrWhiteSpace(editedCategoryDTO.CategoryId)
-                || string.IsNullOrWhiteSpace(editedCategoryDTO.Name)
-                || string.IsNullOrWhiteSpace(editedCategoryDTO.Description))
+            if (string.IsNullOrWhiteSpace(categoryId))
             {
                 jsonObject = new { status = 500 };
                 return Json(jsonObject);
             }
+
+            editedCategoryDTO.CategoryId = categoryId;
 
             bool updateSuccessfully = categoryService.UpdateEditedCategoryDTO(editedCategoryDTO);
 

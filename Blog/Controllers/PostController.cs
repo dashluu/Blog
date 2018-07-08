@@ -40,7 +40,7 @@ namespace Blog.Controllers
         }
 
         [HttpPost]
-        public ActionResult MasterComment(string comment, string postId)
+        public ActionResult AddMasterComment(string comment, string postId)
         {
             object jsonObject;
 
@@ -51,9 +51,10 @@ namespace Blog.Controllers
             }
 
             string username = "whatever";
-            string commentId = commentService.AddCommentDTO(postId, comment, username);
+            CommentDTO commentDTO = commentService.AddCommentDTO(postId, comment, username);
+            CommentModel commentModel = dataMapper.MapCommentDTOToModel(commentDTO);
 
-            if (commentId == null)
+            if (commentModel == null)
             {
                 jsonObject = new { status = 500 };
             }
@@ -61,10 +62,8 @@ namespace Blog.Controllers
             {
                 jsonObject = new
                 {
-                    data = comment,
                     status = 200,
-                    username,
-                    commentId
+                    data = commentModel
                 };
             }
 
@@ -72,7 +71,7 @@ namespace Blog.Controllers
         }
 
         [HttpPost]
-        public ActionResult ChildComment(string comment, string commentId, string postId)
+        public ActionResult AddChildComment(string comment, string commentId, string postId)
         {
             object jsonObject;
 
@@ -83,9 +82,10 @@ namespace Blog.Controllers
             }
 
             string username = "whatever";
-            bool addSuccessfully = commentService.AddChildCommentDTO(postId, commentId, comment, username);
+            CommentDTO childCommentDTO = commentService.AddChildCommentDTO(postId, commentId, comment, username);
+            CommentModel childCommentModel = dataMapper.MapCommentDTOToModel(childCommentDTO);
 
-            if (!addSuccessfully)
+            if (childCommentModel == null)
             {
                 jsonObject = new { status = 500 };
             }
@@ -93,9 +93,8 @@ namespace Blog.Controllers
             {
                 jsonObject = new
                 {
-                    data = comment,
                     status = 200,
-                    username
+                    data = childCommentModel
                 };
             }
 
@@ -103,34 +102,32 @@ namespace Blog.Controllers
         }
 
         [HttpPost]
-        public JsonResult PaginateComment(string postId, int skip, int commentCount)
+        public JsonResult ShowMoreComments(string postId, string createdDateString)
         {
             object jsonObject;
 
-            if (string.IsNullOrWhiteSpace(postId) || skip < 0 || commentCount < 0)
+            if (string.IsNullOrWhiteSpace(postId) || string.IsNullOrWhiteSpace(createdDateString))
             {
                 jsonObject = new { status = 500 };
                 return Json(jsonObject);
             }
 
-            PaginationDTO<CommentDTO> commentPaginationDTO = commentService.GetCommentPaginationDTOWithPost(postId, commentCount, skip, pageSize: pagination.CommentPageSize);
+            DateTime createdDate = dataMapper.ParseCommentTime(createdDateString);
+            PaginationDTO<CommentDTO> commentPaginationDTO = commentService.GetCommentPaginationDTOOfPostWithPreservedFetch(postId, createdDate, pageSize: pagination.CommentPageSize);
+            PaginationModel<CommentModel> commentPaginationModel = dataMapper.MapCommentPaginationDTOToModel(commentPaginationDTO);
 
-            if (commentPaginationDTO == null)
+            if (commentPaginationModel == null)
             {
                 jsonObject = new { status = 500 };
-                return Json(jsonObject);
             }
-
-            List<CommentDTO> commentDTOs = commentPaginationDTO.DTOs;
-            List<CommentModel> commentModels = dataMapper.MapCommentDTOsToModels(commentDTOs);
-            bool hasNext = commentPaginationDTO.HasNext;
-
-            jsonObject = new
+            else
             {
-                status = 200,
-                data = commentModels,
-                hasNext
-            };
+                jsonObject = new
+                {
+                    status = 200,
+                    data = commentPaginationModel
+                };
+            }
 
             return Json(jsonObject);
         }

@@ -43,7 +43,7 @@ namespace BlogDAL.Repository
                     .Include(x => x.PostCategory)
                     .First();
 
-                PaginationEntity<CommentEntity> commentPaginationEntity = commentRepository.GetCommentPaginationEntityWithPost(postId: id, commentCount: postEntity.CommentCount, skip: 0, pageSize);
+                PaginationEntity<CommentEntity> commentPaginationEntity = commentRepository.GetCommentPaginationEntityOfPostWithPreservedFetch(postId: id, DateTime.Now, pageSize);
 
                 PostEntityWithPaginatedComments postEntityWithPaginatedComments = new PostEntityWithPaginatedComments()
                 {
@@ -59,15 +59,19 @@ namespace BlogDAL.Repository
             }
         }
 
-        public PaginationEntity<PostEntity> GetPostPaginationEntityWithCategory(string category, int pageNumber, int pageSize)
+        public PaginationEntity<PostEntity> GetPostPaginationEntity(string category, int pageNumber, int pageSize)
         {
             try
             {
                 int skip = (pageNumber - 1) * pageSize;
 
                 IQueryable<PostEntity> postQueryable = Context.PostEntities
-                    .Where(x => x.PostCategory.Name.Equals(category))
                     .Include(x => x.PostCategory);
+
+                if (!string.IsNullOrWhiteSpace(category))
+                {
+                    postQueryable = postQueryable.Where(x => x.PostCategory.Name.Equals(category));
+                }
 
                 Expression<Func<PostEntity, DateTime>> postOrderByExpression = (x => x.CreatedDate);
 
@@ -90,7 +94,7 @@ namespace BlogDAL.Repository
 
                 foreach (CategoryEntity categoryEntity in categoryEntities)
                 {
-                    PaginationEntity<PostEntity> postPaginationEntity = GetPostPaginationEntityWithCategory(category: categoryEntity.Name, pageNumber: 1, pageSize);
+                    PaginationEntity<PostEntity> postPaginationEntity = GetPostPaginationEntity(category: categoryEntity.Name, pageNumber: 1, pageSize);
 
                     if (postPaginationEntity == null || postPaginationEntity.Entities == null || postPaginationEntity.Pages == 0)
                     {
@@ -121,6 +125,65 @@ namespace BlogDAL.Repository
             }
             catch(Exception)
             {
+                return null;
+            }
+        }
+
+        public PaginationEntity<PostEntity> RemovePostEntityWithReloadedPagination(string category, string postId, int pageNumber, int pageSize)
+        {
+            try
+            {
+                DbSet<PostEntity> postEntityDbSet = Context.PostEntities;
+                DbSet<CommentEntity> commentEntityDbSet = Context.CommentEntities;
+
+                //Get child comments that belong to post.
+                IQueryable<CommentEntity> commentDeleteQueryable = commentEntityDbSet
+                    .Where(x => x.Post.PostId.Equals(postId) && x.RootComment != null);
+
+                List<CommentEntity> commentEntities = commentDeleteQueryable.ToList();
+
+                //Remove child comments that belong to post.
+                commentEntityDbSet.RemoveRange(commentEntities);
+
+                //Get comments that belong to post.
+                commentDeleteQueryable = commentEntityDbSet
+                    .Where(x => x.Post.PostId.Equals(postId));
+
+                commentEntities = commentDeleteQueryable.ToList();
+
+                //Remove comments that belong to post.
+                commentEntityDbSet.RemoveRange(commentEntities);
+
+                //Get and remove post.
+                PostEntity postEntity = postEntityDbSet.Where(x => x.PostId.Equals(postId)).First();
+                postEntityDbSet.Remove(postEntity);
+
+                Context.SaveChanges();
+
+                //Get and return post pagination.
+                IQueryable<PostEntity> postPaginationQueryable = postEntityDbSet.AsQueryable();
+
+                if (!string.IsNullOrWhiteSpace(category))
+                {
+                    postPaginationQueryable = postPaginationQueryable
+                        .Where(x => x.PostCategory.Name.Equals(category));
+                }
+
+                Expression<Func<PostEntity, DateTime>> postOrderByExpression = (x => x.CreatedDate);
+                int skip = (pageNumber - 1) * pageSize;
+
+                PaginationEntity<PostEntity> postPaginationEntity = GetPaginationEntity
+                    (postPaginationQueryable,
+                    isDesc: true,
+                    postOrderByExpression,
+                    skip,
+                    pageSize);
+
+                return postPaginationEntity;
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e);
                 return null;
             }
         }

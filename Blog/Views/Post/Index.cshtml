@@ -24,15 +24,15 @@
 <div class="container" id="post-block">
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 post-section">
-            <p class="post-title">@Model.Post.Title</p>
-            @{ 
+            <div class="post-title">@Model.Post.Title</div>
+            @{
                 CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
                 TextInfo textInfo = cultureInfo.TextInfo;
             }
-            <p class="post-category">About <strong>@textInfo.ToTitleCase(Model.Post.PostCategory.Name)</strong></p>
-            <p class="post-date">On <strong>@Model.Post.CreatedDate</strong></p>
-            <p class="post-date">Updated @Model.Post.UpdatedDate</p>
-            <p class="post-summary">@Model.Post.ShortDescription</p>
+            <div class="post-category">About <strong>@textInfo.ToTitleCase(Model.Post.PostCategory.Name)</strong></div>
+            <div class="post-date">On <strong>@Model.Post.CreatedDate</strong></div>
+            <div class="post-date">Updated @Model.Post.UpdatedDate</div>
+            <div class="post-summary">@Model.Post.ShortDescription</div>
             <div class="post-content">@Html.Raw(Model.Post.Content)</div>
         </div>
 
@@ -44,49 +44,52 @@
                 <input type="hidden" value=@Model.Post.PostId class="post-id" id="post-id" />
                 <button type="submit" class="submit-comment-btn"><span class="glyphicon glyphicon-send"></span></button>
             </form>
-            @{
-                PaginationModel<CommentModel> commentPaginationModel = Model.CommentPaginationModel;
+            <div class="master-comment-list-container">
+                @{
+                    PaginationModel<CommentModel> commentPaginationModel = Model.CommentPaginationModel;
 
-                if (commentPaginationModel == null)
-                {
-                    return;
-                }
+                    if (commentPaginationModel == null)
+                    {
+                        return;
+                    }
 
-                List<CommentModel> commentModels = commentPaginationModel.Models;
+                    List<CommentModel> commentModels = commentPaginationModel.Models;
 
-                if (commentModels == null || commentModels.Count == 0)
-                {
-                    return;
-                }
+                    if (commentModels == null || commentModels.Count == 0)
+                    {
+                        return;
+                    }
 
-                foreach (CommentModel commentModel in commentModels)
-                {
-                    <div class="comment-container">
-                        <div class="master-comment-container">
-                            <p class="comment-user-container">
-                                <strong class="comment-user">@commentModel.Username</strong>
-                                <button class="show-child-comment-btn"><span class='glyphicon glyphicon-list'></span></button>
-                                <button class="add-child-comment-btn"><span class='glyphicon glyphicon-edit'></span></button>
-                            </p>
-                            <p class="comment-body">@commentModel.Content</p>
-                            <input type="hidden" class="load-children-comment" value="0" />
+                    foreach (CommentModel commentModel in commentModels)
+                    {
+                        <div class="comment-container">
+                            <div class="master-comment-container">
+                                <div class="comment-user-container">
+                                    <strong class="comment-user">@commentModel.Username</strong>
+                                    <button class="show-child-comment-btn"><span class='glyphicon glyphicon-list'></span></button>
+                                    <button class="add-child-comment-btn"><span class='glyphicon glyphicon-edit'></span></button>
+                                </div>
+                                <div class="comment-body">@commentModel.Content</div>
+                                <input type="hidden" class="load-children-comment" value="0" />
+                            </div>
+                            <form class="comment-form child-comment-form" action="/Post" method="post" style="display: none">
+                                <textarea class="comment-input" placeholder="Comment"></textarea>
+                                <input type="hidden" value=@commentModel.CommentId class="comment-id" />
+                                <input type="hidden" value=@Model.Post.PostId class="post-id" />
+                                <input type="hidden" value=@commentModel.CreatedDate class="comment-created-date" />
+                                <button type="submit" class="submit-comment-btn"><span class="glyphicon glyphicon-send"></span></button>
+                            </form>
+                            <div class="child-comment-list-container"></div>
                         </div>
-                        <form class="comment-form child-comment-form" action="/Post" method="post" style="display: none">
-                            <textarea class="comment-input" placeholder="Comment"></textarea>
-                            <input type="hidden" value=@commentModel.CommentId class="comment-id" />
-                            <input type="hidden" value=@Model.Post.PostId class="post-id" />
-                            <button type="submit" class="submit-comment-btn"><span class="glyphicon glyphicon-send"></span></button>
-                        </form>
-                        <div class="children-comment-container"></div>
-                    </div>
+                    }
                 }
+            </div>
+            @if (Model.CommentPaginationModel.HasNext)
+            {
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <button id="expand-master-comment-btn" class="expand-comment-btn"><span class="glyphicon glyphicon-option-horizontal"></span></button>
+                </div>
             }
         </div>
-        @if (Model.CommentPaginationModel.HasNext)
-        {
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                <button id="expand-master-comment-btn" class="expand-comment-btn"><span class="glyphicon glyphicon-option-horizontal"></span></button>
-            </div>
-        }
     </div>
 </div>

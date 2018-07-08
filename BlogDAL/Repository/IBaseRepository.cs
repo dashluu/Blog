@@ -18,9 +18,5 @@ namespace BlogDAL.Repository
             (IQueryable<T> queryable, bool isDesc,
             Expression<Func<T, TKey>> orderByExpression,
             int skip, int pageSize);
-        PaginationEntity<T> GetPaginationEntityWithPreservedFetch<TKey>
-            (IQueryable<T> queryable, bool isDesc,
-            Expression<Func<T, TKey>> orderByExpression,
-            int count, int skip, int pageSize);
     }
 }

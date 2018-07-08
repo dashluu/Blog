@@ -15,14 +15,16 @@ namespace Blog.Controllers
     public class CommentAPIController : ApiController
     {
         private ICommentService commentService;
+        private IModelDataMapper dataMapper;
 
-        public CommentAPIController(ICommentService commentService)
+        public CommentAPIController(ICommentService commentService, IModelDataMapper dataMapper)
         {
             this.commentService = commentService;
+            this.dataMapper = dataMapper;
         }
 
         [Route("api/Comments")]
-        public IHttpActionResult GetComments(int pageNumber, int pageSize)
+        public IHttpActionResult GetComments(int pageSize, int pageNumber = 1, string postId = null)
         {
             object jsonObject;
 
@@ -32,7 +34,8 @@ namespace Blog.Controllers
                 return Json(jsonObject);
             }
 
-            PaginationDTO<CommentDTO> commentPaginationDTO = commentService.GetCommentPaginationDTO(pageNumber, pageSize);
+            PaginationDTO<CommentDTO> commentPaginationDTO = commentService.GetCommentPaginationDTO(postId, pageNumber, pageSize);
+            PaginationModel<CommentModel> commentPaginationModel = dataMapper.MapCommentPaginationDTOToModel(commentPaginationDTO);
 
             if (commentPaginationDTO == null)
             {
@@ -43,7 +46,7 @@ namespace Blog.Controllers
                 jsonObject = new
                 {
                     status = 200,
-                    data = commentPaginationDTO
+                    data = commentPaginationModel
                 };
             }
 
@@ -55,13 +58,16 @@ namespace Blog.Controllers
         {
             object jsonObject;
 
-            if (string.IsNullOrWhiteSpace(commentId) || pageNumber <= 0 || pageSize <= 0)
+            if (string.IsNullOrWhiteSpace(commentId) 
+                || pageNumber <= 0 
+                || pageSize <= 0)
             {
                 jsonObject = new { status = 500 };
                 return Json(jsonObject);
             }
 
             PaginationDTO<CommentDTO> commentPaginationDTO = commentService.GetChildCommentPaginationDTO(commentId, pageNumber, pageSize);
+            PaginationModel<CommentModel> commentPaginationModel = dataMapper.MapCommentPaginationDTOToModel(commentPaginationDTO);
 
             if (commentPaginationDTO == null)
             {
@@ -72,7 +78,7 @@ namespace Blog.Controllers
                 jsonObject = new
                 {
                     status = 200,
-                    data = commentPaginationDTO
+                    data = commentPaginationModel
                 };
             }
 
@@ -81,18 +87,19 @@ namespace Blog.Controllers
 
         [HttpPost]
         [Route("api/Comments/Search")]
-        public IHttpActionResult SearchComment([FromBody]APISearchModel searchModel, int pageNumber, int pageSize)
+        public IHttpActionResult SearchComment([FromBody]APISearchModel searchModel, int pageNumber, int pageSize, string postId = null)
         {
             object jsonObject;
             string searchQuery = searchModel.Query;
 
-            if (string.IsNullOrWhiteSpace(searchQuery) || pageNumber <= 0 || pageSize <= 0)
+            if (pageNumber <= 0 || pageSize <= 0)
             {
                 jsonObject = new { status = 500 };
                 return Json(jsonObject);
             }
 
-            PaginationDTO<CommentDTO> commentPaginationDTO = commentService.SearchCommentWithPaginationDTO(searchQuery, pageNumber, pageSize);
+            PaginationDTO<CommentDTO> commentPaginationDTO = commentService.SearchCommentWithPaginationDTO(postId, searchQuery, pageNumber, pageSize);
+            PaginationModel<CommentModel> commentPaginationModel = dataMapper.MapCommentPaginationDTOToModel(commentPaginationDTO);
 
             if (commentPaginationDTO == null)
             {
@@ -103,33 +110,41 @@ namespace Blog.Controllers
                 jsonObject = new
                 {
                     status = 200,
-                    data = commentPaginationDTO
+                    data = commentPaginationModel
                 };
             }
 
             return Json(jsonObject);
         }
 
-        [HttpPost]
-        public IHttpActionResult RemoveComment(string commentId)
+        [HttpDelete]
+        [Route("api/Comments/{commentId}")]
+        public IHttpActionResult RemoveComment(string commentId, int pageNumber, int pageSize, string postId = null)
         {
             object jsonObject;
 
-            if (string.IsNullOrWhiteSpace(commentId))
+            if (string.IsNullOrWhiteSpace(commentId)
+                || pageNumber <= 0
+                || pageSize <= 0)
             {
                 jsonObject = new { status = 500 };
                 return Json(jsonObject);
             }
 
-            bool removeSuccessfully = commentService.RemoveCommentDTO(commentId);
+            PaginationDTO<CommentDTO> commentPaginationDTO = commentService.RemoveCommentDTOWithReloadedPagination(postId, commentId, pageNumber, pageSize);
+            PaginationModel<CommentModel> commentPaginationModel = dataMapper.MapCommentPaginationDTOToModel(commentPaginationDTO);
 
-            if (!removeSuccessfully)
+            if (commentPaginationDTO == null)
             {
                 jsonObject = new { status = 500 };
             }
             else
             {
-                jsonObject = new { status = 200 };
+                jsonObject = new
+                {
+                    status = 200,
+                    data = commentPaginationModel
+                };
             }
 
             return Json(jsonObject);

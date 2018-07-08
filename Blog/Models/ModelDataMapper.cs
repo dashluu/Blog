@@ -20,7 +20,7 @@ namespace Blog.Models
 
             if (nday > 7)
             {
-                internalTime = " on " + FormatTime(updateTime);
+                internalTime = " on " + FormatPostDate(updateTime);
                 return internalTime;
             }
 
@@ -47,9 +47,9 @@ namespace Blog.Models
             return internalTime;
         }
 
-        private string FormatTime(DateTime time)
+        private string FormatPostDate(DateTime date)
         {
-            return time.ToString("dd MMMM");
+            return date.ToString("dd MMMM");
         }
 
         public List<CategoryModel> MapCategoryDTOsToModels(List<CategoryDTO> categoryDTOs)
@@ -134,6 +134,18 @@ namespace Blog.Models
             return commentModels;
         }
 
+        private string FormatCommentTime(DateTime time)
+        {
+            string timeString = time.ToString("MM/dd/yyyy-HH:mm:ss");
+            return timeString;
+        }
+
+        public DateTime ParseCommentTime(string timeString)
+        {
+            DateTime time = DateTime.ParseExact(timeString, "MM/dd/yyyy-HH:mm:ss", null);
+            return time;
+        }
+
         public CommentModel MapCommentDTOToModel(CommentDTO commentDTO)
         {
             if (commentDTO == null)
@@ -145,7 +157,8 @@ namespace Blog.Models
             {
                 CommentId = commentDTO.CommentId,
                 Username = commentDTO.Username,
-                Content = commentDTO.Content
+                Content = commentDTO.Content,
+                CreatedDate = FormatCommentTime(commentDTO.CreatedDate)
             };
 
             return commentModel;
@@ -219,7 +232,7 @@ namespace Blog.Models
                 Title = postCardDTO.Title,
                 ShortDescription = postCardDTO.ShortDescription,
                 ThumbnailImageSrc = postCardDTO.ThumbnailImageSrc,
-                CreatedDate = FormatTime(postCardDTO.CreatedDate),
+                CreatedDate = FormatPostDate(postCardDTO.CreatedDate),
                 UpdatedDate = ComputeUpdateTime(postCardDTO.UpdatedDate),
                 PostCategory = MapCategoryDTOToModel(categoryDTO)
             };
@@ -257,6 +270,8 @@ namespace Blog.Models
                 Models = MapPostCardDTOsToModels(postCardPaginationDTO.DTOs),
                 HasNext = postCardPaginationDTO.HasNext,
                 HasPrevious = postCardPaginationDTO.HasPrevious,
+                PageNumber = postCardPaginationDTO.PageNumber,
+                PageSize = postCardPaginationDTO.PageSize,
                 Pages = postCardPaginationDTO.Pages
             };
 
@@ -281,7 +296,7 @@ namespace Blog.Models
                 ShortDescription = postDTO.ShortDescription,
                 ThumbnailImageSrc = postDTO.ThumbnailImageSrc,
                 Content = postDTO.Content,
-                CreatedDate = FormatTime(postDTO.CreatedDate),
+                CreatedDate = FormatPostDate(postDTO.CreatedDate),
                 UpdatedDate = ComputeUpdateTime(postDTO.UpdatedDate),
                 CommentModels = commentModels,
                 CommentCount = postDTO.CommentCount
@@ -322,7 +337,11 @@ namespace Blog.Models
             PaginationModel<CommentModel> commentPaginationModel = new PaginationModel<CommentModel>()
             {
                 Models = commentModels,
-                HasNext = commentPaginationDTO.HasNext
+                HasNext = commentPaginationDTO.HasNext,
+                HasPrevious = commentPaginationDTO.HasPrevious,
+                PageNumber = commentPaginationDTO.PageNumber,
+                PageSize = commentPaginationDTO.PageSize,
+                Pages = commentPaginationDTO.Pages
             };
 
             return commentPaginationModel;

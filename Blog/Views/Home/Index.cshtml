@@ -1,6 +1,4 @@
 ﻿@using Blog.Models
-@using System.Globalization
-@using System.Threading
 @model List<PaginationModel<PostCardModel>>
 
 @section styles {
@@ -27,11 +25,6 @@
     <div class="row">
         @foreach (PaginationModel<PostCardModel> postCardPaginationModel in Model)
         {
-            string category = postCardPaginationModel.Models[0].PostCategory.Name;
-            CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
-            TextInfo textInfo = cultureInfo.TextInfo;
-
-            <p class="post-category">@textInfo.ToTitleCase(category)</p>
             Html.RenderPartial("~/Views/Home/_CategoryPartial.cshtml", postCardPaginationModel);
         }
     </div>

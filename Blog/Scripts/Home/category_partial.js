@@ -1,5 +1,30 @@
-﻿$(document).on("click", ".post-img", function () {
-    $(this).parent().siblings().eq(0).children("form").eq(0).submit();
+﻿function mapObjectToPostCardModel(object) {
+    var postCardModel = {
+        postId: object["PostId"],
+        title: object["Title"],
+        createdDate: object["CreatedDate"],
+        updatedDate: object["UpdatedDate"],
+        shortDescription: object["ShortDescription"],
+        thumbnailImageSrc: object["ThumbnailImageSrc"]
+    };
+
+    return postCardModel;
+}
+
+function mapObjectToPostCardPaginationModel(object) {
+    var postCardPaginationModel = {
+        postCardModels: object["Models"],
+        hasNext: object["HasNext"],
+        hasPrevious: object["HasPrevious"],
+        pageNumber: object["PageNumber"],
+        pages: object["Pages"]
+    }
+
+    return postCardPaginationModel;
+}
+
+$(document).on("click", ".post-img", function () {
+    $(this).parent().siblings().first().children("form").first().submit();
 });
 
 $(document).on("click", ".next-page-btn", function () {
@@ -11,41 +36,53 @@ $(document).on("click", ".previous-page-btn", function () {
 });
 
 function navigatePage(button, nextPage) {
-    var pageIndicator = button.siblings(".page-indicator").eq(0);
-    var pageNumberInput = pageIndicator.children(".page-number").eq(0);
-    var pageNumber = pageNumberInput.html();
-    var pageCountInput = pageIndicator.children(".page-count").eq(0);
-    var categoryInput = button.siblings(".post-category");
-    var category = categoryInput.val();
+    var pageIndicator = button.siblings(".page-indicator").first();
+    var pageCountInput = pageIndicator.children(".page-count").first();
+
+    var pageNumberInput = pageIndicator.children(".page-number").first();
+    var pageNumber = parseInt(pageNumberInput.html());
+
+    var categoryInput = button.parent().siblings(".post-category").first();
+    var category = categoryInput.html().toLowerCase();
+
+    var pageSize = button.siblings(".post-page-size").first().val();
 
     var row = button.parent().parent();
 
-    $.post("/Home/CategoryPartial", { pageNumber: pageNumber, nextPage: nextPage, category: category }, function (result) {    
+    if (nextPage) {
+        pageNumber++;
+    }
+    else {
+        pageNumber--;
+    }
+
+    $.post("/Home/CategoryPartial", { pageNumber: pageNumber, pageSize: pageSize, category: category }, function (result) {    
         if (result.status === 200) {
-            if (nextPage) {
-                pageNumber++;
-            }
-            else {
-                pageNumber--;
-            }
-
-            pageNumberInput.html(pageNumber);
-            pageCountInput.html(result.pages);
+            var postCardPaginationObject = result.data;
+            var postCardPaginationModel = mapObjectToPostCardPaginationModel(postCardPaginationObject);
             row.children(".post-card").remove();
-            var postCards = result.data;
-            var postCardsCount = postCards.length;
+
+            if (postCardPaginationModel.pages == 0) {
+                row.parent().hide();
+                return;
+            }
+
+            pageNumberInput.html(postCardPaginationModel.pageNumber);
+            pageCountInput.html(postCardPaginationModel.pages);
+            var postCardModels = postCardPaginationModel.postCardModels;
+            var postCardModelCount = postCardModels.length;
 
             if (nextPage) {
-                if (!result.hasNext) {
+                if (!postCardPaginationModel.hasNext) {
                     button.hide();
                 }
                 else {
                     button.show();
                 }
 
-                var previousButton = button.siblings(".previous-page-btn");
+                var previousButton = button.siblings(".previous-page-btn").first();
 
-                if (!result.hasPrevious) {
+                if (!postCardPaginationModel.hasPrevious) {
                     previousButton.hide();
                 }
                 else {
@@ -53,16 +90,16 @@ function navigatePage(button, nextPage) {
                 }
             }
             else {
-                var nextButton = button.siblings(".next-page-btn");
+                var nextButton = button.siblings(".next-page-btn").first();
 
-                if (!result.hasNext) {
+                if (!postCardPaginationModel.hasNext) {
                     nextButton.hide();
                 }
                 else {
                     nextButton.show();
                 }
 
-                if (!result.hasPrevious) {
+                if (!postCardPaginationModel.hasPrevious) {
                     button.hide();
                 }
                 else {
@@ -70,30 +107,32 @@ function navigatePage(button, nextPage) {
                 }
             }
 
-            for (var i = 0; i < postCardsCount; i++) {
-                var postCard = postCards[i];
-                var postCardSelector = createPostCardSelector(postCard);
-                $(postCardSelector).appendTo(row);
+            for (var i = 0; i < postCardModelCount; i++) {
+                var postCardModel = mapObjectToPostCardModel(postCardModels[i]);
+                var postCardSelector = createPostCardSelector(postCardModel);
+                row.append(postCardSelector);
             }
         }
     });
 }
 
-function createPostCardSelector(postCard) {
-    return "<div class='post-card container col-xs-12 col-sm-12 col-md-12 col-lg-6'>" +
+function createPostCardSelector(postCardModel) {
+    var postCardSelector = "<div class='post-card container col-xs-12 col-sm-12 col-md-12 col-lg-6'>" +
         "<div class='row'>" +
         "<div class='col-xs-12 col-sm-3 col-md-3 col-lg-4 post-col-1'>" +
-        "<img class='post-img' src='" + postCard.ThumbnailImageSrc + "'/>" +
+        "<img class='post-img' src='" + postCardModel.thumbnailImageSrc + "'/>" +
         "</div>" +
         "<div class='col-xs-12 col-sm-9 col-md-9 col-lg-8 post-col-2'>" +
-        "<p class='post-title'>" + postCard.Title + "</p>" +
-        "<p class='post-date'>On <strong>" + postCard.CreatedDate + "</strong></p>" +
-        "<p class='post-date'>Updated " + postCard.UpdatedDate + "</p>" +
-        "<p class='post-summary'>" + postCard.ShortDescription + "</p>" +
+        "<div class='post-title'>" + postCardModel.title + "</div>" +
+        "<div class='post-date'>On <strong>" + postCardModel.createdDate + "</strong></div>" +
+        "<div class='post-date'>Updated " + postCardModel.updatedDate + "</div>" +
+        "<div class='post-summary'>" + postCardModel.shortDescription + "</div>" +
         "<form action='/Home/CategoryPost' method='post'>" +
-        "<input type='hidden' value='" + postCard.PostId + "' name='postId' />" +
+        "<input type='hidden' value='" + postCardModel.postId + "' name='postId' />" +
         "</form>" +
         "</div>" +
         "</div>" +
         "</div>";
+
+    return postCardSelector;
 }

@@ -10,7 +10,9 @@ namespace BlogDAL.Repository
     {
         PostEntity GetPostEntity(string id);
         PostEntityWithPaginatedComments GetPostEntityWithPaginatedComments(string id, int pageSize);
-        PaginationEntity<PostEntity> GetPostPaginationEntityWithCategory(string category, int pageNumber, int pageSize);
+        PaginationEntity<PostEntity> GetPostPaginationEntity(string category, int pageNumber, int pageSize);
         List<PaginationEntity<PostEntity>> GetPostPaginationEntities(int pageSize);
+
+        PaginationEntity<PostEntity> RemovePostEntityWithReloadedPagination(string category, string postId, int pageNumber, int pageSize);
     }
 }

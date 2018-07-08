@@ -66,14 +66,14 @@ namespace Blog.Controllers
                 //Do something with this exception.
             }
 
-            PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.GetPostCardPaginationDTOWithCategory(category, pageNumber: 1, pageSize: pagination.PostPageSize);
+            PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.GetPostCardPaginationDTO(category, pageNumber: 1, pageSize: pagination.PostPageSize);
             PaginationModel<PostCardModel> postCardPaginationModel = dataMapper.MapPostCardPaginationDTOToModel(postCardPaginationDTO);
 
             return PartialView("_CategoryPartial", postCardPaginationModel);
         }
 
         [HttpPost]
-        public ActionResult CategoryPartial(string category, int pageNumber, bool nextPage)
+        public ActionResult CategoryPartial(string category, int pageNumber, int pageSize)
         {
             object jsonObject;
 
@@ -83,37 +83,21 @@ namespace Blog.Controllers
                 return Json(jsonObject);
             }
 
-            if (nextPage)
+            PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.GetPostCardPaginationDTO(category, pageNumber, pageSize);
+            PaginationModel<PostCardModel> postCardPaginationModel = dataMapper.MapPostCardPaginationDTOToModel(postCardPaginationDTO);
+
+            if (postCardPaginationModel == null)
             {
-                pageNumber++;
+                jsonObject = new { status = 500 };
             }
             else
             {
-                pageNumber--;
+                jsonObject = new
+                {
+                    status = 200,
+                    data = postCardPaginationModel
+                };
             }
-
-            PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.GetPostCardPaginationDTOWithCategory(category, pageNumber, pageSize: pagination.PostPageSize);
-
-            if (postCardPaginationDTO == null)
-            {
-                jsonObject = new { status = 500 };
-                return Json(jsonObject);
-            }
-
-            List<PostCardDTO> postCardDTOs = postCardPaginationDTO.DTOs;
-            List<PostCardModel> postCardModels = dataMapper.MapPostCardDTOsToModels(postCardDTOs);
-            bool hasNext = postCardPaginationDTO.HasNext;
-            bool hasPrevious = postCardPaginationDTO.HasPrevious;
-            int pages = postCardPaginationDTO.Pages;
-
-            jsonObject = new
-            {
-                status = 200,
-                data = postCardModels,
-                hasNext,
-                hasPrevious,
-                pages
-            };
 
             return Json(jsonObject);
         }

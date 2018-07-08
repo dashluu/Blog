@@ -20,6 +20,10 @@
     overflow-wrap: break-word;
 }
 
+.post-title, .post-summary, .post-author, .post-date {
+    margin-bottom: 10px;
+}
+
 .post-category {
     font-weight: 800;
     font-size: 35px;
@@ -27,7 +31,6 @@
 }
 
 .post-title {
-    margin-top: 0px;
     font-weight: 800;
     font-size: 25px;
 }

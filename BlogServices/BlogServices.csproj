@@ -13,6 +13,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Z.EntityFramework.Plus.EF6" Version="1.8.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\BlogDAL\BlogDAL.csproj" />
   </ItemGroup>
 

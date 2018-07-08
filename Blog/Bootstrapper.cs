@@ -27,7 +27,7 @@ namespace Blog
 
             // e.g. container.RegisterType<ITestService, TestService>();
 
-            int homePostPageSize = 3;
+            int homePostPageSize = 1;
             int postPageSize = 2;
             int commentPageSize = 1;
             int childCommentPageSize = 1;

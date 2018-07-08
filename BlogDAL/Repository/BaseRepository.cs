@@ -59,6 +59,9 @@ namespace BlogDAL.Repository
             try
             {
                 List<T> entities = null;
+                int count = queryable.Count();
+                int pages = (int)(Math.Ceiling((double)count / pageSize));
+                int pageNumber = (skip / pageSize) + 1;
 
                 if (isDesc)
                 {
@@ -69,21 +72,43 @@ namespace BlogDAL.Repository
                     queryable = queryable.OrderBy(orderByExpression);
                 }
 
+                if (skip >= count)
+                {
+                    skip = (pages - 1) * pageSize;
+                }
+
+                if (skip < 0)
+                {
+                    skip = 0;
+                }
+
+                if (pageNumber > pages)
+                {
+                    pageNumber = pages;
+                }
+
+                if (pageNumber <= 0)
+                {
+                    pageNumber = 1;
+                }
+
                 entities = queryable.Skip(skip).Take(pageSize).ToList();
-                int count = queryable.Count();
 
                 PaginationEntity<T> paginationEntity = new PaginationEntity<T>()
                 {
                     Entities = entities,
-                    Pages = (int)(Math.Ceiling((double)count / pageSize)),
+                    Pages = pages,
+                    PageNumber = pageNumber,
+                    PageSize = pageSize,
                     HasNext = (skip + pageSize) < count,
                     HasPrevious = skip > 0
                 };
 
                 return paginationEntity;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                System.Diagnostics.Debug.WriteLine(e);
                 return null;
             }
         }
@@ -119,42 +144,6 @@ namespace BlogDAL.Repository
             catch (Exception)
             {
                 return false;
-            }
-        }
-
-        public PaginationEntity<T> GetPaginationEntityWithPreservedFetch<TKey>
-            (IQueryable<T> queryable, bool isDesc, 
-            Expression<Func<T, TKey>> orderByExpression,
-            int count, int skip, int pageSize)
-        {
-            try
-            {
-                List<T> entities = null;
-                int updatedCount = queryable.Count();
-                int updatedSkip = skip + (updatedCount - count);
-
-                if (isDesc)
-                {
-                    queryable = queryable.OrderByDescending(orderByExpression);
-                }
-                else
-                {
-                    queryable = queryable.OrderBy(orderByExpression);
-                }
-
-                entities = queryable.Skip(updatedSkip).Take(pageSize).ToList();
-
-                PaginationEntity<T> paginationEntity = new PaginationEntity<T>()
-                {
-                    Entities = entities,
-                    HasNext = (updatedSkip + pageSize) < updatedCount
-                };
-
-                return paginationEntity;
-            }
-            catch (Exception)
-            {
-                return null;
             }
         }
     }

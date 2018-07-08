@@ -8,6 +8,8 @@ namespace Blog.Models
 {
     public interface IModelDataMapper
     {
+        DateTime ParseCommentTime(string timeString);
+
         List<CommentModel> MapCommentDTOsToModels(List<CommentDTO> commentDTOs);
 
         PostModel MapPostDTOToModel(PostDTO postDTO);

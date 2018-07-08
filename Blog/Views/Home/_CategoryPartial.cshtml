@@ -1,7 +1,9 @@
 ﻿@using Blog.Models
+@using System.Globalization
+@using System.Threading
 @model PaginationModel<PostCardModel>
 
-@{ 
+@{
     if (Model == null || Model.Models == null || Model.Pages == 0)
     {
         return;
@@ -13,6 +15,12 @@
 <div class="container">
     <div class="row">
 
+        @{
+            CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
+            TextInfo textInfo = cultureInfo.TextInfo;
+        }
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 post-category">@textInfo.ToTitleCase(category)</div>
+
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             @{
                 bool hasNext = Model.HasNext;
@@ -21,11 +29,11 @@
             <button class="page-nav-btn previous-page-btn" style="display:none">
                 <span class="glyphicon glyphicon-chevron-left"></span>
             </button>
-            <span class="page-indicator"><strong class="page-number">1</strong> of <strong class="page-count">@Model.Pages</strong></span>
+            <span class="page-indicator"><strong class="page-number">@Model.PageNumber</strong> of <strong class="page-count">@Model.Pages</strong></span>
             <button class="page-nav-btn next-page-btn" style=@displayNext>
                 <span class="glyphicon glyphicon-chevron-right"></span>
             </button>
-            <input type="hidden" class="post-category" value=@category />
+            <input type="hidden" class="post-page-size" value=@Model.PageSize />
         </div>
 
         @foreach (PostCardModel postCard in Model.Models)
@@ -36,10 +44,10 @@
                         <img class="post-img" src=@postCard.ThumbnailImageSrc />
                     </div>
                     <div class="col-xs-12 col-sm-9 col-md-9 col-lg-8 post-col-2">
-                        <p class="post-title">@postCard.Title</p>
-                        <p class="post-date">On <strong>@postCard.CreatedDate</strong></p>
-                        <p class="post-date">Updated @postCard.UpdatedDate</p>
-                        <p class="post-summary">@postCard.ShortDescription</p>
+                        <div class="post-title">@postCard.Title</div>
+                        <div class="post-date">On <strong>@postCard.CreatedDate</strong></div>
+                        <div class="post-date">Updated @postCard.UpdatedDate</div>
+                        <div class="post-summary">@postCard.ShortDescription</div>
                         @using (Html.BeginForm("CategoryPost", "Home"))
                         {
                             <input type="hidden" value=@postCard.PostId name="postId" />

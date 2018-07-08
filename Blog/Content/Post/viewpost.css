@@ -62,6 +62,10 @@
     margin-top: 20px;
 }
 
+.master-comment-list-container {
+    padding-left: 0;
+}
+
 .comment-form > * {
     display: block;
 }
@@ -134,7 +138,7 @@
     padding-top: 3px;
     padding-bottom: 3px;
     width: 30px;
-    margin-left: 8px;
+    margin-left: 5px;
 }
 
 .show-child-comment-btn:hover, .add-child-comment-btn:hover {
@@ -144,7 +148,7 @@
     border-radius: 3px;
 }
 
-.children-comment-container {
+.child-comment-list-container {
     padding-left: 50px;
     margin-top: 20px;
 }
