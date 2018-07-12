@@ -11,16 +11,20 @@ namespace BlogServices.Services
     {
         private ICategoryRepository categoryRepository;
         private IServiceDataMapper dataMapper;
+        private IHashService hashService;
 
-        public CategoryService(ICategoryRepository categoryRepository, IServiceDataMapper dataMapper)
+        public CategoryService(ICategoryRepository categoryRepository, IServiceDataMapper dataMapper, IHashService hashService)
         {
             this.categoryRepository = categoryRepository;
             this.dataMapper = dataMapper;
+            this.hashService = hashService;
         }
 
-        public bool AddEditedCategoryDTO(EditedCategoryDTO editedCategoryDTO)
+        public bool AddCategory(CategoryDTO categoryDTO)
         {
-            CategoryEntity categoryEntity = dataMapper.MapEditedCategoryDTOToEntity(editedCategoryDTO);
+            categoryDTO.CategoryId = hashService.GenerateId();
+
+            CategoryEntity categoryEntity = dataMapper.MapCategoryDTOToEntity(categoryDTO);
             bool addSuccessfully = categoryRepository.Add(categoryEntity);
 
             return addSuccessfully;
@@ -29,26 +33,14 @@ namespace BlogServices.Services
         public List<CategoryDTO> GetCategoryDTOs()
         {
             List<CategoryEntity> categoryEntities = categoryRepository.GetEntities();
-
-            if (categoryEntities == null)
-            {
-                return null;
-            }
-
-            List<CategoryDTO> categoryDTOs = new List<CategoryDTO>();
-
-            foreach (CategoryEntity categoryEntity in categoryEntities)
-            {
-                CategoryDTO categoryDTO = dataMapper.MapCategoryEntityToDTO(categoryEntity);
-                categoryDTOs.Add(categoryDTO);
-            }
+            List<CategoryDTO> categoryDTOs = dataMapper.MapCategoryEntitiesToDTOs(categoryEntities);
 
             return categoryDTOs;
         }
 
-        public bool UpdateEditedCategoryDTO(EditedCategoryDTO editedCategoryDTO)
+        public bool UpdateCategory(CategoryDTO categoryDTO)
         {
-            CategoryEntity categoryEntity = dataMapper.MapEditedCategoryDTOToEntity(editedCategoryDTO);
+            CategoryEntity categoryEntity = dataMapper.MapCategoryDTOToEntity(categoryDTO);
             bool updateSuccessfully = categoryRepository.Update(categoryEntity);
 
             return updateSuccessfully;

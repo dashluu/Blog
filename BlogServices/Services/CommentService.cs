@@ -11,36 +11,42 @@ namespace BlogServices.Services
     {
         private ICommentRepository commentRepository;
         private IServiceDataMapper dataMapper;
+        private IHashService hashService;
 
-        public CommentService(ICommentRepository commentRepository, IServiceDataMapper dataMapper)
+        public CommentService(ICommentRepository commentRepository, IServiceDataMapper dataMapper, IHashService hashService)
         {
             this.commentRepository = commentRepository;
             this.dataMapper = dataMapper;
+            this.hashService = hashService;
         }
 
-        public CommentDTO AddCommentDTO(string postId, string commentContent, string username)
+        public CommentDTO AddComment(string postId, string commentContent, string username)
         {
             CommentEntity commentEntity = new CommentEntity()
             {
+                CommentId = hashService.GenerateId(),
+                CreatedDate = DateTime.Now,
                 Content = commentContent,
                 Username = username
             };
 
-            commentEntity = commentRepository.AddCommentEntity(postId, commentEntity);
+            commentEntity = commentRepository.AddComment(postId, commentEntity);
             CommentDTO commentDTO = dataMapper.MapCommentEntityToDTO(commentEntity);
 
             return commentDTO;
         }
 
-        public CommentDTO AddChildCommentDTO(string postId, string commentId, string commentContent, string username)
+        public CommentDTO AddChildComment(string postId, string commentId, string commentContent, string username)
         {
             CommentEntity childCommentEntity = new CommentEntity()
             {
+                CommentId = hashService.GenerateId(),
+                CreatedDate = DateTime.Now,
                 Content = commentContent,
                 Username = username
             };
 
-            childCommentEntity = commentRepository.AddChildCommentEntity(postId, commentId, childCommentEntity);
+            childCommentEntity = commentRepository.AddChildComment(postId, commentId, childCommentEntity);
             CommentDTO childCommentDTO = dataMapper.MapCommentEntityToDTO(childCommentEntity);
 
             return childCommentDTO;

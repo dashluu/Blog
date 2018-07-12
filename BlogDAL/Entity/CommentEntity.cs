@@ -14,7 +14,10 @@ namespace BlogDAL.Entity
         public string Content { get; set; }
         public DateTime CreatedDate { get; set; }
         public List<CommentEntity> ChildCommentEntities { get; set; }
+        [ForeignKey("PostId")]
         public PostEntity Post { get; set; }
         public CommentEntity RootComment { get; set; }
+
+        public string PostId { get; set; }
     }
 }

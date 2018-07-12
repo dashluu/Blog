@@ -34,6 +34,7 @@ namespace Blog
 
             container.RegisterType<Pagination>(new Microsoft.Practices.Unity.InjectionConstructor(homePostPageSize, postPageSize, commentPageSize, childCommentPageSize));
 
+            container.RegisterType<IHashService, HashService>();
             container.RegisterType<IModelDataMapper, ModelDataMapper>();
             container.RegisterType<IServiceDataMapper, ServiceDataMapper>();
 

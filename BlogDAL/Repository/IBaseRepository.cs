@@ -9,7 +9,6 @@ namespace BlogDAL.Repository
 {
     public interface IBaseRepository<T>
     {
-        string GenerateId();
         bool Add(T entity);
         bool Remove(T entity);
         bool Update(T entity);
@@ -17,6 +16,6 @@ namespace BlogDAL.Repository
         PaginationEntity<T> GetPaginationEntity<TKey>
             (IQueryable<T> queryable, bool isDesc,
             Expression<Func<T, TKey>> orderByExpression,
-            int skip, int pageSize);
+            int pageNumber, int pageSize);
     }
 }

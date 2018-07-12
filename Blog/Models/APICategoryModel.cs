@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using System.Web;
 
-namespace BlogServices.DTO
+namespace Blog.Models
 {
-    public class EditedCategoryDTO
+    public class APICategoryModel
     {
         public string CategoryId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public int PostCount { get; set; }
     }
 }

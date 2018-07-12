@@ -19,11 +19,6 @@ namespace BlogDAL.Repository
             Context = new C();
         }
 
-        public string GenerateId()
-        {
-            return Guid.NewGuid().ToString();
-        }
-
         public virtual bool Add(T entity)
         {
             try
@@ -54,14 +49,13 @@ namespace BlogDAL.Repository
         public PaginationEntity<T> GetPaginationEntity<TKey>
             (IQueryable<T> queryable, bool isDesc,
             Expression<Func<T, TKey>> orderByExpression,
-            int skip, int pageSize)
+            int pageNumber, int pageSize)
         {
             try
             {
                 List<T> entities = null;
                 int count = queryable.Count();
                 int pages = (int)(Math.Ceiling((double)count / pageSize));
-                int pageNumber = (skip / pageSize) + 1;
 
                 if (isDesc)
                 {
@@ -70,16 +64,6 @@ namespace BlogDAL.Repository
                 else
                 {
                     queryable = queryable.OrderBy(orderByExpression);
-                }
-
-                if (skip >= count)
-                {
-                    skip = (pages - 1) * pageSize;
-                }
-
-                if (skip < 0)
-                {
-                    skip = 0;
                 }
 
                 if (pageNumber > pages)
@@ -91,6 +75,8 @@ namespace BlogDAL.Repository
                 {
                     pageNumber = 1;
                 }
+
+                int skip = (pageNumber - 1) * pageSize;
 
                 entities = queryable.Skip(skip).Take(pageSize).ToList();
 

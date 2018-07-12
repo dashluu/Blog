@@ -10,17 +10,26 @@ namespace BlogServices.Services
     {
         private IPostRepository postRepository;
         private IServiceDataMapper dataMapper;
+        private IHashService hashService;
 
-        public PostService(IPostRepository postRepository, IServiceDataMapper dataMapper)
+        public PostService(IPostRepository postRepository, IServiceDataMapper dataMapper, IHashService hashService)
         {
             this.postRepository = postRepository;
             this.dataMapper = dataMapper;
+            this.hashService = hashService;
         }
 
-        public bool AddEditedPostDTO(EditedPostDTO editedPostDTO)
+        public bool AddPost(PostDTO postDTO)
         {
-            PostEntity postEntity = dataMapper.MapEditedPostDTOToEntity(editedPostDTO);
+            postDTO.PostId = hashService.GenerateId();
+            postDTO.CreatedDate = DateTime.Now;
+            postDTO.UpdatedDate = DateTime.Now;
+
+            PostEntity postEntity = dataMapper.MapPostDTOToEntity(postDTO);
+            postEntity.CategoryId = postEntity.PostCategory.CategoryId;
+
             bool addSuccessfully = postRepository.Add(postEntity);
+
             return addSuccessfully;
         }
 
@@ -54,6 +63,25 @@ namespace BlogServices.Services
             PaginationDTO<PostCardDTO> postCardPaginationDTO = dataMapper.MapPostCardPaginationEntityToDTO(postPaginationEntity);
 
             return postCardPaginationDTO;
+        }
+
+        public PostDTO GetPostDTO(string id)
+        {
+            PostEntity postEntity = postRepository.GetPostEntity(id);
+            PostDTO postDTO = dataMapper.MapPostEntityToDTO(postEntity);
+
+            return postDTO;
+        }
+
+        public bool UpdatePost(PostDTO postDTO)
+        {
+            PostEntity postEntity = dataMapper.MapPostDTOToEntity(postDTO);
+            postEntity.CategoryId = postEntity.PostCategory.CategoryId;
+            postEntity.UpdatedDate = DateTime.Now;
+
+            bool updateSuccessfully = postRepository.Update(postEntity);
+
+            return updateSuccessfully;
         }
     }
 }

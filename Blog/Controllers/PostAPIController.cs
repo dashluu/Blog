@@ -15,9 +15,9 @@ namespace Blog.Controllers
     public class PostAPIController : ApiController
     {
         private IPostService postService;
-        private IModelDataMapper dataMapper;
+        private APIIModelDataMapper dataMapper;
 
-        public PostAPIController(IPostService postService, IModelDataMapper dataMapper)
+        public PostAPIController(IPostService postService, APIIModelDataMapper dataMapper)
         {
             this.postService = postService;
             this.dataMapper = dataMapper;
@@ -35,7 +35,7 @@ namespace Blog.Controllers
             }
 
             PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.GetPostCardPaginationDTO(category, pageNumber, pageSize);
-            PaginationModel<PostCardModel> postCardPaginationModel = dataMapper.MapPostCardPaginationDTOToModel(postCardPaginationDTO);
+            APIPaginationModel<APIPostCardModel> postCardPaginationModel = dataMapper.MapPostCardPaginationDTOToModel(postCardPaginationDTO);
 
             if (postCardPaginationDTO == null)
             {
@@ -47,6 +47,36 @@ namespace Blog.Controllers
                 {
                     status = 200,
                     data = postCardPaginationModel
+                };
+            }
+
+            return Json(jsonObject);
+        }
+
+        [Route("api/Posts/{postId}")]
+        public IHttpActionResult GetPostCards(string postId)
+        {
+            object jsonObject;
+
+            if (string.IsNullOrWhiteSpace(postId))
+            {
+                jsonObject = new { status = 500 };
+                return Json(jsonObject);
+            }
+
+            PostDTO postDTO = postService.GetPostDTO(postId);
+            APIEditedPostModel editedPostModel = dataMapper.MapEditedPostDTOToModel(postDTO);
+
+            if (editedPostModel == null)
+            {
+                jsonObject = new { status = 500 };
+            }
+            else
+            {
+                jsonObject = new
+                {
+                    status = 200,
+                    data = editedPostModel
                 };
             }
 
@@ -68,7 +98,7 @@ namespace Blog.Controllers
             }
 
             PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.RemovePostDTOWithReloadedPagination(category, postId, pageNumber, pageSize);
-            PaginationModel<PostCardModel> postCardPaginationModel = dataMapper.MapPostCardPaginationDTOToModel(postCardPaginationDTO);
+            APIPaginationModel<APIPostCardModel> postCardPaginationModel = dataMapper.MapPostCardPaginationDTOToModel(postCardPaginationDTO);
 
             if (postCardPaginationDTO == null)
             {
@@ -81,6 +111,62 @@ namespace Blog.Controllers
                     status = 200,
                     data = postCardPaginationModel
                 };
+            }
+
+            return Json(jsonObject);
+        }
+
+        [HttpPost]
+        [Route("api/Posts")]
+        public IHttpActionResult AddPost([FromBody]APIEditedPostModel editedPostModel)
+        {
+            object jsonObject;
+
+            if (!ModelState.IsValid)
+            {
+                jsonObject = new { status = 500 };
+                return Json(jsonObject);
+            }
+
+            PostDTO postDTO = dataMapper.MapEditedPostModelToDTO(editedPostModel);
+            bool addSuccessfully = postService.AddPost(postDTO);
+
+            if (!addSuccessfully)
+            {
+                jsonObject = new { status = 500 };
+            }
+            else
+            {
+                jsonObject = new { status = 200 };
+            }
+
+            return Json(jsonObject);
+        }
+
+        [HttpPost]
+        [Route("api/Posts/{postId}")]
+        public IHttpActionResult UpdatePost(string postId, [FromBody]APIEditedPostModel editedPostModel)
+        {
+            object jsonObject;
+
+            if (string.IsNullOrWhiteSpace(postId) || !ModelState.IsValid)
+            {
+                jsonObject = new { status = 500 };
+                return Json(jsonObject);
+            }
+
+            PostDTO PostDTO = dataMapper.MapEditedPostModelToDTO(editedPostModel);
+            PostDTO.PostId = postId;
+
+            bool updateSuccessfully = postService.UpdatePost(PostDTO);
+
+            if (!updateSuccessfully)
+            {
+                jsonObject = new { status = 500 };
+            }
+            else
+            {
+                jsonObject = new { status = 200 };
             }
 
             return Json(jsonObject);

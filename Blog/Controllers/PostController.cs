@@ -12,15 +12,13 @@ namespace Blog.Controllers
     {
         private IPostService postService;
         private ICommentService commentService;
-        private ICategoryService categoryService;
         private IModelDataMapper dataMapper;
         private Pagination pagination;
 
-        public PostController(IPostService postService, ICommentService commentService, ICategoryService categoryService, IModelDataMapper dataMapper, Pagination pagination)
+        public PostController(IPostService postService, ICommentService commentService, IModelDataMapper dataMapper, Pagination pagination)
         {
             this.postService = postService;
             this.commentService = commentService;
-            this.categoryService = categoryService;
             this.dataMapper = dataMapper;
             this.pagination = pagination;
         }
@@ -51,7 +49,7 @@ namespace Blog.Controllers
             }
 
             string username = "whatever";
-            CommentDTO commentDTO = commentService.AddCommentDTO(postId, comment, username);
+            CommentDTO commentDTO = commentService.AddComment(postId, comment, username);
             CommentModel commentModel = dataMapper.MapCommentDTOToModel(commentDTO);
 
             if (commentModel == null)
@@ -82,7 +80,7 @@ namespace Blog.Controllers
             }
 
             string username = "whatever";
-            CommentDTO childCommentDTO = commentService.AddChildCommentDTO(postId, commentId, comment, username);
+            CommentDTO childCommentDTO = commentService.AddChildComment(postId, commentId, comment, username);
             CommentModel childCommentModel = dataMapper.MapCommentDTOToModel(childCommentDTO);
 
             if (childCommentModel == null)
@@ -156,92 +154,6 @@ namespace Blog.Controllers
                 {
                     status = 200,
                     data = childCommentModels
-                };
-            }
-
-            return Json(jsonObject);
-        }
-
-        private List<CategoryModel> GetCategoryModelsHelper()
-        {
-            List<CategoryDTO> categoryDTOs = categoryService.GetCategoryDTOs();
-            List<CategoryModel> categoryModels = dataMapper.MapCategoryDTOsToModels(categoryDTOs);
-
-            return categoryModels;
-        }
-
-        public ActionResult CreatePost()
-        {
-            List<CategoryModel> categoryModels = GetCategoryModelsHelper();
-            return View(categoryModels);
-        }
-
-        [HttpPost]
-        [ValidateInput(false)]
-        public ActionResult CreatePost(EditedPostModel Post)
-        {
-            List<CategoryModel> categoryModels = GetCategoryModelsHelper();
-
-            if (string.IsNullOrWhiteSpace(Post.Title))
-            {
-                ModelState.AddModelError("Title", "Title field is required.");
-            }
-
-            if (string.IsNullOrWhiteSpace(Post.ThumbnailImageSrc))
-            {
-                ModelState.AddModelError("Thumbnail", "Thumbnail image field is required.");
-            }
-
-            if (string.IsNullOrWhiteSpace(Post.ShortDescription))
-            {
-                ModelState.AddModelError("ShortDescription", "Short description field is required.");
-            }
-
-            if (string.IsNullOrWhiteSpace(Post.Content))
-            {
-                ModelState.AddModelError("Content", "Content field is required.");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return View(categoryModels);
-            }
-
-            EditedPostDTO editedPostDTO = dataMapper.MapEditedPostModelToDTO(Post);
-            postService.AddEditedPostDTO(editedPostDTO);
-
-            return View(categoryModels);
-        }
-
-        [HttpPost]
-        public ActionResult CreateCategory(string name, string description)
-        {
-            object jsonObject;
-
-            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(description))
-            {
-                jsonObject = new { status = 500 };
-                return Json(jsonObject);
-            }
-
-            EditedCategoryDTO editedCategoryDTO = new EditedCategoryDTO()
-            {
-                Name = name,
-                Description = description
-            };
-
-            bool addSuccessfully = categoryService.AddEditedCategoryDTO(editedCategoryDTO);
-
-            if (!addSuccessfully)
-            {
-                jsonObject = new { status = 500 };
-            }
-            else
-            {
-                jsonObject = new
-                {
-                    status = 200,
-                    name
                 };
             }
 

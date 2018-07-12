@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -19,19 +20,27 @@ namespace BlogDAL.Repository
 
         public override bool Add(PostEntity entity)
         {
-            entity.PostId = GenerateId();
-            entity.CreatedDate = DateTime.Now;
-            entity.UpdatedDate = DateTime.Now;
+            try
+            {
+                CategoryEntity categoryEntity = entity.PostCategory;
+                categoryEntity.PostCount++;
+                entity.PostCategory = null;
 
-            CategoryEntity categoryEntity = Context.CategoryEntities
-                .Where(x => x.Name.Equals(entity.PostCategory.Name))
-                .First();
+                Context.CategoryEntities.Attach(categoryEntity);
+                DbEntityEntry<CategoryEntity> categoryEntry = Context.Entry(categoryEntity);
 
-            categoryEntity.PostCount++;
+                categoryEntry.Property(x => x.PostCount).IsModified = true;
+                Context.PostEntities.Add(entity);
 
-            entity.PostCategory = categoryEntity;
+                Context.SaveChanges();
+                categoryEntry.State = EntityState.Detached;
 
-            return base.Add(entity);
+                return true;
+            }
+            catch(Exception)
+            {
+                return false;
+            }
         }
 
         public PostEntityWithPaginatedComments GetPostEntityWithPaginatedComments(string id, int pageSize)
@@ -63,8 +72,6 @@ namespace BlogDAL.Repository
         {
             try
             {
-                int skip = (pageNumber - 1) * pageSize;
-
                 IQueryable<PostEntity> postQueryable = Context.PostEntities
                     .Include(x => x.PostCategory);
 
@@ -74,8 +81,7 @@ namespace BlogDAL.Repository
                 }
 
                 Expression<Func<PostEntity, DateTime>> postOrderByExpression = (x => x.CreatedDate);
-
-                PaginationEntity<PostEntity> postPaginationEntity = GetPaginationEntity(postQueryable, isDesc: true, postOrderByExpression, skip, pageSize);
+                PaginationEntity<PostEntity> postPaginationEntity = GetPaginationEntity(postQueryable, isDesc: true, postOrderByExpression, pageNumber, pageSize);
 
                 return postPaginationEntity;
             }
@@ -170,13 +176,12 @@ namespace BlogDAL.Repository
                 }
 
                 Expression<Func<PostEntity, DateTime>> postOrderByExpression = (x => x.CreatedDate);
-                int skip = (pageNumber - 1) * pageSize;
 
                 PaginationEntity<PostEntity> postPaginationEntity = GetPaginationEntity
                     (postPaginationQueryable,
                     isDesc: true,
                     postOrderByExpression,
-                    skip,
+                    pageNumber,
                     pageSize);
 
                 return postPaginationEntity;
@@ -185,6 +190,41 @@ namespace BlogDAL.Repository
             {
                 System.Diagnostics.Debug.WriteLine(e);
                 return null;
+            }
+        }
+
+        public override bool Update(PostEntity entity)
+        {
+            try
+            {
+                CategoryEntity categoryEntity = entity.PostCategory;
+                categoryEntity.PostCount++;
+                entity.PostCategory = null;
+
+                Context.PostEntities.Attach(entity);
+                DbEntityEntry<PostEntity> postEntry = Context.Entry(entity);
+                Context.CategoryEntities.Attach(categoryEntity);
+                DbEntityEntry<CategoryEntity> categoryEntry = Context.Entry(categoryEntity);
+
+                postEntry.Property(x => x.Title).IsModified = true;
+                postEntry.Property(x => x.ThumbnailImageSrc).IsModified = true;
+                postEntry.Property(x => x.ShortDescription).IsModified = true;
+                postEntry.Property(x => x.Content).IsModified = true;
+                postEntry.Property(x => x.CategoryId).IsModified = true;
+                postEntry.Property(x => x.UpdatedDate).IsModified = true;
+
+                categoryEntry.Property(x => x.PostCount).IsModified = true;
+
+                Context.SaveChanges();
+                postEntry.State = EntityState.Detached;
+                categoryEntry.State = EntityState.Detached;
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e);
+                return false;
             }
         }
     }

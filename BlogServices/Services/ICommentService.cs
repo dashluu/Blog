@@ -7,8 +7,8 @@ namespace BlogServices.Services
 {
     public interface ICommentService
     {
-        CommentDTO AddCommentDTO(string postId, string commentContent, string username);
-        CommentDTO AddChildCommentDTO(string postId, string commentId, string commentContent, string username);
+        CommentDTO AddComment(string postId, string commentContent, string username);
+        CommentDTO AddChildComment(string postId, string commentId, string commentContent, string username);
 
         PaginationDTO<CommentDTO> RemoveCommentDTOWithReloadedPagination(string postId, string commentId, int pageNumber, int pageSize);
 

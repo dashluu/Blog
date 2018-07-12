@@ -15,9 +15,9 @@ namespace Blog.Controllers
     public class CommentAPIController : ApiController
     {
         private ICommentService commentService;
-        private IModelDataMapper dataMapper;
+        private APIIModelDataMapper dataMapper;
 
-        public CommentAPIController(ICommentService commentService, IModelDataMapper dataMapper)
+        public CommentAPIController(ICommentService commentService, APIIModelDataMapper dataMapper)
         {
             this.commentService = commentService;
             this.dataMapper = dataMapper;
@@ -35,7 +35,7 @@ namespace Blog.Controllers
             }
 
             PaginationDTO<CommentDTO> commentPaginationDTO = commentService.GetCommentPaginationDTO(postId, pageNumber, pageSize);
-            PaginationModel<CommentModel> commentPaginationModel = dataMapper.MapCommentPaginationDTOToModel(commentPaginationDTO);
+            PaginationModel<APICommentModel> commentPaginationModel = dataMapper.MapCommentPaginationDTOToModel(commentPaginationDTO);
 
             if (commentPaginationDTO == null)
             {
@@ -67,7 +67,7 @@ namespace Blog.Controllers
             }
 
             PaginationDTO<CommentDTO> commentPaginationDTO = commentService.GetChildCommentPaginationDTO(commentId, pageNumber, pageSize);
-            PaginationModel<CommentModel> commentPaginationModel = dataMapper.MapCommentPaginationDTOToModel(commentPaginationDTO);
+            PaginationModel<APICommentModel> commentPaginationModel = dataMapper.MapCommentPaginationDTOToModel(commentPaginationDTO);
 
             if (commentPaginationDTO == null)
             {
@@ -99,7 +99,7 @@ namespace Blog.Controllers
             }
 
             PaginationDTO<CommentDTO> commentPaginationDTO = commentService.SearchCommentWithPaginationDTO(postId, searchQuery, pageNumber, pageSize);
-            PaginationModel<CommentModel> commentPaginationModel = dataMapper.MapCommentPaginationDTOToModel(commentPaginationDTO);
+            PaginationModel<APICommentModel> commentPaginationModel = dataMapper.MapCommentPaginationDTOToModel(commentPaginationDTO);
 
             if (commentPaginationDTO == null)
             {
@@ -132,7 +132,7 @@ namespace Blog.Controllers
             }
 
             PaginationDTO<CommentDTO> commentPaginationDTO = commentService.RemoveCommentDTOWithReloadedPagination(postId, commentId, pageNumber, pageSize);
-            PaginationModel<CommentModel> commentPaginationModel = dataMapper.MapCommentPaginationDTOToModel(commentPaginationDTO);
+            PaginationModel<APICommentModel> commentPaginationModel = dataMapper.MapCommentPaginationDTOToModel(commentPaginationDTO);
 
             if (commentPaginationDTO == null)
             {

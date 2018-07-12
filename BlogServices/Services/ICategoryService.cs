@@ -8,7 +8,9 @@ namespace BlogServices.Services
     public interface ICategoryService
     {
         List<CategoryDTO> GetCategoryDTOs();
-        bool AddEditedCategoryDTO(EditedCategoryDTO editedCategoryDTO);
-        bool UpdateEditedCategoryDTO(EditedCategoryDTO editedCategoryDTO);
+
+        bool AddCategory(CategoryDTO categoryDTO);
+
+        bool UpdateCategory(CategoryDTO categoryDTO);
     }
 }

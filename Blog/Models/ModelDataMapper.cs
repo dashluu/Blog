@@ -164,41 +164,6 @@ namespace Blog.Models
             return commentModel;
         }
 
-        public EditedCategoryDTO MapEditedCategoryModelToDTO(EditedCategoryModel editedCategoryModel)
-        {
-            if (editedCategoryModel == null)
-            {
-                return null;
-            }
-
-            EditedCategoryDTO editedCategoryDTO = new EditedCategoryDTO()
-            {
-                Name = editedCategoryModel.Name,
-                Description = editedCategoryModel.Description
-            };
-
-            return editedCategoryDTO;
-        }
-
-        public EditedPostDTO MapEditedPostModelToDTO(EditedPostModel editedPostModel)
-        {
-            if (editedPostModel == null)
-            {
-                return null;
-            }
-
-            EditedPostDTO editedPostDTO = new EditedPostDTO()
-            {
-                Title = editedPostModel.Title,
-                PostCategory = MapCategoryModelToDTO(editedPostModel.PostCategory),
-                ShortDescription = editedPostModel.ShortDescription,
-                ThumbnailImageSrc = editedPostModel.ThumbnailImageSrc,
-                Content = editedPostModel.Content
-            };
-
-            return editedPostDTO;
-        }
-
         public List<PostCardModel> MapPostCardDTOsToModels(List<PostCardDTO> postCardDTOs)
         {
             if (postCardDTOs == null)

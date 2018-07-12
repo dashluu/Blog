@@ -69,25 +69,6 @@ namespace BlogServices.DTO
             return postDTO;
         }
 
-        public PostEntity MapEditedPostDTOToEntity(EditedPostDTO editedPostDTO)
-        {
-            if (editedPostDTO == null)
-            {
-                return null;
-            }
-
-            PostEntity postEntity = new PostEntity()
-            {
-                PostCategory = MapCategoryDTOToEntity(editedPostDTO.PostCategory),
-                Title = editedPostDTO.Title,
-                ShortDescription = editedPostDTO.ShortDescription,
-                Content = editedPostDTO.Content,
-                ThumbnailImageSrc = editedPostDTO.ThumbnailImageSrc
-            };
-
-            return postEntity;
-        }
-
         public PostCardDTO MapPostCardEntityToDTO(PostEntity postEntity)
         {
             if (postEntity == null)
@@ -147,23 +128,6 @@ namespace BlogServices.DTO
             return categoryDTO;
         }
 
-        public CategoryEntity MapEditedCategoryDTOToEntity(EditedCategoryDTO editedCategoryDTO)
-        {
-            if (editedCategoryDTO == null)
-            {
-                return null;
-            }
-
-            CategoryEntity categoryEntity = new CategoryEntity()
-            {
-                CategoryId = editedCategoryDTO.CategoryId,
-                Name = editedCategoryDTO.Name,
-                Description = editedCategoryDTO.Description
-            };
-
-            return categoryEntity;
-        }
-
         public CategoryEntity MapCategoryDTOToEntity(CategoryDTO categoryDTO)
         {
             if (categoryDTO == null)
@@ -173,7 +137,10 @@ namespace BlogServices.DTO
 
             CategoryEntity categoryEntity = new CategoryEntity()
             {
-                Name = categoryDTO.Name
+                CategoryId = categoryDTO.CategoryId,
+                Name = categoryDTO.Name,
+                Description = categoryDTO.Description,
+                PostCount = categoryDTO.PostCount
             };
 
             return categoryEntity;
@@ -278,6 +245,46 @@ namespace BlogServices.DTO
             }
 
             return postCardPaginationDTOs;
+        }
+
+        public PostEntity MapPostDTOToEntity(PostDTO postDTO)
+        {
+            if (postDTO == null)
+            {
+                return null;
+            }
+
+            PostEntity postEntity = new PostEntity()
+            {
+                PostId = postDTO.PostId,
+                PostCategory = MapCategoryDTOToEntity(postDTO.PostCategory),
+                Title = postDTO.Title,
+                ShortDescription = postDTO.ShortDescription,
+                Content = postDTO.Content,
+                ThumbnailImageSrc = postDTO.ThumbnailImageSrc,
+                CreatedDate = postDTO.CreatedDate,
+                UpdatedDate = postDTO.UpdatedDate
+            };
+
+            return postEntity;
+        }
+
+        public List<CategoryDTO> MapCategoryEntitiesToDTOs(List<CategoryEntity> categoryEntities)
+        {
+            if (categoryEntities == null)
+            {
+                return null;
+            }
+
+            List<CategoryDTO> categoryDTOs = new List<CategoryDTO>();
+
+            foreach (CategoryEntity categoryEntity in categoryEntities)
+            {
+                CategoryDTO categoryDTO = MapCategoryEntityToDTO(categoryEntity);
+                categoryDTOs.Add(categoryDTO);
+            }
+
+            return categoryDTOs;
         }
     }
 }

@@ -8,30 +8,23 @@ namespace BlogServices.Services
 {
     public interface IServiceDataMapper
     {
-        List<CommentDTO> MapCommentEntitiesToDTOs(List<CommentEntity> commentEntities);
-
+        //Map post
+        PostEntity MapPostDTOToEntity(PostDTO postDTO);
         PostDTO MapPostEntityToDTO(PostEntity postEntity);
-
-        PostEntity MapEditedPostDTOToEntity(EditedPostDTO editedPostDTO);
-
         PostCardDTO MapPostCardEntityToDTO(PostEntity postEntity);
-
         List<PostCardDTO> MapPostCardEntitiesToDTOs(List<PostEntity> postEntities);
-
-        CommentDTO MapCommentEntityToDTO(CommentEntity commentEntity);
-
-        CategoryDTO MapCategoryEntityToDTO(CategoryEntity categoryEntity);
-
-        CategoryEntity MapEditedCategoryDTOToEntity(EditedCategoryDTO editedCategoryDTO);
-
-        CategoryEntity MapCategoryDTOToEntity(CategoryDTO categoryDTO);
-
+        PostDTOWithPaginatedComments MapPostEntityToDTOWithPaginatedComments(PostEntityWithPaginatedComments postEntityWithPaginatedComments);
+        List<PaginationDTO<PostCardDTO>> MapPostCardPaginationEntitiesToDTOs(List<PaginationEntity<PostEntity>> postPaginationEntities);
         PaginationDTO<PostCardDTO> MapPostCardPaginationEntityToDTO(PaginationEntity<PostEntity> postPaginationEntity);
 
+        //Map comment
         PaginationDTO<CommentDTO> MapCommentPaginationEntityToDTO(PaginationEntity<CommentEntity> commentPaginationEntity);
+        CommentDTO MapCommentEntityToDTO(CommentEntity commentEntity);
+        List<CommentDTO> MapCommentEntitiesToDTOs(List<CommentEntity> commentEntities);
 
-        PostDTOWithPaginatedComments MapPostEntityToDTOWithPaginatedComments(PostEntityWithPaginatedComments postEntityWithPaginatedComments);
-
-        List<PaginationDTO<PostCardDTO>> MapPostCardPaginationEntitiesToDTOs(List<PaginationEntity<PostEntity>> postPaginationEntities);
+        //Map category
+        CategoryDTO MapCategoryEntityToDTO(CategoryEntity categoryEntity);
+        CategoryEntity MapCategoryDTOToEntity(CategoryDTO categoryDTO);
+        List<CategoryDTO> MapCategoryEntitiesToDTOs(List<CategoryEntity> categoryEntities);
     }
 }

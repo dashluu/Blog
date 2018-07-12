@@ -11,14 +11,10 @@ namespace BlogDAL.Repository
 {
     public class CommentRepository : BaseRepository<CommentEntity, BlogDBContext>, ICommentRepository
     {
-        public CommentEntity AddCommentEntity(string postId, CommentEntity commentEntity)
+        public CommentEntity AddComment(string postId, CommentEntity commentEntity)
         {
             try
             {
-                string commentId = GenerateId();
-                commentEntity.CommentId = commentId;
-                commentEntity.CreatedDate = DateTime.Now;
-
                 PostEntity postEntity = Context.PostEntities
                     .Where(x => x.PostId.Equals(postId))
                     .First();
@@ -37,14 +33,10 @@ namespace BlogDAL.Repository
             }
         }
 
-        public CommentEntity AddChildCommentEntity(string postId, string commentId, CommentEntity childCommentEntity)
+        public CommentEntity AddChildComment(string postId, string commentId, CommentEntity childCommentEntity)
         {
             try
             {
-                string childCommentId = GenerateId();
-                childCommentEntity.CommentId = childCommentId;
-                childCommentEntity.CreatedDate = DateTime.Now;
-                
                 CommentEntity commentEntity = Context.CommentEntities
                     .Where(x => x.Post.PostId.Equals(postId) && x.CommentId.Equals(commentId))
                     .First();
@@ -98,7 +90,7 @@ namespace BlogDAL.Repository
                     && DateTime.Compare(x.CreatedDate, createdDate) < 0
                     && x.RootComment == null);
 
-                PaginationEntity<CommentEntity> commentPaginationEntity = GetPaginationEntity(commentQueryable, isDesc: true, commentOrderByExpression, skip: 0, pageSize);
+                PaginationEntity<CommentEntity> commentPaginationEntity = GetPaginationEntity(commentQueryable, isDesc: true, commentOrderByExpression, pageNumber: 1, pageSize);
 
                 return commentPaginationEntity;
             }
@@ -112,7 +104,6 @@ namespace BlogDAL.Repository
         {
             try
             {
-                int skip = (pageNumber - 1) * pageSize;
                 Expression<Func<CommentEntity, DateTime>> commentOrderByExpression = (x => x.CreatedDate);
                 IQueryable<CommentEntity> commentQueryable = Context.CommentEntities.AsQueryable();
 
@@ -121,7 +112,7 @@ namespace BlogDAL.Repository
                     commentQueryable = commentQueryable.Where(x => x.Post.PostId.Equals(postId));
                 }
 
-                PaginationEntity<CommentEntity> commentPaginationEntity = GetPaginationEntity(commentQueryable, isDesc: true, commentOrderByExpression, skip, pageSize);
+                PaginationEntity<CommentEntity> commentPaginationEntity = GetPaginationEntity(commentQueryable, isDesc: true, commentOrderByExpression, pageNumber, pageSize);
 
                 return commentPaginationEntity;
             }
@@ -135,10 +126,9 @@ namespace BlogDAL.Repository
         {
             try
             {
-                int skip = (pageNumber - 1) * pageSize;
                 Expression<Func<CommentEntity, DateTime>> commentOrderByExpression = (x => x.CreatedDate);
                 IQueryable<CommentEntity> commentQueryable = Context.CommentEntities.Where(x => x.RootComment.CommentId.Equals(commentId));
-                PaginationEntity<CommentEntity> commentPaginationEntity = GetPaginationEntity(commentQueryable, isDesc: true, commentOrderByExpression, skip, pageSize);
+                PaginationEntity<CommentEntity> commentPaginationEntity = GetPaginationEntity(commentQueryable, isDesc: true, commentOrderByExpression, pageNumber, pageSize);
 
                 return commentPaginationEntity;
             }
@@ -152,8 +142,6 @@ namespace BlogDAL.Repository
         {
             try
             {
-                int skip = (pageNumber - 1) * pageSize;
-
                 IQueryable<CommentEntity> commentQueryable = Context.CommentEntities
                     .Where(x => x.Username.Contains(searchQuery) || x.Content.Contains(searchQuery));
 
@@ -163,7 +151,7 @@ namespace BlogDAL.Repository
                 }
 
                 Expression<Func<CommentEntity, DateTime>> commentOrderByExpression = (x => x.CreatedDate);
-                PaginationEntity<CommentEntity> commentPaginationEntity = GetPaginationEntity(commentQueryable, isDesc: true, commentOrderByExpression, skip, pageSize);
+                PaginationEntity<CommentEntity> commentPaginationEntity = GetPaginationEntity(commentQueryable, isDesc: true, commentOrderByExpression, pageNumber, pageSize);
 
                 return commentPaginationEntity;
             }
@@ -207,13 +195,12 @@ namespace BlogDAL.Repository
                 }
 
                 Expression<Func<CommentEntity, DateTime>> commentOrderByExpression = (x => x.CreatedDate);
-                int skip = (pageNumber - 1) * pageSize;
 
                 PaginationEntity<CommentEntity> commentPaginationEntity = GetPaginationEntity
                     (commentPaginationQueryable,
                     isDesc: true,
                     commentOrderByExpression,
-                    skip,
+                    pageNumber,
                     pageSize);
 
                 return commentPaginationEntity;

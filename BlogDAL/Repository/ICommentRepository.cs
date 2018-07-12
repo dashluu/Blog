@@ -7,8 +7,8 @@ namespace BlogDAL.Repository
 {
     public interface ICommentRepository : IBaseRepository<CommentEntity>
     {
-        CommentEntity AddCommentEntity(string postId, CommentEntity commentEntity);
-        CommentEntity AddChildCommentEntity(string postId, string commentId, CommentEntity childCommentEntity);
+        CommentEntity AddComment(string postId, CommentEntity commentEntity);
+        CommentEntity AddChildComment(string postId, string commentId, CommentEntity childCommentEntity);
 
         List<CommentEntity> GetChildCommentEntities(string commentId, int skip);
         PaginationEntity<CommentEntity> GetChildCommentPaginationEntity(string commentId, int pageNumber, int pageSize);
