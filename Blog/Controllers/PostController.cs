@@ -48,16 +48,22 @@ namespace Blog.Controllers
                 return Json(jsonObject);
             }
 
-            string username = "whatever";
-            CommentDTO commentDTO = commentService.AddComment(postId, comment, username);
-            CommentModel commentModel = dataMapper.MapCommentDTOToModel(commentDTO);
+            CommentDTO commentDTO = new CommentDTO()
+            {
+                Content = comment,
+                PostId = postId
+            };
 
-            if (commentModel == null)
+            bool addSuccessfully = commentService.AddComment(commentDTO);
+
+            if (!addSuccessfully)
             {
                 jsonObject = new { status = 500 };
             }
             else
             {
+                CommentModel commentModel = dataMapper.MapCommentDTOToModel(commentDTO);
+
                 jsonObject = new
                 {
                     status = 200,
@@ -79,16 +85,23 @@ namespace Blog.Controllers
                 return Json(jsonObject);
             }
 
-            string username = "whatever";
-            CommentDTO childCommentDTO = commentService.AddChildComment(postId, commentId, comment, username);
-            CommentModel childCommentModel = dataMapper.MapCommentDTOToModel(childCommentDTO);
+            CommentDTO childCommentDTO = new CommentDTO()
+            {
+                Content = comment,
+                PostId = postId,
+                ParentCommentId = commentId
+            };
 
-            if (childCommentModel == null)
+            bool addSuccessfully = commentService.AddComment(childCommentDTO);
+
+            if (!addSuccessfully)
             {
                 jsonObject = new { status = 500 };
             }
             else
             {
+                CommentModel childCommentModel = dataMapper.MapCommentDTOToModel(childCommentDTO);
+
                 jsonObject = new
                 {
                     status = 200,

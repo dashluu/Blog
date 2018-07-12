@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -105,8 +106,10 @@ namespace BlogDAL.Repository
             {
                 DbSet<T> set = Context.Set<T>();
                 set.Attach(entity);
-                set.Remove(entity);
+                DbEntityEntry<T> entry = Context.Entry(entity);
+                entry.State = EntityState.Deleted;
                 Context.SaveChanges();
+                entry.State = EntityState.Detached;
 
                 return true;
             }
@@ -122,8 +125,10 @@ namespace BlogDAL.Repository
             {
                 DbSet<T> set = Context.Set<T>();
                 set.Attach(entity);
-                Context.Entry(entity).State = EntityState.Modified;
+                DbEntityEntry<T> entry = Context.Entry(entity);
+                entry.State = EntityState.Modified;
                 Context.SaveChanges();
+                entry.State = EntityState.Detached;
 
                 return true;
             }

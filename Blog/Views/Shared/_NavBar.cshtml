@@ -1,6 +1,4 @@
 ﻿@using Blog.Models
-@using System.Globalization
-@using System.Threading
 @model List<CategoryModel>
 
 <div class="navbar navbar-default navbar-fixed-top">
@@ -11,15 +9,13 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            @Html.ActionLink("Blog", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            @Html.ActionLink("BLOG", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 @foreach (CategoryModel categoryModel in Model)
                 {
-                    CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
-                    TextInfo textInfo = cultureInfo.TextInfo;
-                    <li>@Html.ActionLink(textInfo.ToTitleCase(categoryModel.Name), "Category", "Home", new { category = categoryModel.Name }, new { })</li>
+                    <li>@Html.ActionLink(categoryModel.Name.ToUpper(), "Category", "Home", new { category = categoryModel.Name }, new { })</li>
                 }
             </ul>
         </div>

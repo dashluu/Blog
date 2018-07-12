@@ -7,17 +7,14 @@ namespace BlogDAL.Repository
 {
     public interface ICommentRepository : IBaseRepository<CommentEntity>
     {
-        CommentEntity AddComment(string postId, CommentEntity commentEntity);
-        CommentEntity AddChildComment(string postId, string commentId, CommentEntity childCommentEntity);
-
         List<CommentEntity> GetChildCommentEntities(string commentId, int skip);
         PaginationEntity<CommentEntity> GetChildCommentPaginationEntity(string commentId, int pageNumber, int pageSize);
 
         PaginationEntity<CommentEntity> GetCommentPaginationEntityOfPostWithPreservedFetch(string postId, DateTime createdDate, int pageSize);
-        PaginationEntity<CommentEntity> GetCommentPaginationEntity(string postId, int pageNumber, int pageSize);
+        PaginationEntity<CommentEntity> GetCommentPaginationEntity(int pageNumber, int pageSize, string postId = null);
 
-        PaginationEntity<CommentEntity> SearchCommentWithPaginationEntity(string postId, string searchQuery, int pageNumber, int pageSize);
+        PaginationEntity<CommentEntity> SearchCommentWithPaginationEntity(string searchQuery, int pageNumber, int pageSize, string postId = null);
 
-        PaginationEntity<CommentEntity> RemoveCommentEntityWithReloadedPagination(string postId, string commentId, int pageNumber, int pageSize);
+        PaginationEntity<CommentEntity> RemoveCommentEntityWithReloadedPagination(string commentId, int pageNumber, int pageSize, string postId = null);
     }
 }

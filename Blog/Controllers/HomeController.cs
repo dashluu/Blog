@@ -66,7 +66,7 @@ namespace Blog.Controllers
                 //Do something with this exception.
             }
 
-            PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.GetPostCardPaginationDTO(category, pageNumber: 1, pageSize: pagination.PostPageSize);
+            PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.GetPostCardPaginationDTO(pageNumber: 1, pageSize: pagination.PostPageSize, category);
             PaginationModel<PostCardModel> postCardPaginationModel = dataMapper.MapPostCardPaginationDTOToModel(postCardPaginationDTO);
 
             return PartialView("_CategoryPartial", postCardPaginationModel);
@@ -83,7 +83,7 @@ namespace Blog.Controllers
                 return Json(jsonObject);
             }
 
-            PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.GetPostCardPaginationDTO(category, pageNumber, pageSize);
+            PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.GetPostCardPaginationDTO(pageNumber, pageSize, category);
             PaginationModel<PostCardModel> postCardPaginationModel = dataMapper.MapPostCardPaginationDTOToModel(postCardPaginationDTO);
 
             if (postCardPaginationModel == null)

@@ -21,6 +21,7 @@ namespace BlogServices.Services
         PaginationDTO<CommentDTO> MapCommentPaginationEntityToDTO(PaginationEntity<CommentEntity> commentPaginationEntity);
         CommentDTO MapCommentEntityToDTO(CommentEntity commentEntity);
         List<CommentDTO> MapCommentEntitiesToDTOs(List<CommentEntity> commentEntities);
+        CommentEntity MapCommentDTOToEntity(CommentDTO commentDTO);
 
         //Map category
         CategoryDTO MapCategoryEntityToDTO(CategoryEntity categoryEntity);

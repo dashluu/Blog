@@ -34,7 +34,7 @@ namespace Blog.Controllers
                 return Json(jsonObject);
             }
 
-            PaginationDTO<CommentDTO> commentPaginationDTO = commentService.GetCommentPaginationDTO(postId, pageNumber, pageSize);
+            PaginationDTO<CommentDTO> commentPaginationDTO = commentService.GetCommentPaginationDTO(pageNumber, pageSize, postId);
             PaginationModel<APICommentModel> commentPaginationModel = dataMapper.MapCommentPaginationDTOToModel(commentPaginationDTO);
 
             if (commentPaginationDTO == null)
@@ -98,7 +98,7 @@ namespace Blog.Controllers
                 return Json(jsonObject);
             }
 
-            PaginationDTO<CommentDTO> commentPaginationDTO = commentService.SearchCommentWithPaginationDTO(postId, searchQuery, pageNumber, pageSize);
+            PaginationDTO<CommentDTO> commentPaginationDTO = commentService.SearchCommentWithPaginationDTO(searchQuery, pageNumber, pageSize, postId);
             PaginationModel<APICommentModel> commentPaginationModel = dataMapper.MapCommentPaginationDTOToModel(commentPaginationDTO);
 
             if (commentPaginationDTO == null)
@@ -131,7 +131,7 @@ namespace Blog.Controllers
                 return Json(jsonObject);
             }
 
-            PaginationDTO<CommentDTO> commentPaginationDTO = commentService.RemoveCommentDTOWithReloadedPagination(postId, commentId, pageNumber, pageSize);
+            PaginationDTO<CommentDTO> commentPaginationDTO = commentService.RemoveCommentDTOWithReloadedPagination(commentId, pageNumber, pageSize, postId);
             PaginationModel<APICommentModel> commentPaginationModel = dataMapper.MapCommentPaginationDTOToModel(commentPaginationDTO);
 
             if (commentPaginationDTO == null)

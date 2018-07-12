@@ -10,6 +10,8 @@ namespace BlogServices.DTO
         public string Username { get; set; }
         public string Content { get; set; }
         public DateTime CreatedDate { get; set; }
+        public string ParentCommentId { get; set; }
+        public string PostId { get; set; }
         public List<CommentDTO> ChildCommentDTOs { get; set; }
     }
 }

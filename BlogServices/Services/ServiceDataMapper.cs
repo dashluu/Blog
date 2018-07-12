@@ -286,5 +286,25 @@ namespace BlogServices.DTO
 
             return categoryDTOs;
         }
+
+        public CommentEntity MapCommentDTOToEntity(CommentDTO commentDTO)
+        {
+            if (commentDTO == null)
+            {
+                return null;
+            }
+
+            CommentEntity commentEntity = new CommentEntity()
+            {
+                CommentId = commentDTO.CommentId,
+                Username = commentDTO.Username,
+                Content = commentDTO.Content,
+                CreatedDate = commentDTO.CreatedDate,
+                ParentCommentId = commentDTO.ParentCommentId,
+                PostId = commentDTO.PostId
+            };
+
+            return commentEntity;
+        }
     }
 }

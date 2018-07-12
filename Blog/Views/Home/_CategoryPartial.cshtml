@@ -1,6 +1,4 @@
 ﻿@using Blog.Models
-@using System.Globalization
-@using System.Threading
 @model PaginationModel<PostCardModel>
 
 @{
@@ -15,11 +13,7 @@
 <div class="container">
     <div class="row">
 
-        @{
-            CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
-            TextInfo textInfo = cultureInfo.TextInfo;
-        }
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 post-category">@textInfo.ToTitleCase(category)</div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 post-category">@category.ToUpper()</div>
 
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             @{

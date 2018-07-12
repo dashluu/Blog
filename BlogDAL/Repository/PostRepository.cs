@@ -68,14 +68,14 @@ namespace BlogDAL.Repository
             }
         }
 
-        public PaginationEntity<PostEntity> GetPostPaginationEntity(string category, int pageNumber, int pageSize)
+        public PaginationEntity<PostEntity> GetPostPaginationEntity(int pageNumber, int pageSize, string category = null)
         {
             try
             {
                 IQueryable<PostEntity> postQueryable = Context.PostEntities
                     .Include(x => x.PostCategory);
 
-                if (!string.IsNullOrWhiteSpace(category))
+                if (category != null)
                 {
                     postQueryable = postQueryable.Where(x => x.PostCategory.Name.Equals(category));
                 }
@@ -100,7 +100,7 @@ namespace BlogDAL.Repository
 
                 foreach (CategoryEntity categoryEntity in categoryEntities)
                 {
-                    PaginationEntity<PostEntity> postPaginationEntity = GetPostPaginationEntity(category: categoryEntity.Name, pageNumber: 1, pageSize);
+                    PaginationEntity<PostEntity> postPaginationEntity = GetPostPaginationEntity(pageNumber: 1, pageSize, category: categoryEntity.Name);
 
                     if (postPaginationEntity == null || postPaginationEntity.Entities == null || postPaginationEntity.Pages == 0)
                     {
@@ -135,7 +135,7 @@ namespace BlogDAL.Repository
             }
         }
 
-        public PaginationEntity<PostEntity> RemovePostEntityWithReloadedPagination(string category, string postId, int pageNumber, int pageSize)
+        public PaginationEntity<PostEntity> RemovePostEntityWithReloadedPagination(string postId, int pageNumber, int pageSize, string category = null)
         {
             try
             {
@@ -144,7 +144,7 @@ namespace BlogDAL.Repository
 
                 //Get child comments that belong to post.
                 IQueryable<CommentEntity> commentDeleteQueryable = commentEntityDbSet
-                    .Where(x => x.Post.PostId.Equals(postId) && x.RootComment != null);
+                    .Where(x => x.Post.PostId.Equals(postId) && x.ParentComment != null);
 
                 List<CommentEntity> commentEntities = commentDeleteQueryable.ToList();
 
@@ -169,7 +169,7 @@ namespace BlogDAL.Repository
                 //Get and return post pagination.
                 IQueryable<PostEntity> postPaginationQueryable = postEntityDbSet.AsQueryable();
 
-                if (!string.IsNullOrWhiteSpace(category))
+                if (category != null)
                 {
                     postPaginationQueryable = postPaginationQueryable
                         .Where(x => x.PostCategory.Name.Equals(category));
@@ -200,6 +200,14 @@ namespace BlogDAL.Repository
                 CategoryEntity categoryEntity = entity.PostCategory;
                 categoryEntity.PostCount++;
                 entity.PostCategory = null;
+
+                CategoryEntity oldCategoryEntity = Context.PostEntities
+                    .Where(x => x.PostId.Equals(entity.PostId))
+                    .Include(x => x.PostCategory)
+                    .Select(x => x.PostCategory)
+                    .First();
+
+                oldCategoryEntity.PostCount--;
 
                 Context.PostEntities.Attach(entity);
                 DbEntityEntry<PostEntity> postEntry = Context.Entry(entity);

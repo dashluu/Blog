@@ -11,7 +11,6 @@ namespace BlogDAL.Entity
         [Key]
         public string PostId { get; set; }
         public string Title { get; set; }
-        [ForeignKey("CategoryId")]
         public CategoryEntity PostCategory { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
@@ -21,6 +20,7 @@ namespace BlogDAL.Entity
 
         public List<CommentEntity> CommentEntities { get; set; }
         public int CommentCount { get; set; }
+        [ForeignKey("PostCategory")]
         public string CategoryId { get; set; }
     }
 }

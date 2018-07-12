@@ -5,59 +5,29 @@ using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
-using Z.EntityFramework.Plus;
 
 namespace BlogDAL.Repository
 {
     public class CommentRepository : BaseRepository<CommentEntity, BlogDBContext>, ICommentRepository
     {
-        public CommentEntity AddComment(string postId, CommentEntity commentEntity)
+        public override bool Add(CommentEntity commentEntity)
         {
             try
             {
                 PostEntity postEntity = Context.PostEntities
-                    .Where(x => x.PostId.Equals(postId))
+                    .Where(x => x.PostId.Equals(commentEntity.PostId))
                     .First();
 
                 postEntity.CommentCount++;
-                commentEntity.Post = postEntity;
 
                 Context.CommentEntities.Add(commentEntity);
                 Context.SaveChanges();
 
-                return commentEntity;
+                return true;
             }
             catch (Exception)
             {
-                return null;
-            }
-        }
-
-        public CommentEntity AddChildComment(string postId, string commentId, CommentEntity childCommentEntity)
-        {
-            try
-            {
-                CommentEntity commentEntity = Context.CommentEntities
-                    .Where(x => x.Post.PostId.Equals(postId) && x.CommentId.Equals(commentId))
-                    .First();
-
-                PostEntity postEntity = Context.PostEntities
-                    .Where(x => x.PostId.Equals(postId))
-                    .First();
-
-                postEntity.CommentCount++;
-
-                childCommentEntity.RootComment = commentEntity;
-                childCommentEntity.Post = postEntity;
-
-                Context.CommentEntities.Add(childCommentEntity);
-                Context.SaveChanges();
-
-                return childCommentEntity;
-            }
-            catch(Exception)
-            {
-                return null;
+                return false;
             }
         }
 
@@ -66,7 +36,7 @@ namespace BlogDAL.Repository
             try
             {
                 List<CommentEntity> commentEntities = Context.CommentEntities
-                    .Where(x => x.RootComment.CommentId.Equals(commentId))
+                    .Where(x => x.ParentComment.CommentId.Equals(commentId))
                     .OrderByDescending(x => x.CreatedDate)
                     .Skip(skip)
                     .ToList();
@@ -88,7 +58,7 @@ namespace BlogDAL.Repository
                 IQueryable<CommentEntity> commentQueryable = Context.CommentEntities
                     .Where(x => x.Post.PostId.Equals(postId) 
                     && DateTime.Compare(x.CreatedDate, createdDate) < 0
-                    && x.RootComment == null);
+                    && x.ParentComment == null);
 
                 PaginationEntity<CommentEntity> commentPaginationEntity = GetPaginationEntity(commentQueryable, isDesc: true, commentOrderByExpression, pageNumber: 1, pageSize);
 
@@ -100,14 +70,14 @@ namespace BlogDAL.Repository
             }
         }
 
-        public PaginationEntity<CommentEntity> GetCommentPaginationEntity(string postId, int pageNumber, int pageSize)
+        public PaginationEntity<CommentEntity> GetCommentPaginationEntity(int pageNumber, int pageSize, string postId = null)
         {
             try
             {
                 Expression<Func<CommentEntity, DateTime>> commentOrderByExpression = (x => x.CreatedDate);
                 IQueryable<CommentEntity> commentQueryable = Context.CommentEntities.AsQueryable();
 
-                if (!string.IsNullOrWhiteSpace(postId))
+                if (postId != null)
                 {
                     commentQueryable = commentQueryable.Where(x => x.Post.PostId.Equals(postId));
                 }
@@ -127,7 +97,7 @@ namespace BlogDAL.Repository
             try
             {
                 Expression<Func<CommentEntity, DateTime>> commentOrderByExpression = (x => x.CreatedDate);
-                IQueryable<CommentEntity> commentQueryable = Context.CommentEntities.Where(x => x.RootComment.CommentId.Equals(commentId));
+                IQueryable<CommentEntity> commentQueryable = Context.CommentEntities.Where(x => x.ParentComment.CommentId.Equals(commentId));
                 PaginationEntity<CommentEntity> commentPaginationEntity = GetPaginationEntity(commentQueryable, isDesc: true, commentOrderByExpression, pageNumber, pageSize);
 
                 return commentPaginationEntity;
@@ -138,14 +108,14 @@ namespace BlogDAL.Repository
             }
         }
 
-        public PaginationEntity<CommentEntity> SearchCommentWithPaginationEntity(string postId, string searchQuery, int pageNumber, int pageSize)
+        public PaginationEntity<CommentEntity> SearchCommentWithPaginationEntity(string searchQuery, int pageNumber, int pageSize, string postId = null)
         {
             try
             {
                 IQueryable<CommentEntity> commentQueryable = Context.CommentEntities
                     .Where(x => x.Username.Contains(searchQuery) || x.Content.Contains(searchQuery));
 
-                if (!string.IsNullOrWhiteSpace(postId))
+                if (postId != null)
                 {
                     commentQueryable = commentQueryable.Where(x => x.Post.PostId.Equals(postId));
                 }
@@ -161,20 +131,20 @@ namespace BlogDAL.Repository
             }
         }
 
-        public PaginationEntity<CommentEntity> RemoveCommentEntityWithReloadedPagination(string postId, string commentId, int pageNumber, int pageSize)
+        public PaginationEntity<CommentEntity> RemoveCommentEntityWithReloadedPagination(string commentId, int pageNumber, int pageSize, string postId = null)
         {
             try
             {
                 DbSet<CommentEntity> commentEntityDbSet = Context.CommentEntities;
 
                 IQueryable<CommentEntity> commentDeleteQueryable = commentEntityDbSet
-                    .Where(x => x.RootComment.CommentId.Equals(commentId));
+                    .Where(x => x.ParentComment.CommentId.Equals(commentId));
 
                 List<CommentEntity> commentEntities = commentDeleteQueryable.ToList();
 
                 CommentEntity commentEntity = commentEntityDbSet
                     .Include(x => x.Post)
-                    .Include(x => x.RootComment)
+                    .Include(x => x.ParentComment)
                     .Where(x => x.CommentId.Equals(commentId))
                     .First();
 
@@ -188,7 +158,7 @@ namespace BlogDAL.Repository
 
                 IQueryable<CommentEntity> commentPaginationQueryable = commentEntityDbSet.AsQueryable();
 
-                if (!string.IsNullOrWhiteSpace(postId))
+                if (postId != null)
                 {
                     commentPaginationQueryable = commentPaginationQueryable
                         .Where(x => x.Post.PostId.Equals(postId));

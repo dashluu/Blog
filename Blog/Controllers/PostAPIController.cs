@@ -34,7 +34,7 @@ namespace Blog.Controllers
                 return Json(jsonObject);
             }
 
-            PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.GetPostCardPaginationDTO(category, pageNumber, pageSize);
+            PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.GetPostCardPaginationDTO(pageNumber, pageSize, category);
             APIPaginationModel<APIPostCardModel> postCardPaginationModel = dataMapper.MapPostCardPaginationDTOToModel(postCardPaginationDTO);
 
             if (postCardPaginationDTO == null)
@@ -97,7 +97,7 @@ namespace Blog.Controllers
                 return Json(jsonObject);
             }
 
-            PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.RemovePostDTOWithReloadedPagination(category, postId, pageNumber, pageSize);
+            PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.RemovePostDTOWithReloadedPagination(postId, pageNumber, pageSize, category);
             APIPaginationModel<APIPostCardModel> postCardPaginationModel = dataMapper.MapPostCardPaginationDTOToModel(postCardPaginationDTO);
 
             if (postCardPaginationDTO == null)
