@@ -13,5 +13,6 @@ namespace BlogServices.DTO
         public string ShortDescription { get; set; }
         public string ThumbnailImageSrc { get; set; }
         public CategoryDTO PostCategory { get; set; }
+        public int CommentCount { get; set; }
     }
 }

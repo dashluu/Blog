@@ -24,8 +24,12 @@ namespace BlogDAL.Repository
         {
             try
             {
-                Context.Set<T>().Add(entity);
+                Context.Set<T>().Attach(entity);
+                DbEntityEntry<T> entry = Context.Entry(entity);
+                entry.State = EntityState.Added;
                 Context.SaveChanges();
+                entry.State = EntityState.Detached;
+
                 return true;
             }
             catch (Exception)
@@ -38,7 +42,7 @@ namespace BlogDAL.Repository
         {
             try
             {
-                List<T> blogEntityList = Context.Set<T>().ToList();
+                List<T> blogEntityList = Context.Set<T>().AsNoTracking().ToList();
                 return blogEntityList;
             }
             catch (Exception)
@@ -79,7 +83,7 @@ namespace BlogDAL.Repository
 
                 int skip = (pageNumber - 1) * pageSize;
 
-                entities = queryable.Skip(skip).Take(pageSize).ToList();
+                entities = queryable.AsNoTracking().Skip(skip).Take(pageSize).ToList();
 
                 PaginationEntity<T> paginationEntity = new PaginationEntity<T>()
                 {
@@ -93,9 +97,8 @@ namespace BlogDAL.Repository
 
                 return paginationEntity;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                System.Diagnostics.Debug.WriteLine(e);
                 return null;
             }
         }
@@ -104,12 +107,10 @@ namespace BlogDAL.Repository
         {
             try
             {
-                DbSet<T> set = Context.Set<T>();
-                set.Attach(entity);
+                Context.Set<T>().Attach(entity);
                 DbEntityEntry<T> entry = Context.Entry(entity);
                 entry.State = EntityState.Deleted;
                 Context.SaveChanges();
-                entry.State = EntityState.Detached;
 
                 return true;
             }
@@ -123,8 +124,7 @@ namespace BlogDAL.Repository
         {
             try
             {
-                DbSet<T> set = Context.Set<T>();
-                set.Attach(entity);
+                Context.Set<T>().Attach(entity);
                 DbEntityEntry<T> entry = Context.Entry(entity);
                 entry.State = EntityState.Modified;
                 Context.SaveChanges();

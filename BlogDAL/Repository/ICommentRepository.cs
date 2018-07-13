@@ -15,6 +15,6 @@ namespace BlogDAL.Repository
 
         PaginationEntity<CommentEntity> SearchCommentWithPaginationEntity(string searchQuery, int pageNumber, int pageSize, string postId = null);
 
-        PaginationEntity<CommentEntity> RemoveCommentEntityWithReloadedPagination(string commentId, int pageNumber, int pageSize, string postId = null);
+        bool Remove(string commentId);
     }
 }

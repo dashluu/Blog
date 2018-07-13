@@ -15,9 +15,7 @@ namespace BlogDAL.Repository
             {
                 Context.CategoryEntities.Attach(categoryEntity);
                 DbEntityEntry<CategoryEntity> entry = Context.Entry(categoryEntity);
-
                 entry.Property(x => x.Description).IsModified = true;
-
                 Context.SaveChanges();
                 entry.State = EntityState.Detached;
 

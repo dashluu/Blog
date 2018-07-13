@@ -86,7 +86,8 @@ namespace BlogServices.DTO
                 UpdatedDate = postEntity.UpdatedDate,
                 ShortDescription = postEntity.ShortDescription,
                 ThumbnailImageSrc = postEntity.ThumbnailImageSrc,
-                PostCategory = MapCategoryEntityToDTO(categoryEntity)
+                PostCategory = MapCategoryEntityToDTO(categoryEntity),
+                CommentCount = postEntity.CommentCount
             };
 
             return postCardDTO;

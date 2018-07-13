@@ -72,12 +72,10 @@ namespace BlogServices.Services
             return commentPaginationDTO;
         }
 
-        public PaginationDTO<CommentDTO> RemoveCommentDTOWithReloadedPagination(string commentId, int pageNumber, int pageSize, string postId = null)
+        public bool RemoveComment(string commentId)
         {
-            PaginationEntity<CommentEntity> commentPaginationEntity = commentRepository.RemoveCommentEntityWithReloadedPagination(commentId, pageNumber, pageSize, postId);
-            PaginationDTO<CommentDTO> commentPaginationDTO = dataMapper.MapCommentPaginationEntityToDTO(commentPaginationEntity);
-
-            return commentPaginationDTO;
+            bool removeSuccessfully = commentRepository.Remove(commentId);
+            return removeSuccessfully;
         }
     }
 }

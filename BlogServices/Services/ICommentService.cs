@@ -9,7 +9,7 @@ namespace BlogServices.Services
     {
         bool AddComment(CommentDTO commentDTO);
 
-        PaginationDTO<CommentDTO> RemoveCommentDTOWithReloadedPagination(string commentId, int pageNumber, int pageSize, string postId = null);
+        bool RemoveComment(string commentId);
 
         List<CommentDTO> GetChildCommentDTOs(string commentId, int skip);
         PaginationDTO<CommentDTO> GetChildCommentPaginationDTO(string commentId, int pageNumber, int pageSize);

@@ -27,13 +27,17 @@ namespace BlogDAL.Repository
                 entity.PostCategory = null;
 
                 Context.CategoryEntities.Attach(categoryEntity);
+                Context.PostEntities.Attach(entity);
                 DbEntityEntry<CategoryEntity> categoryEntry = Context.Entry(categoryEntity);
+                DbEntityEntry<PostEntity> postEntry = Context.Entry(entity);
 
                 categoryEntry.Property(x => x.PostCount).IsModified = true;
-                Context.PostEntities.Add(entity);
+                postEntry.State = EntityState.Added;
 
                 Context.SaveChanges();
+
                 categoryEntry.State = EntityState.Detached;
+                postEntry.State = EntityState.Detached;
 
                 return true;
             }
@@ -48,6 +52,7 @@ namespace BlogDAL.Repository
             try
             {
                 PostEntity postEntity = Context.PostEntities
+                    .AsNoTracking()
                     .Where(x => x.PostId.Equals(id))
                     .Include(x => x.PostCategory)
                     .First();
@@ -123,6 +128,7 @@ namespace BlogDAL.Repository
             try
             {
                 PostEntity postEntity = Context.PostEntities
+                    .AsNoTracking()
                     .Where(x => x.PostId.Equals(id))
                     .Include(x => x.PostCategory)
                     .First();
@@ -135,7 +141,7 @@ namespace BlogDAL.Repository
             }
         }
 
-        public PaginationEntity<PostEntity> RemovePostEntityWithReloadedPagination(string postId, int pageNumber, int pageSize, string category = null)
+        public bool Remove(string postId)
         {
             try
             {
@@ -144,7 +150,7 @@ namespace BlogDAL.Repository
 
                 //Get child comments that belong to post.
                 IQueryable<CommentEntity> commentDeleteQueryable = commentEntityDbSet
-                    .Where(x => x.Post.PostId.Equals(postId) && x.ParentComment != null);
+                    .Where(x => x.Post.PostId.Equals(postId) && x.ParentCommentId != null);
 
                 List<CommentEntity> commentEntities = commentDeleteQueryable.ToList();
 
@@ -161,35 +167,25 @@ namespace BlogDAL.Repository
                 commentEntityDbSet.RemoveRange(commentEntities);
 
                 //Get and remove post.
-                PostEntity postEntity = postEntityDbSet.Where(x => x.PostId.Equals(postId)).First();
+                PostEntity postEntity = postEntityDbSet
+                    .Include(x => x.PostCategory)
+                    .Where(x => x.PostId.Equals(postId))
+                    .First();
+
+                CategoryEntity categoryEntity = postEntity.PostCategory;
+                categoryEntity.PostCount--;
+
                 postEntityDbSet.Remove(postEntity);
 
                 Context.SaveChanges();
 
-                //Get and return post pagination.
-                IQueryable<PostEntity> postPaginationQueryable = postEntityDbSet.AsQueryable();
+                Context.Entry(categoryEntity).State = EntityState.Detached;
 
-                if (category != null)
-                {
-                    postPaginationQueryable = postPaginationQueryable
-                        .Where(x => x.PostCategory.Name.Equals(category));
-                }
-
-                Expression<Func<PostEntity, DateTime>> postOrderByExpression = (x => x.CreatedDate);
-
-                PaginationEntity<PostEntity> postPaginationEntity = GetPaginationEntity
-                    (postPaginationQueryable,
-                    isDesc: true,
-                    postOrderByExpression,
-                    pageNumber,
-                    pageSize);
-
-                return postPaginationEntity;
+                return true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                System.Diagnostics.Debug.WriteLine(e);
-                return null;
+                return false;
             }
         }
 
@@ -224,8 +220,10 @@ namespace BlogDAL.Repository
                 categoryEntry.Property(x => x.PostCount).IsModified = true;
 
                 Context.SaveChanges();
+
                 postEntry.State = EntityState.Detached;
                 categoryEntry.State = EntityState.Detached;
+                Context.Entry(oldCategoryEntity).State = EntityState.Detached;
 
                 return true;
             }

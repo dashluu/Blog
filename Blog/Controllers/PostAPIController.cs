@@ -54,7 +54,7 @@ namespace Blog.Controllers
         }
 
         [Route("api/Posts/{postId}")]
-        public IHttpActionResult GetPostCards(string postId)
+        public IHttpActionResult GetEditedPost(string postId)
         {
             object jsonObject;
 
@@ -85,7 +85,7 @@ namespace Blog.Controllers
 
         [HttpDelete]
         [Route("api/Posts/{postId}")]
-        public IHttpActionResult RemovePost(string postId, int pageNumber, int pageSize, string category = null)
+        public IHttpActionResult RemovePost(string postId, int pageNumber = 1, int pageSize = 0, string category = null)
         {
             object jsonObject;
 
@@ -97,15 +97,17 @@ namespace Blog.Controllers
                 return Json(jsonObject);
             }
 
-            PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.RemovePostDTOWithReloadedPagination(postId, pageNumber, pageSize, category);
-            APIPaginationModel<APIPostCardModel> postCardPaginationModel = dataMapper.MapPostCardPaginationDTOToModel(postCardPaginationDTO);
+            bool removeSuccessfully = postService.RemovePost(postId);
 
-            if (postCardPaginationDTO == null)
+            if (!removeSuccessfully)
             {
                 jsonObject = new { status = 500 };
             }
             else
             {
+                PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.GetPostCardPaginationDTO(pageNumber, pageSize, category);
+                APIPaginationModel<APIPostCardModel> postCardPaginationModel = dataMapper.MapPostCardPaginationDTOToModel(postCardPaginationDTO);
+
                 jsonObject = new
                 {
                     status = 200,

@@ -17,6 +17,6 @@ namespace BlogServices.Services
         List<PaginationDTO<PostCardDTO>> GetPostCardPaginationDTOs(int pageSize);
         PostDTO GetPostDTO(string id);
 
-        PaginationDTO<PostCardDTO> RemovePostDTOWithReloadedPagination(string postId, int pageNumber, int pageSize, string category = null);
+        bool RemovePost(string postId);
     }
 }

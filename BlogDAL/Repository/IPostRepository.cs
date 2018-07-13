@@ -13,6 +13,6 @@ namespace BlogDAL.Repository
         PaginationEntity<PostEntity> GetPostPaginationEntity(int pageNumber, int pageSize, string category = null);
         List<PaginationEntity<PostEntity>> GetPostPaginationEntities(int pageSize);
 
-        PaginationEntity<PostEntity> RemovePostEntityWithReloadedPagination(string postId, int pageNumber, int pageSize, string category = null);
+        bool Remove(string postId);
     }
 }

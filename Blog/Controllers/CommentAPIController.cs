@@ -54,7 +54,7 @@ namespace Blog.Controllers
         }
 
         [Route("api/Comments/{commentId}/ChildComments")]
-        public IHttpActionResult GetChildComments(string commentId, int pageNumber, int pageSize)
+        public IHttpActionResult GetChildComments(string commentId, int pageSize, int pageNumber = 1)
         {
             object jsonObject;
 
@@ -87,7 +87,7 @@ namespace Blog.Controllers
 
         [HttpPost]
         [Route("api/Comments/Search")]
-        public IHttpActionResult SearchComment([FromBody]APISearchModel searchModel, int pageNumber, int pageSize, string postId = null)
+        public IHttpActionResult SearchComment([FromBody]APISearchModel searchModel, int pageSize, int pageNumber = 1, string postId = null)
         {
             object jsonObject;
             string searchQuery = searchModel.Query;
@@ -119,7 +119,7 @@ namespace Blog.Controllers
 
         [HttpDelete]
         [Route("api/Comments/{commentId}")]
-        public IHttpActionResult RemoveComment(string commentId, int pageNumber, int pageSize, string postId = null)
+        public IHttpActionResult RemoveComment(string commentId, int pageNumber = 1, int pageSize = 0, string postId = null)
         {
             object jsonObject;
 
@@ -131,15 +131,17 @@ namespace Blog.Controllers
                 return Json(jsonObject);
             }
 
-            PaginationDTO<CommentDTO> commentPaginationDTO = commentService.RemoveCommentDTOWithReloadedPagination(commentId, pageNumber, pageSize, postId);
-            PaginationModel<APICommentModel> commentPaginationModel = dataMapper.MapCommentPaginationDTOToModel(commentPaginationDTO);
+            bool removeSuccessfully = commentService.RemoveComment(commentId);
 
-            if (commentPaginationDTO == null)
+            if (!removeSuccessfully)
             {
                 jsonObject = new { status = 500 };
             }
             else
             {
+                PaginationDTO<CommentDTO> commentPaginationDTO = commentService.GetCommentPaginationDTO(pageNumber, pageSize, postId);
+                PaginationModel<APICommentModel> commentPaginationModel = dataMapper.MapCommentPaginationDTOToModel(commentPaginationDTO);
+
                 jsonObject = new
                 {
                     status = 200,

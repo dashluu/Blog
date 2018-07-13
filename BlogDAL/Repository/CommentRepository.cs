@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -14,14 +15,25 @@ namespace BlogDAL.Repository
         {
             try
             {
+                //Get and track post.
+                //Update number of comments in post.
                 PostEntity postEntity = Context.PostEntities
                     .Where(x => x.PostId.Equals(commentEntity.PostId))
                     .First();
 
                 postEntity.CommentCount++;
 
-                Context.CommentEntities.Add(commentEntity);
+                //Attach to track new comment.
+                //Add comment.
+                Context.CommentEntities.Attach(commentEntity);
+                DbEntityEntry<CommentEntity> commentEntry = Context.Entry(commentEntity);
+                commentEntry.State = EntityState.Added;
+
                 Context.SaveChanges();
+
+                //Detach post and comment to stop tracking.
+                Context.Entry(postEntity).State = EntityState.Detached;
+                commentEntry.State = EntityState.Detached;
 
                 return true;
             }
@@ -36,6 +48,7 @@ namespace BlogDAL.Repository
             try
             {
                 List<CommentEntity> commentEntities = Context.CommentEntities
+                    .AsNoTracking()
                     .Where(x => x.ParentComment.CommentId.Equals(commentId))
                     .OrderByDescending(x => x.CreatedDate)
                     .Skip(skip)
@@ -131,7 +144,7 @@ namespace BlogDAL.Repository
             }
         }
 
-        public PaginationEntity<CommentEntity> RemoveCommentEntityWithReloadedPagination(string commentId, int pageNumber, int pageSize, string postId = null)
+        public bool Remove(string commentId)
         {
             try
             {
@@ -148,37 +161,21 @@ namespace BlogDAL.Repository
                     .Where(x => x.CommentId.Equals(commentId))
                     .First();
 
-                commentEntities.Add(commentEntity);
+                PostEntity postEntity = commentEntity.Post;
 
-                commentEntity.Post.CommentCount -= commentEntities.Count;
-
+                postEntity.CommentCount -= (commentEntities.Count + 1);
                 commentEntityDbSet.RemoveRange(commentEntities);
+                commentEntityDbSet.Remove(commentEntity);
 
                 Context.SaveChanges();
 
-                IQueryable<CommentEntity> commentPaginationQueryable = commentEntityDbSet.AsQueryable();
+                Context.Entry(postEntity).State = EntityState.Detached;
 
-                if (postId != null)
-                {
-                    commentPaginationQueryable = commentPaginationQueryable
-                        .Where(x => x.Post.PostId.Equals(postId));
-                }
-
-                Expression<Func<CommentEntity, DateTime>> commentOrderByExpression = (x => x.CreatedDate);
-
-                PaginationEntity<CommentEntity> commentPaginationEntity = GetPaginationEntity
-                    (commentPaginationQueryable,
-                    isDesc: true,
-                    commentOrderByExpression,
-                    pageNumber,
-                    pageSize);
-
-                return commentPaginationEntity;
+                return true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                System.Diagnostics.Debug.WriteLine(e);
-                return null;
+                return false;
             }
         }
     }

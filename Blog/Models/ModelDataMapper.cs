@@ -199,7 +199,8 @@ namespace Blog.Models
                 ThumbnailImageSrc = postCardDTO.ThumbnailImageSrc,
                 CreatedDate = FormatPostDate(postCardDTO.CreatedDate),
                 UpdatedDate = ComputeUpdateTime(postCardDTO.UpdatedDate),
-                PostCategory = MapCategoryDTOToModel(categoryDTO)
+                PostCategory = MapCategoryDTOToModel(categoryDTO),
+                CommentCount = postCardDTO.CommentCount
             };
 
             return postCardModel;
