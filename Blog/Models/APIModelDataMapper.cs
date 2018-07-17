@@ -274,5 +274,21 @@ namespace Blog.Models
 
             return commentPaginationModel;
         }
+
+        public APIImageModel MapImageDTOToModel(ImageDTO imageDTO)
+        {
+            if (imageDTO == null)
+            {
+                return null;
+            }
+
+            APIImageModel imageModel = new APIImageModel()
+            {
+                ImageId = imageDTO.ImageId,
+                Extension = imageDTO.Extension
+            };
+
+            return imageModel;
+        }
     }
 }

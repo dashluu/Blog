@@ -13,8 +13,8 @@ namespace BlogServices.Services
         bool UpdatePost(PostDTO postDTO);
 
         PostDTOWithPaginatedComments GetPostDTOWithPaginatedComments(string id, int pageSize);
-        PaginationDTO<PostCardDTO> GetPostCardPaginationDTO(int pageNumber, int pageSize, string category = null);
-        List<PaginationDTO<PostCardDTO>> GetPostCardPaginationDTOs(int pageSize);
+        PaginationDTO<PostCardDTO> GetPostCardPaginationDTO(int pageNumber, int pageSize, string category = null, string searchQuery = null);
+        List<PaginationDTO<PostCardDTO>> GetPostCardPaginationDTOs(int pageSize, string searchQuery = null);
         PostDTO GetPostDTO(string id);
 
         bool RemovePost(string postId);

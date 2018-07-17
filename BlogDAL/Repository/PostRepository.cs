@@ -5,6 +5,8 @@ using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Web;
 using BlogDAL.Entity;
 
 namespace BlogDAL.Repository
@@ -73,7 +75,7 @@ namespace BlogDAL.Repository
             }
         }
 
-        public PaginationEntity<PostEntity> GetPostPaginationEntity(int pageNumber, int pageSize, string category = null)
+        public PaginationEntity<PostEntity> GetPostPaginationEntity(int pageNumber, int pageSize, string category = null, string searchQuery = null)
         {
             try
             {
@@ -82,7 +84,18 @@ namespace BlogDAL.Repository
 
                 if (category != null)
                 {
-                    postQueryable = postQueryable.Where(x => x.PostCategory.Name.Equals(category));
+                    postQueryable = postQueryable
+                        .Where(x => x.PostCategory.Name.Equals(category));
+                }
+
+                if (searchQuery != null)
+                {
+                    string encodedSearchQuery = HttpUtility.HtmlEncode(searchQuery);
+
+                    postQueryable = postQueryable
+                        .Where(x => x.Title.Contains(encodedSearchQuery)
+                        || x.ShortDescription.Contains(encodedSearchQuery)
+                        || x.PostCategory.Name.Contains(encodedSearchQuery));
                 }
 
                 Expression<Func<PostEntity, DateTime>> postOrderByExpression = (x => x.CreatedDate);
@@ -96,7 +109,7 @@ namespace BlogDAL.Repository
             }
         }
 
-        public List<PaginationEntity<PostEntity>> GetPostPaginationEntities(int pageSize)
+        public List<PaginationEntity<PostEntity>> GetPostPaginationEntities(int pageSize, string searchQuery = null)
         {
             try
             {
@@ -105,7 +118,7 @@ namespace BlogDAL.Repository
 
                 foreach (CategoryEntity categoryEntity in categoryEntities)
                 {
-                    PaginationEntity<PostEntity> postPaginationEntity = GetPostPaginationEntity(pageNumber: 1, pageSize, category: categoryEntity.Name);
+                    PaginationEntity<PostEntity> postPaginationEntity = GetPostPaginationEntity(pageNumber: 1, pageSize, category: categoryEntity.Name, searchQuery);
 
                     if (postPaginationEntity == null || postPaginationEntity.Entities == null || postPaginationEntity.Pages == 0)
                     {
@@ -194,7 +207,6 @@ namespace BlogDAL.Repository
             try
             {
                 CategoryEntity categoryEntity = entity.PostCategory;
-                categoryEntity.PostCount++;
                 entity.PostCategory = null;
 
                 CategoryEntity oldCategoryEntity = Context.PostEntities
@@ -203,12 +215,19 @@ namespace BlogDAL.Repository
                     .Select(x => x.PostCategory)
                     .First();
 
-                oldCategoryEntity.PostCount--;
+                DbEntityEntry<CategoryEntity> categoryEntry = null;
+
+                if (!categoryEntity.CategoryId.Equals(oldCategoryEntity.CategoryId))
+                {
+                    categoryEntity.PostCount++;
+                    oldCategoryEntity.PostCount--;
+                    Context.CategoryEntities.Attach(categoryEntity);
+                    categoryEntry = Context.Entry(categoryEntity);
+                    categoryEntry.Property(x => x.PostCount).IsModified = true;
+                }
 
                 Context.PostEntities.Attach(entity);
                 DbEntityEntry<PostEntity> postEntry = Context.Entry(entity);
-                Context.CategoryEntities.Attach(categoryEntity);
-                DbEntityEntry<CategoryEntity> categoryEntry = Context.Entry(categoryEntity);
 
                 postEntry.Property(x => x.Title).IsModified = true;
                 postEntry.Property(x => x.ThumbnailImageSrc).IsModified = true;
@@ -217,13 +236,15 @@ namespace BlogDAL.Repository
                 postEntry.Property(x => x.CategoryId).IsModified = true;
                 postEntry.Property(x => x.UpdatedDate).IsModified = true;
 
-                categoryEntry.Property(x => x.PostCount).IsModified = true;
-
                 Context.SaveChanges();
 
                 postEntry.State = EntityState.Detached;
-                categoryEntry.State = EntityState.Detached;
                 Context.Entry(oldCategoryEntity).State = EntityState.Detached;
+
+                if (categoryEntry != null)
+                {
+                    categoryEntry.State = EntityState.Detached;
+                }
 
                 return true;
             }

@@ -3,9 +3,11 @@ using BlogServices.DTO;
 using BlogServices.Services;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 using System.Web.Http;
 using System.Web.Http.Cors;
 
@@ -83,6 +85,38 @@ namespace Blog.Controllers
             return Json(jsonObject);
         }
 
+        [HttpPost]
+        [Route("api/Posts/Search")]
+        public IHttpActionResult SearchPost([FromBody]APISearchModel searchModel, int pageSize, int pageNumber = 1, string category = null)
+        {
+            object jsonObject;
+            string searchQuery = searchModel.Query;
+
+            if (pageNumber <= 0 || pageSize <= 0)
+            {
+                jsonObject = new { status = 500 };
+                return Json(jsonObject);
+            }
+
+            PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.GetPostCardPaginationDTO(pageNumber, pageSize, category, searchQuery);
+            APIPaginationModel<APIPostCardModel> postCardPaginationModel = dataMapper.MapPostCardPaginationDTOToModel(postCardPaginationDTO);
+
+            if (postCardPaginationDTO == null)
+            {
+                jsonObject = new { status = 500 };
+            }
+            else
+            {
+                jsonObject = new
+                {
+                    status = 200,
+                    data = postCardPaginationModel
+                };
+            }
+
+            return Json(jsonObject);
+        }
+
         [HttpDelete]
         [Route("api/Posts/{postId}")]
         public IHttpActionResult RemovePost(string postId, int pageNumber = 1, int pageSize = 0, string category = null)
@@ -131,6 +165,12 @@ namespace Blog.Controllers
             }
 
             PostDTO postDTO = dataMapper.MapEditedPostModelToDTO(editedPostModel);
+
+            if (string.IsNullOrWhiteSpace(postDTO.ThumbnailImageSrc))
+            {
+                postDTO.ThumbnailImageSrc = APISettings.EMPTY_IMAGE;
+            }
+
             bool addSuccessfully = postService.AddPost(postDTO);
 
             if (!addSuccessfully)
@@ -157,10 +197,15 @@ namespace Blog.Controllers
                 return Json(jsonObject);
             }
 
-            PostDTO PostDTO = dataMapper.MapEditedPostModelToDTO(editedPostModel);
-            PostDTO.PostId = postId;
+            PostDTO postDTO = dataMapper.MapEditedPostModelToDTO(editedPostModel);
+            postDTO.PostId = postId;
 
-            bool updateSuccessfully = postService.UpdatePost(PostDTO);
+            if (string.IsNullOrWhiteSpace(postDTO.ThumbnailImageSrc))
+            {
+                postDTO.ThumbnailImageSrc = APISettings.EMPTY_IMAGE;
+            }
+
+            bool updateSuccessfully = postService.UpdatePost(postDTO);
 
             if (!updateSuccessfully)
             {

@@ -27,5 +27,8 @@ namespace Blog.Models
         APICommentModel MapCommentDTOToModel(CommentDTO commentDTO);
         List<APICommentModel> MapCommentDTOsToModels(List<CommentDTO> commentDTOs);
         PaginationModel<APICommentModel> MapCommentPaginationDTOToModel(PaginationDTO<CommentDTO> commentPaginationDTO);
+
+        //Map image
+        APIImageModel MapImageDTOToModel(ImageDTO imageDTO);
     }
 }

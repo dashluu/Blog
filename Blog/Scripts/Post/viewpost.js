@@ -39,29 +39,38 @@ $(document).on("submit", ".master-comment-form", function (event) {
         return;
     }
 
-    var commentTextBox = form.children(".comment-input").first();
-    var commentInput = commentTextBox.val();
+    var commentInputElement = form
+        .children(".comment-input")
+        .first();
 
-    var postInput = form.children(".post-id").first();
-    var postId = postInput.val();
+    var postIdInputElement = form
+        .children(".post-id")
+        .first();
 
-    var commentCountInput = $(".comment-count").first();
-    var commentCount = commentCountInput.html();
+    var commentCountInputElement = $(".comment-count").first();
 
-    var masterCommentListContainer = form.siblings(".master-comment-list-container").first();
+    var masterCommentListContainer = form
+        .siblings(".master-comment-list-container")
+        .first();
 
-    $.post("/Post/AddMasterComment", { comment: commentInput, postId: postId }, function (result) {
+    var values = {
+        comment: commentInputElement.val(),
+        postId: postIdInputElement.val()
+    };
+
+    $.post("/Post/AddMasterComment", values, function (result) {
         if (result.status === 200) {
-            commentTextBox.val("");
+            commentInputElement.val("");
 
+            var commentCount = commentCountInputElement.html();
             var updatedCommentCount = parseInt(commentCount) + 1;
-            commentCountInput.html(updatedCommentCount.toString());
+            commentCountInputElement.html(updatedCommentCount.toString());
 
             var object = result.data;
             var commentModel = mapObjectToCommentModel(object);
 
-            var newCommentContainerSelector = createCommentContainerSelector(commentModel, postId);
-            masterCommentListContainer.prepend(newCommentContainerSelector);
+            var newCommentContainerHtml = createCommentContainerHtml(commentModel, values.postId);
+            masterCommentListContainer.prepend(newCommentContainerHtml);
             var newCommentContainer = masterCommentListContainer.children().first();
             newCommentContainer.show("fast");
         }
@@ -89,60 +98,71 @@ $(document).on("submit", ".child-comment-form", function (event) {
         return;
     }
 
-    var commentTextBox = form.children(".comment-input").first();
-    var commentInput = commentTextBox.val();
+    var commentInputElement = form
+        .children(".comment-input")
+        .first();
 
-    var commentIdInput = form.children(".comment-id").first();
-    var commentId = commentIdInput.val();
+    var commentIdInputElement = form
+        .children(".comment-id")
+        .first();
 
-    var postIdInput = form.children(".post-id").first();
-    var postId = postIdInput.val();
+    var postIdInputElement = form
+        .children(".post-id")
+        .first();
 
-    var commentCountInput = $(".comment-count").first();
-    var commentCount = commentCountInput.html();
+    var commentCountInputElement = $(".comment-count").first();
 
-    var childCommentListContainer = form.siblings(".child-comment-list-container").first();
+    var childCommentListContainer = form
+        .siblings(".child-comment-list-container")
+        .first();
 
-    $.post("/Post/AddChildComment", { comment: commentInput, commentId: commentId, postId: postId }, function (result) {
+    var values = {
+        comment: commentInputElement.val(),
+        commentId: commentIdInputElement.val(),
+        postId: postIdInputElement.val()
+    };
+
+    $.post("/Post/AddChildComment", values, function (result) {
         if (result.status === 200) {
-            commentTextBox.val("");
+            commentInputElement.val("");
 
+            var commentCount = commentCountInputElement.html();
             var updatedCommentCount = parseInt(commentCount) + 1;
-            commentCountInput.html(updatedCommentCount.toString());
+            commentCountInputElement.html(updatedCommentCount.toString());
 
             var object = result.data;
             var childCommentModel = mapObjectToCommentModel(object);
 
-            var newCommentContainerSelector = createChildCommentContainerSelector(childCommentModel);
+            var newCommentContainerHtml = createChildCommentContainerHtml(childCommentModel);
 
-            childCommentListContainer.prepend(newCommentContainerSelector);
-            var newCommentSelector = childCommentListContainer.children().first();
+            childCommentListContainer.prepend(newCommentContainerHtml);
+            var newCommentHtml = childCommentListContainer.children().first();
 
             if (childCommentListContainer.css("display") === "none") {
                 childCommentListContainer.show("fast");
-                newCommentSelector.show();
+                newCommentHtml.show();
             } else {
-                newCommentSelector.show("fast");
+                newCommentHtml.show("fast");
             }
         }
     });
 });
 
 $(document).on("click", ".show-child-comment-btn", function () {
-    var thisBtn = $(this);
+    var button = $(this);
 
-    var childCommentListContainer = thisBtn
+    var childCommentListContainer = button
         .parent()
         .parent()
         .siblings(".child-comment-list-container")
         .first();
 
-    var loadChildrenCommentInput = thisBtn
+    var loadChildrenCommentInputElement = button
         .parent()
         .siblings(".load-children-comment")
         .first();
 
-    var loadChildrenComment = loadChildrenCommentInput.val();
+    var loadChildrenComment = loadChildrenCommentInputElement.val();
 
     if (loadChildrenComment === "1") {
         if (childCommentListContainer.children().length > 0) {
@@ -151,7 +171,7 @@ $(document).on("click", ".show-child-comment-btn", function () {
         return;
     }
 
-    var commentIdInput = $(this)
+    var commentIdInputElement = button
         .parent()
         .parent()
         .siblings(".child-comment-form")
@@ -159,12 +179,14 @@ $(document).on("click", ".show-child-comment-btn", function () {
         .children(".comment-id")
         .first();
 
-    var commentId = commentIdInput.val();
-    var skip = childCommentListContainer.children().length;
+    var values = {
+        commentId: commentIdInputElement.val(),
+        skip: childCommentListContainer.children().length
+    };
 
-    $.post("/Post/ShowChildComments", { commentId: commentId, skip: skip }, function (result) {
+    $.post("/Post/ShowChildComments", values, function (result) {
         if (result.status === 200) {
-            loadChildrenCommentInput.val("1");
+            loadChildrenCommentInputElement.val("1");
             var objects = result.data;
             var count = objects.length;
             childCommentListContainer.show("fast");
@@ -173,8 +195,8 @@ $(document).on("click", ".show-child-comment-btn", function () {
                 var object = objects[i];
                 var childCommentModel = mapObjectToCommentModel(object);
 
-                var newChildCommentContainerSelector = createChildCommentContainerSelector(childCommentModel);
-                var newChildCommentContainer = $(newChildCommentContainerSelector);
+                var newChildCommentContainerHtml = createChildCommentContainerHtml(childCommentModel);
+                var newChildCommentContainer = $(newChildCommentContainerHtml);
                 newChildCommentContainer.appendTo(childCommentListContainer);
                 newChildCommentContainer.show("fast");
             }
@@ -183,52 +205,58 @@ $(document).on("click", ".show-child-comment-btn", function () {
 });
 
 $(document).on("click", ".add-child-comment-btn", function () {
-    var commentForm = $(this)
+    var button = $(this);
+
+    var childCommentForm = button
         .parent()
         .parent()
         .siblings(".child-comment-form")
         .first();
-    commentForm.toggle("fast");
+
+    childCommentForm.toggle("fast");
 });
 
-function createCommentContainerSelector(commentModel, postId) {
-    var commentContainerSelector = "<div class='comment-container' style='display: none'>" +
-        "<div class='master-comment-container'>" +
-        "<div class='comment-user-container'>" +
-        "<strong class='comment-user'>" + commentModel.username + "</strong>" +
-        "<button class='show-child-comment-btn'><span class='glyphicon glyphicon-list'></span></button>" +
-        "<button class='add-child-comment-btn'><span class='glyphicon glyphicon-edit'></span></button>" +
-        "</div>" +
-        "<div class='comment-body'>" + commentModel.content + "</div>" +
-        "<input type='hidden' class='load-children-comment' value='0' />" +
-        "</div>" +
-        "<form class='comment-form child-comment-form' action='/ViewPost' method='post' style='display: none'>" +
-        "<textarea class='comment-input' placeholder='Comment'></textarea>" +
-        "<input type='hidden' value='" + commentModel.commentId + "' class='comment-id' />" +
-        "<input type='hidden' value='" + postId + "' class='post-id'/>" +
-        "<input type='hidden' value='" + commentModel.createdDate + "'class='comment-created-date' />" +
-        "<button type='submit' class='submit-comment-btn'><span class='glyphicon glyphicon-send'></span></button>" +
-        "</form>" +
-        "<div class='child-comment-list-container'>" +
-        "</div>";
+function createCommentContainerHtml(commentModel, postId) {
+    var commentContainerHtml =
+        `<div class='comment-container' style='display: none'>
+            <div class='master-comment-container'>
+                <div class='comment-user-container'>
+                    <strong class='comment-user'>${commentModel.username}</strong>
+                    <button class='show-child-comment-btn'><span class='glyphicon glyphicon-list'></span></button>
+                    <button class='add-child-comment-btn'><span class='glyphicon glyphicon-edit'></span></button>
+                </div>
+            <div class='comment-body'>${commentModel.content}</div>
+            <input type='hidden' class='load-children-comment' value='0' />
+        </div>
+        <form class='comment-form child-comment-form' style='display: none'>
+            <textarea class='comment-input' placeholder='Comment'></textarea>
+            <input type='hidden' value=${commentModel.commentId} class='comment-id' />
+            <input type='hidden' value=${postId} class='post-id' />
+            <input type='hidden' value=${commentModel.createdDate} class='comment-created-date' />
+            <button type='submit' class='submit-comment-btn'><span class='glyphicon glyphicon-send'></span></button>
+        </form>
+        <div class='child-comment-list-container'></div>`;
 
-    return commentContainerSelector;
+    return commentContainerHtml;
 }
 
-function createChildCommentContainerSelector(commentModel) {
-    var childCommentContainerSelector = "<div class='child-comment-container' style='display: none'>" +
-        "<div class='comment-user-section'><strong class='comment-user'>" + commentModel.username + "</strong></div>" +
-        "<div class='comment-body'>" + commentModel.content + "</div>" +
-        "</div>";
+function createChildCommentContainerHtml(commentModel) {
+    var childCommentContainerHtml =
+        `<div class='child-comment-container' style='display: none'>
+            <div class='comment-user-section'><strong class='comment-user'>${commentModel.username}</strong></div>
+            <div class='comment-body'>${commentModel.content}</div>
+        </div>`;
 
-    return childCommentContainerSelector;
+    return childCommentContainerHtml;
 } 
 
 $("#expand-master-comment-btn").click(function () {
-    var postId = $("#post-id").val();
-    var createdDateString = $(".comment-created-date").last().val();
+    var values = {
+        postId: $("#post-id").val(),
+        createdDateString: $(".comment-created-date").last().val()
+    };
 
-    $.post("/Post/ShowMoreComments", { postId: postId, createdDateString: createdDateString }, function (result) {
+    $.post("/Post/ShowMoreComments", values, function (result) {
         if (result.status === 200) {
             var commentPaginationObject = result.data;
             var commentPaginationModel = mapObjectToCommentPaginationModel(commentPaginationObject);
@@ -240,8 +268,8 @@ $("#expand-master-comment-btn").click(function () {
             for (var i = 0; i < commentModelCount; i++) {
                 var commentModel = mapObjectToCommentModel(commentModels[i]);
 
-                var newCommentContainerSelector = createCommentContainerSelector(commentModel, postId);
-                masterCommentListContainer.append(newCommentContainerSelector);
+                var newCommentContainerHtml = createCommentContainerHtml(commentModel, postId);
+                masterCommentListContainer.append(newCommentContainerHtml);
 
                 var newCommentContainer = masterCommentListContainer.children().last();
                 newCommentContainer.show("fast");

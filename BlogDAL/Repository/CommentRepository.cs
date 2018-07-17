@@ -150,25 +150,23 @@ namespace BlogDAL.Repository
             {
                 DbSet<CommentEntity> commentEntityDbSet = Context.CommentEntities;
 
-                IQueryable<CommentEntity> commentDeleteQueryable = commentEntityDbSet
+                IQueryable<CommentEntity> childCommentQueryable = commentEntityDbSet
                     .Where(x => x.ParentComment.CommentId.Equals(commentId));
 
-                List<CommentEntity> commentEntities = commentDeleteQueryable.ToList();
+                List<CommentEntity> childCommentEntities = childCommentQueryable.ToList();
 
                 CommentEntity commentEntity = commentEntityDbSet
                     .Include(x => x.Post)
-                    .Include(x => x.ParentComment)
                     .Where(x => x.CommentId.Equals(commentId))
                     .First();
 
                 PostEntity postEntity = commentEntity.Post;
 
-                postEntity.CommentCount -= (commentEntities.Count + 1);
-                commentEntityDbSet.RemoveRange(commentEntities);
+                postEntity.CommentCount -= (childCommentEntities.Count + 1);
+                commentEntityDbSet.RemoveRange(childCommentEntities);
                 commentEntityDbSet.Remove(commentEntity);
 
                 Context.SaveChanges();
-
                 Context.Entry(postEntity).State = EntityState.Detached;
 
                 return true;

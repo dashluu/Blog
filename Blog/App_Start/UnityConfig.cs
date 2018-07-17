@@ -18,6 +18,7 @@ namespace Blog
             // it is NOT necessary to register your controllers
 
             // e.g. container.RegisterType<ITestService, TestService>();
+            container.RegisterType<IImageService, ImageService>();
             container.RegisterType<IHashService, HashService>();
             container.RegisterType<APIIModelDataMapper, APIModelDataMapper>();
             container.RegisterType<IServiceDataMapper, ServiceDataMapper>();

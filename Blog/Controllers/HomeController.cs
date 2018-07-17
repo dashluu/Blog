@@ -59,21 +59,21 @@ namespace Blog.Controllers
         }
 
         [ChildActionOnly]
-        public ActionResult CategoryPartial(string category)
+        public ActionResult CategoryPartial(string category, string searchQuery = null)
         {
             if (string.IsNullOrWhiteSpace(category))
             {
                 //Do something with this exception.
             }
 
-            PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.GetPostCardPaginationDTO(pageNumber: 1, pageSize: pagination.PostPageSize, category);
+            PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.GetPostCardPaginationDTO(pageNumber: 1, pageSize: pagination.PostPageSize, category, searchQuery);
             PaginationModel<PostCardModel> postCardPaginationModel = dataMapper.MapPostCardPaginationDTOToModel(postCardPaginationDTO);
 
             return PartialView("_CategoryPartial", postCardPaginationModel);
         }
 
         [HttpPost]
-        public ActionResult CategoryPartial(string category, int pageNumber, int pageSize)
+        public ActionResult CategoryPartial(string category, int pageNumber, int pageSize, string searchQuery = null)
         {
             object jsonObject;
 
@@ -83,7 +83,7 @@ namespace Blog.Controllers
                 return Json(jsonObject);
             }
 
-            PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.GetPostCardPaginationDTO(pageNumber, pageSize, category);
+            PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.GetPostCardPaginationDTO(pageNumber, pageSize, category, searchQuery);
             PaginationModel<PostCardModel> postCardPaginationModel = dataMapper.MapPostCardPaginationDTOToModel(postCardPaginationDTO);
 
             if (postCardPaginationModel == null)
@@ -103,7 +103,7 @@ namespace Blog.Controllers
         }
 
         [HttpPost]
-        public ActionResult CategoryPost(string postId)
+        public ActionResult ViewPost(string postId)
         {
             if (string.IsNullOrWhiteSpace(postId))
             {

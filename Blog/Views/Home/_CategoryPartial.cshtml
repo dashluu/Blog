@@ -15,7 +15,7 @@
 
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 post-category">@category.ToUpper()</div>
 
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 post-navigation-controls">
             @{
                 bool hasNext = Model.HasNext;
                 string displayNext = hasNext ? "" : "display:none";
@@ -42,7 +42,7 @@
                         <div class="post-date">On <strong>@postCard.CreatedDate</strong></div>
                         <div class="post-date">Updated @postCard.UpdatedDate</div>
                         <div class="post-summary">@postCard.ShortDescription</div>
-                        @using (Html.BeginForm("CategoryPost", "Home"))
+                        @using (Html.BeginForm("ViewPost", "Home"))
                         {
                             <input type="hidden" value=@postCard.PostId name="postId" />
                         }

@@ -125,7 +125,7 @@ namespace Blog.Controllers
 
             if (string.IsNullOrWhiteSpace(commentId)
                 || pageNumber <= 0
-                || pageSize <= 0)
+                || pageSize < 0)
             {
                 jsonObject = new { status = 500 };
                 return Json(jsonObject);
