@@ -26,7 +26,7 @@ namespace Blog.Controllers
         }
 
         [Route("api/Posts")]
-        public IHttpActionResult GetPostCards(int pageSize, int pageNumber = 1, string category = null)
+        public IHttpActionResult GetPostCards(int pageSize, int pageNumber = 1, string category = null, string searchQuery = null)
         {
             object jsonObject;
 
@@ -36,7 +36,7 @@ namespace Blog.Controllers
                 return Json(jsonObject);
             }
 
-            PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.GetPostCardPaginationDTO(pageNumber, pageSize, category);
+            PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.GetPostCardPagination(pageNumber, pageSize, category: category, searchQuery: searchQuery);
             APIPaginationModel<APIPostCardModel> postCardPaginationModel = dataMapper.MapPostCardPaginationDTOToModel(postCardPaginationDTO);
 
             if (postCardPaginationDTO == null)
@@ -66,7 +66,7 @@ namespace Blog.Controllers
                 return Json(jsonObject);
             }
 
-            PostDTO postDTO = postService.GetPostDTO(postId);
+            PostDTO postDTO = postService.GetPost(postId);
             APIEditedPostModel editedPostModel = dataMapper.MapEditedPostDTOToModel(postDTO);
 
             if (editedPostModel == null)
@@ -79,38 +79,6 @@ namespace Blog.Controllers
                 {
                     status = 200,
                     data = editedPostModel
-                };
-            }
-
-            return Json(jsonObject);
-        }
-
-        [HttpPost]
-        [Route("api/Posts/Search")]
-        public IHttpActionResult SearchPost([FromBody]APISearchModel searchModel, int pageSize, int pageNumber = 1, string category = null)
-        {
-            object jsonObject;
-            string searchQuery = searchModel.Query;
-
-            if (pageNumber <= 0 || pageSize <= 0)
-            {
-                jsonObject = new { status = 500 };
-                return Json(jsonObject);
-            }
-
-            PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.GetPostCardPaginationDTO(pageNumber, pageSize, category, searchQuery);
-            APIPaginationModel<APIPostCardModel> postCardPaginationModel = dataMapper.MapPostCardPaginationDTOToModel(postCardPaginationDTO);
-
-            if (postCardPaginationDTO == null)
-            {
-                jsonObject = new { status = 500 };
-            }
-            else
-            {
-                jsonObject = new
-                {
-                    status = 200,
-                    data = postCardPaginationModel
                 };
             }
 
@@ -131,7 +99,7 @@ namespace Blog.Controllers
                 return Json(jsonObject);
             }
 
-            bool removeSuccessfully = postService.RemovePost(postId);
+            bool removeSuccessfully = postService.Remove(postId);
 
             if (!removeSuccessfully)
             {
@@ -139,7 +107,7 @@ namespace Blog.Controllers
             }
             else
             {
-                PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.GetPostCardPaginationDTO(pageNumber, pageSize, category);
+                PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.GetPostCardPagination(pageNumber, pageSize, category: category);
                 APIPaginationModel<APIPostCardModel> postCardPaginationModel = dataMapper.MapPostCardPaginationDTOToModel(postCardPaginationDTO);
 
                 jsonObject = new
@@ -171,7 +139,7 @@ namespace Blog.Controllers
                 postDTO.ThumbnailImageSrc = APISettings.EMPTY_IMAGE;
             }
 
-            bool addSuccessfully = postService.AddPost(postDTO);
+            bool addSuccessfully = postService.Add(postDTO);
 
             if (!addSuccessfully)
             {
@@ -205,7 +173,7 @@ namespace Blog.Controllers
                 postDTO.ThumbnailImageSrc = APISettings.EMPTY_IMAGE;
             }
 
-            bool updateSuccessfully = postService.UpdatePost(postDTO);
+            bool updateSuccessfully = postService.Update(postDTO);
 
             if (!updateSuccessfully)
             {

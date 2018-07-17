@@ -62,42 +62,42 @@ $(document).on("click", ".previous-page-btn", function () {
 var searchQuery = null;
 
 function navigatePage(targetRow, nextPage) {
-    var postNavigationElement = targetRow
+    var postNavigationInputElement = targetRow
         .children(".post-navigation-controls")
         .first();
 
-    var categoryElement = targetRow
+    var categoryInputElement = targetRow
         .children(".post-category")
         .first();
 
-    var pageIndicatorElement = postNavigationElement
+    var pageIndicatorInputElement = postNavigationInputElement
         .children(".page-indicator")
         .first();
 
-    var pageNumberElement = pageIndicatorElement
+    var pageNumberInputElement = pageIndicatorInputElement
         .children(".page-number")
         .first();
 
-    var pageCountElement = pageIndicatorElement
+    var pageCountInputElement = pageIndicatorInputElement
         .children(".page-count")
         .first();
 
-    var pageSizeElement = postNavigationElement
+    var pageSizeInputElement = postNavigationInputElement
         .children(".post-page-size")
         .first();
 
-    var nextBtnElement = postNavigationElement
+    var nextBtnInputElement = postNavigationInputElement
         .children(".next-page-btn")
         .first();
 
-    var previousBtnElement = postNavigationElement
+    var previousBtnInputElement = postNavigationInputElement
         .children(".previous-page-btn")
         .first();
 
     var values = {
-        pageNumber: parseInt(pageNumberElement.html()) + (nextPage ? 1 : -1),
-        category: categoryElement.html().toLowerCase(),
-        pageSize: pageSizeElement.val(),
+        pageNumber: parseInt(pageNumberInputElement.html()) + (nextPage ? 1 : -1),
+        category: categoryInputElement.html().toLowerCase(),
+        pageSize: pageSizeInputElement.val(),
         searchQuery: searchQuery
     };
 
@@ -113,23 +113,23 @@ function navigatePage(targetRow, nextPage) {
                 return;
             }
 
-            pageNumberElement.html(postCardPaginationModel.pageNumber);
-            pageCountElement.html(postCardPaginationModel.pages);
+            pageNumberInputElement.html(postCardPaginationModel.pageNumber);
+            pageCountInputElement.html(postCardPaginationModel.pages);
             var postCardModels = postCardPaginationModel.postCardModels;
             var postCardModelCount = postCardModels.length;
 
             if (!postCardPaginationModel.hasNext) {
-                nextBtnElement.hide();
+                nextBtnInputElement.hide();
             }
             else {
-                nextBtnElement.show();
+                nextBtnInputElement.show();
             }
 
             if (!postCardPaginationModel.hasPrevious) {
-                previousBtnElement.hide();
+                previousBtnInputElement.hide();
             }
             else {
-                previousBtnElement.show();
+                previousBtnInputElement.show();
             }
 
             for (var i = 0; i < postCardModelCount; i++) {

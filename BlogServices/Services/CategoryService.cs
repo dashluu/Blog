@@ -20,7 +20,7 @@ namespace BlogServices.Services
             this.hashService = hashService;
         }
 
-        public bool AddCategory(CategoryDTO categoryDTO)
+        public bool Add(CategoryDTO categoryDTO)
         {
             categoryDTO.CategoryId = hashService.GenerateId();
 
@@ -30,7 +30,7 @@ namespace BlogServices.Services
             return addSuccessfully;
         }
 
-        public List<CategoryDTO> GetCategoryDTOs()
+        public List<CategoryDTO> GetCategories()
         {
             List<CategoryEntity> categoryEntities = categoryRepository.GetEntities();
             List<CategoryDTO> categoryDTOs = dataMapper.MapCategoryEntitiesToDTOs(categoryEntities);
@@ -38,7 +38,7 @@ namespace BlogServices.Services
             return categoryDTOs;
         }
 
-        public bool UpdateCategory(CategoryDTO categoryDTO)
+        public bool Update(CategoryDTO categoryDTO)
         {
             CategoryEntity categoryEntity = dataMapper.MapCategoryDTOToEntity(categoryDTO);
             bool updateSuccessfully = categoryRepository.Update(categoryEntity);

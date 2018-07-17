@@ -49,7 +49,7 @@ namespace BlogDAL.Repository
             }
         }
 
-        public PostEntityWithPaginatedComments GetPostEntityWithPaginatedComments(string id, int pageSize)
+        public PostEntityWithPaginatedComments GetPostWithPaginatedComments(string id, int pageSize)
         {
             try
             {
@@ -59,7 +59,7 @@ namespace BlogDAL.Repository
                     .Include(x => x.PostCategory)
                     .First();
 
-                PaginationEntity<CommentEntity> commentPaginationEntity = commentRepository.GetCommentPaginationEntityOfPostWithPreservedFetch(postId: id, DateTime.Now, pageSize);
+                PaginationEntity<CommentEntity> commentPaginationEntity = commentRepository.GetCommentPaginationOfPostWithPreservedFetch(postId: id, createdDate: DateTime.Now, pageSize);
 
                 PostEntityWithPaginatedComments postEntityWithPaginatedComments = new PostEntityWithPaginatedComments()
                 {
@@ -75,7 +75,7 @@ namespace BlogDAL.Repository
             }
         }
 
-        public PaginationEntity<PostEntity> GetPostPaginationEntity(int pageNumber, int pageSize, string category = null, string searchQuery = null)
+        public PaginationEntity<PostEntity> GetPostPagination(int pageNumber, int pageSize, string category = null, string searchQuery = null)
         {
             try
             {
@@ -109,7 +109,7 @@ namespace BlogDAL.Repository
             }
         }
 
-        public List<PaginationEntity<PostEntity>> GetPostPaginationEntities(int pageSize, string searchQuery = null)
+        public List<PaginationEntity<PostEntity>> GetPostPaginationList(int pageSize, string searchQuery = null)
         {
             try
             {
@@ -118,7 +118,7 @@ namespace BlogDAL.Repository
 
                 foreach (CategoryEntity categoryEntity in categoryEntities)
                 {
-                    PaginationEntity<PostEntity> postPaginationEntity = GetPostPaginationEntity(pageNumber: 1, pageSize, category: categoryEntity.Name, searchQuery);
+                    PaginationEntity<PostEntity> postPaginationEntity = GetPostPagination(pageNumber: 1, pageSize, category: categoryEntity.Name, searchQuery);
 
                     if (postPaginationEntity == null || postPaginationEntity.Entities == null || postPaginationEntity.Pages == 0)
                     {
@@ -136,7 +136,7 @@ namespace BlogDAL.Repository
             }
         }
 
-        public PostEntity GetPostEntity(string id)
+        public PostEntity GetPost(string id)
         {
             try
             {
@@ -248,9 +248,8 @@ namespace BlogDAL.Repository
 
                 return true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                System.Diagnostics.Debug.WriteLine(e);
                 return false;
             }
         }

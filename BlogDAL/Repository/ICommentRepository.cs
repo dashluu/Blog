@@ -7,13 +7,9 @@ namespace BlogDAL.Repository
 {
     public interface ICommentRepository : IBaseRepository<CommentEntity>
     {
-        List<CommentEntity> GetChildCommentEntities(string commentId, int skip);
-        PaginationEntity<CommentEntity> GetChildCommentPaginationEntity(string commentId, int pageNumber, int pageSize);
-
-        PaginationEntity<CommentEntity> GetCommentPaginationEntityOfPostWithPreservedFetch(string postId, DateTime createdDate, int pageSize);
-        PaginationEntity<CommentEntity> GetCommentPaginationEntity(int pageNumber, int pageSize, string postId = null);
-
-        PaginationEntity<CommentEntity> SearchCommentWithPaginationEntity(string searchQuery, int pageNumber, int pageSize, string postId = null);
+        List<CommentEntity> GetChildComments(string commentId, int skip);
+        PaginationEntity<CommentEntity> GetCommentPaginationOfPostWithPreservedFetch(string postId, DateTime createdDate, int pageSize);
+        PaginationEntity<CommentEntity> GetCommentPagination(int pageNumber, int pageSize, string postId = null, string commentId = null, string searchQuery = null);
 
         bool Remove(string commentId);
     }

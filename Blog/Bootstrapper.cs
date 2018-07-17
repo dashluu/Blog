@@ -27,13 +27,6 @@ namespace Blog
 
             // e.g. container.RegisterType<ITestService, TestService>();
 
-            int homePostPageSize = 1;
-            int postPageSize = 2;
-            int commentPageSize = 1;
-            int childCommentPageSize = 1;
-
-            container.RegisterType<Pagination>(new Microsoft.Practices.Unity.InjectionConstructor(homePostPageSize, postPageSize, commentPageSize, childCommentPageSize));
-
             container.RegisterType<IHashService, HashService>();
             container.RegisterType<IModelDataMapper, ModelDataMapper>();
             container.RegisterType<IServiceDataMapper, ServiceDataMapper>();

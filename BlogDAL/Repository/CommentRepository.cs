@@ -43,7 +43,7 @@ namespace BlogDAL.Repository
             }
         }
 
-        public List<CommentEntity> GetChildCommentEntities(string commentId, int skip)
+        public List<CommentEntity> GetChildComments(string commentId, int skip)
         {
             try
             {
@@ -62,7 +62,7 @@ namespace BlogDAL.Repository
             }
         }
 
-        public PaginationEntity<CommentEntity> GetCommentPaginationEntityOfPostWithPreservedFetch(string postId, DateTime createdDate, int pageSize)
+        public PaginationEntity<CommentEntity> GetCommentPaginationOfPostWithPreservedFetch(string postId, DateTime createdDate, int pageSize)
         {
             try
             {
@@ -83,7 +83,7 @@ namespace BlogDAL.Repository
             }
         }
 
-        public PaginationEntity<CommentEntity> GetCommentPaginationEntity(int pageNumber, int pageSize, string postId = null)
+        public PaginationEntity<CommentEntity> GetCommentPagination(int pageNumber, int pageSize, string postId = null, string commentId = null, string searchQuery = null)
         {
             try
             {
@@ -92,48 +92,23 @@ namespace BlogDAL.Repository
 
                 if (postId != null)
                 {
-                    commentQueryable = commentQueryable.Where(x => x.Post.PostId.Equals(postId));
+                    commentQueryable = commentQueryable
+                        .Where(x => x.Post.PostId.Equals(postId));
                 }
 
-                PaginationEntity<CommentEntity> commentPaginationEntity = GetPaginationEntity(commentQueryable, isDesc: true, commentOrderByExpression, pageNumber, pageSize);
-
-                return commentPaginationEntity;
-            }
-            catch(Exception)
-            {
-                return null;
-            }
-        }
-
-        public PaginationEntity<CommentEntity> GetChildCommentPaginationEntity(string commentId, int pageNumber, int pageSize)
-        {
-            try
-            {
-                Expression<Func<CommentEntity, DateTime>> commentOrderByExpression = (x => x.CreatedDate);
-                IQueryable<CommentEntity> commentQueryable = Context.CommentEntities.Where(x => x.ParentComment.CommentId.Equals(commentId));
-                PaginationEntity<CommentEntity> commentPaginationEntity = GetPaginationEntity(commentQueryable, isDesc: true, commentOrderByExpression, pageNumber, pageSize);
-
-                return commentPaginationEntity;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
-        public PaginationEntity<CommentEntity> SearchCommentWithPaginationEntity(string searchQuery, int pageNumber, int pageSize, string postId = null)
-        {
-            try
-            {
-                IQueryable<CommentEntity> commentQueryable = Context.CommentEntities
-                    .Where(x => x.Username.Contains(searchQuery) || x.Content.Contains(searchQuery));
-
-                if (postId != null)
+                if (commentId != null)
                 {
-                    commentQueryable = commentQueryable.Where(x => x.Post.PostId.Equals(postId));
+                    commentQueryable = commentQueryable
+                        .Where(x => x.ParentComment.CommentId.Equals(commentId));
                 }
 
-                Expression<Func<CommentEntity, DateTime>> commentOrderByExpression = (x => x.CreatedDate);
+                if (searchQuery != null)
+                {
+                    commentQueryable = commentQueryable
+                        .Where(x => x.Username.Contains(searchQuery) 
+                        || x.Content.Contains(searchQuery));
+                }
+
                 PaginationEntity<CommentEntity> commentPaginationEntity = GetPaginationEntity(commentQueryable, isDesc: true, commentOrderByExpression, pageNumber, pageSize);
 
                 return commentPaginationEntity;

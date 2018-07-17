@@ -13,14 +13,12 @@ namespace Blog.Controllers
         private IPostService postService;
         private ICommentService commentService;
         private IModelDataMapper dataMapper;
-        private Pagination pagination;
 
-        public PostController(IPostService postService, ICommentService commentService, IModelDataMapper dataMapper, Pagination pagination)
+        public PostController(IPostService postService, ICommentService commentService, IModelDataMapper dataMapper)
         {
             this.postService = postService;
             this.commentService = commentService;
             this.dataMapper = dataMapper;
-            this.pagination = pagination;
         }
 
         // GET: Default
@@ -31,7 +29,7 @@ namespace Blog.Controllers
                 //Do something with this exception.
             }
 
-            PostDTOWithPaginatedComments postDTOWithPaginatedComments = postService.GetPostDTOWithPaginatedComments(postId, pageSize: pagination.CommentPageSize);
+            PostDTOWithPaginatedComments postDTOWithPaginatedComments = postService.GetPostWithPaginatedComments(postId, pageSize: Settings.COMMENT_PAGE_SIZE);
             PostModelWithPaginatedComments postModelWithPaginatedComments = dataMapper.MapPostDTOToModelWithPaginatedComments(postDTOWithPaginatedComments);
 
             return View(postModelWithPaginatedComments);
@@ -54,7 +52,7 @@ namespace Blog.Controllers
                 PostId = postId
             };
 
-            bool addSuccessfully = commentService.AddComment(commentDTO);
+            bool addSuccessfully = commentService.Add(commentDTO);
 
             if (!addSuccessfully)
             {
@@ -92,7 +90,7 @@ namespace Blog.Controllers
                 ParentCommentId = commentId
             };
 
-            bool addSuccessfully = commentService.AddComment(childCommentDTO);
+            bool addSuccessfully = commentService.Add(childCommentDTO);
 
             if (!addSuccessfully)
             {
@@ -124,7 +122,7 @@ namespace Blog.Controllers
             }
 
             DateTime createdDate = dataMapper.ParseCommentTime(createdDateString);
-            PaginationDTO<CommentDTO> commentPaginationDTO = commentService.GetCommentPaginationDTOOfPostWithPreservedFetch(postId, createdDate, pageSize: pagination.CommentPageSize);
+            PaginationDTO<CommentDTO> commentPaginationDTO = commentService.GetCommentPaginationOfPostWithPreservedFetch(postId, createdDate, pageSize: Settings.COMMENT_PAGE_SIZE);
             PaginationModel<CommentModel> commentPaginationModel = dataMapper.MapCommentPaginationDTOToModel(commentPaginationDTO);
 
             if (commentPaginationModel == null)
@@ -154,7 +152,7 @@ namespace Blog.Controllers
                 return Json(jsonObject);
             }
 
-            List<CommentDTO> childCommentDTOs = commentService.GetChildCommentDTOs(commentId, skip);
+            List<CommentDTO> childCommentDTOs = commentService.GetChildComments(commentId, skip);
             List<CommentModel> childCommentModels = dataMapper.MapCommentDTOsToModels(childCommentDTOs);
 
             if (childCommentModels == null)

@@ -7,16 +7,12 @@ namespace BlogServices.Services
 {
     public interface ICommentService
     {
-        bool AddComment(CommentDTO commentDTO);
+        bool Add(CommentDTO commentDTO);
 
-        bool RemoveComment(string commentId);
+        bool Remove(string commentId);
 
-        List<CommentDTO> GetChildCommentDTOs(string commentId, int skip);
-        PaginationDTO<CommentDTO> GetChildCommentPaginationDTO(string commentId, int pageNumber, int pageSize);
-
-        PaginationDTO<CommentDTO> GetCommentPaginationDTOOfPostWithPreservedFetch(string postId, DateTime createdDate, int pageSize);
-        PaginationDTO<CommentDTO> GetCommentPaginationDTO(int pageNumber, int pageSize, string postId = null);
-
-        PaginationDTO<CommentDTO> SearchCommentWithPaginationDTO(string searchQuery, int pageNumber, int pageSize, string postId = null);
+        List<CommentDTO> GetChildComments(string commentId, int skip);
+        PaginationDTO<CommentDTO> GetCommentPaginationOfPostWithPreservedFetch(string postId, DateTime createdDate, int pageSize);
+        PaginationDTO<CommentDTO> GetCommentPagination(int pageNumber, int pageSize, string postId = null, string commentId = null, string searchQuery = null);
     }
 }

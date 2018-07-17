@@ -268,7 +268,7 @@ $("#expand-master-comment-btn").click(function () {
             for (var i = 0; i < commentModelCount; i++) {
                 var commentModel = mapObjectToCommentModel(commentModels[i]);
 
-                var newCommentContainerHtml = createCommentContainerHtml(commentModel, postId);
+                var newCommentContainerHtml = createCommentContainerHtml(commentModel, values.postId);
                 masterCommentListContainer.append(newCommentContainerHtml);
 
                 var newCommentContainer = masterCommentListContainer.children().last();

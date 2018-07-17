@@ -15,19 +15,17 @@ namespace Blog.Controllers
         private IPostService postService;
         private ICategoryService categoryService;
         private IModelDataMapper dataMapper;
-        private Pagination pagination;
 
-        public HomeController(IPostService postService, ICategoryService categoryService, IModelDataMapper dataMapper, Pagination pagination)
+        public HomeController(IPostService postService, ICategoryService categoryService, IModelDataMapper dataMapper)
         {
             this.postService = postService;
             this.categoryService = categoryService;
             this.dataMapper = dataMapper;
-            this.pagination = pagination;
         }
 
         public ActionResult Index()
         {
-            List<PaginationDTO<PostCardDTO>> postCardPaginationDTOs = postService.GetPostCardPaginationDTOs(pageSize: pagination.HomePostPageSize);
+            List<PaginationDTO<PostCardDTO>> postCardPaginationDTOs = postService.GetPostCardPaginationList(pageSize: Settings.HOME_POST_PAGE_SIZE);
             List<PaginationModel<PostCardModel>> postCardPaginationModels = dataMapper.MapPostCardPaginationDTOsToModels(postCardPaginationDTOs);
 
             return View(postCardPaginationModels);
@@ -66,7 +64,7 @@ namespace Blog.Controllers
                 //Do something with this exception.
             }
 
-            PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.GetPostCardPaginationDTO(pageNumber: 1, pageSize: pagination.PostPageSize, category, searchQuery);
+            PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.GetPostCardPagination(pageNumber: 1, pageSize: Settings.POST_PAGE_SIZE, category, searchQuery);
             PaginationModel<PostCardModel> postCardPaginationModel = dataMapper.MapPostCardPaginationDTOToModel(postCardPaginationDTO);
 
             return PartialView("_CategoryPartial", postCardPaginationModel);
@@ -83,7 +81,7 @@ namespace Blog.Controllers
                 return Json(jsonObject);
             }
 
-            PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.GetPostCardPaginationDTO(pageNumber, pageSize, category, searchQuery);
+            PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.GetPostCardPagination(pageNumber, pageSize, category, searchQuery);
             PaginationModel<PostCardModel> postCardPaginationModel = dataMapper.MapPostCardPaginationDTOToModel(postCardPaginationDTO);
 
             if (postCardPaginationModel == null)
@@ -118,7 +116,7 @@ namespace Blog.Controllers
         [ChildActionOnly]
         public ActionResult NavBar()
         {
-            List<CategoryDTO> categoryDTOs = categoryService.GetCategoryDTOs();
+            List<CategoryDTO> categoryDTOs = categoryService.GetCategories();
             List<CategoryModel> categoryModels = dataMapper.MapCategoryDTOsToModels(categoryDTOs);
 
             return PartialView("_NavBar", categoryModels);

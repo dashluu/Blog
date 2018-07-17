@@ -7,10 +7,10 @@ namespace BlogServices.Services
 {
     public interface ICategoryService
     {
-        List<CategoryDTO> GetCategoryDTOs();
+        List<CategoryDTO> GetCategories();
 
-        bool AddCategory(CategoryDTO categoryDTO);
+        bool Add(CategoryDTO categoryDTO);
 
-        bool UpdateCategory(CategoryDTO categoryDTO);
+        bool Update(CategoryDTO categoryDTO);
     }
 }

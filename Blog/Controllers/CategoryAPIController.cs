@@ -28,7 +28,7 @@ namespace Blog.Controllers
         {
             object jsonObject;
 
-            List<CategoryDTO> categoryDTOs = categoryService.GetCategoryDTOs();
+            List<CategoryDTO> categoryDTOs = categoryService.GetCategories();
             List<APICategoryModel> categoryModels = dataMapper.MapCategoryDTOsToModels(categoryDTOs);
 
             if (categoryDTOs == null)
@@ -60,7 +60,7 @@ namespace Blog.Controllers
             }
 
             CategoryDTO categoryDTO = dataMapper.MapEditedCategoryModelToDTO(editedCategoryModel);
-            bool addSuccessfully = categoryService.AddCategory(categoryDTO);
+            bool addSuccessfully = categoryService.Add(categoryDTO);
 
             if (!addSuccessfully)
             {
@@ -94,7 +94,7 @@ namespace Blog.Controllers
             CategoryDTO categoryDTO = dataMapper.MapEditedCategoryModelToDTO(editedCategoryModel);
             categoryDTO.CategoryId = categoryId;
 
-            bool updateSuccessfully = categoryService.UpdateCategory(categoryDTO);
+            bool updateSuccessfully = categoryService.Update(categoryDTO);
 
             if (!updateSuccessfully)
             {

@@ -20,7 +20,7 @@ namespace BlogServices.Services
             this.hashService = hashService;
         }
 
-        public bool AddComment(CommentDTO commentDTO)
+        public bool Add(CommentDTO commentDTO)
         {
             commentDTO.CommentId = hashService.GenerateId();
             commentDTO.CreatedDate = DateTime.Now;
@@ -32,47 +32,31 @@ namespace BlogServices.Services
             return addSuccessfully;
         }
 
-        public List<CommentDTO> GetChildCommentDTOs(string commentId, int skip)
+        public List<CommentDTO> GetChildComments(string commentId, int skip)
         {
-            List<CommentEntity> childCommentEntities = commentRepository.GetChildCommentEntities(commentId, skip);
+            List<CommentEntity> childCommentEntities = commentRepository.GetChildComments(commentId, skip);
             List<CommentDTO> childCommentDTOs = dataMapper.MapCommentEntitiesToDTOs(childCommentEntities);
 
             return childCommentDTOs;
         }
 
-        public PaginationDTO<CommentDTO> GetCommentPaginationDTOOfPostWithPreservedFetch(string postId, DateTime createdDate, int pageSize)
+        public PaginationDTO<CommentDTO> GetCommentPaginationOfPostWithPreservedFetch(string postId, DateTime createdDate, int pageSize)
         {
-            PaginationEntity<CommentEntity> commentPaginationEntity = commentRepository.GetCommentPaginationEntityOfPostWithPreservedFetch(postId, createdDate, pageSize);
+            PaginationEntity<CommentEntity> commentPaginationEntity = commentRepository.GetCommentPaginationOfPostWithPreservedFetch(postId, createdDate, pageSize);
             PaginationDTO<CommentDTO> commentPaginationDTO = dataMapper.MapCommentPaginationEntityToDTO(commentPaginationEntity);
 
             return commentPaginationDTO;
         }
 
-        public PaginationDTO<CommentDTO> GetCommentPaginationDTO(int pageNumber, int pageSize, string postId = null)
+        public PaginationDTO<CommentDTO> GetCommentPagination(int pageNumber, int pageSize, string postId = null, string commentId = null, string searchQuery = null)
         {
-            PaginationEntity<CommentEntity> commentPaginationEntity = commentRepository.GetCommentPaginationEntity(pageNumber, pageSize, postId);
+            PaginationEntity<CommentEntity> commentPaginationEntity = commentRepository.GetCommentPagination(pageNumber, pageSize, postId, commentId, searchQuery);
             PaginationDTO<CommentDTO> commentPaginationDTO = dataMapper.MapCommentPaginationEntityToDTO(commentPaginationEntity);
 
             return commentPaginationDTO;
         }
 
-        public PaginationDTO<CommentDTO> GetChildCommentPaginationDTO(string commentId, int pageNumber, int pageSize)
-        {
-            PaginationEntity<CommentEntity> commentPaginationEntity = commentRepository.GetChildCommentPaginationEntity(commentId, pageNumber, pageSize);
-            PaginationDTO<CommentDTO> commentPaginationDTO = dataMapper.MapCommentPaginationEntityToDTO(commentPaginationEntity);
-
-            return commentPaginationDTO;
-        }
-
-        public PaginationDTO<CommentDTO> SearchCommentWithPaginationDTO(string searchQuery, int pageNumber, int pageSize, string postId = null)
-        {
-            PaginationEntity<CommentEntity> commentPaginationEntity = commentRepository.SearchCommentWithPaginationEntity(searchQuery, pageNumber, pageSize, postId);
-            PaginationDTO<CommentDTO> commentPaginationDTO = dataMapper.MapCommentPaginationEntityToDTO(commentPaginationEntity);
-
-            return commentPaginationDTO;
-        }
-
-        public bool RemoveComment(string commentId)
+        public bool Remove(string commentId)
         {
             bool removeSuccessfully = commentRepository.Remove(commentId);
             return removeSuccessfully;
