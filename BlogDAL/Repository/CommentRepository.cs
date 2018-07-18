@@ -43,7 +43,7 @@ namespace BlogDAL.Repository
             }
         }
 
-        public List<CommentEntity> GetChildComments(string commentId, int skip)
+        public List<CommentEntity> GetChildComments(string commentId)
         {
             try
             {
@@ -51,7 +51,6 @@ namespace BlogDAL.Repository
                     .AsNoTracking()
                     .Where(x => x.ParentComment.CommentId.Equals(commentId))
                     .OrderByDescending(x => x.CreatedDate)
-                    .Skip(skip)
                     .ToList();
 
                 return commentEntities;

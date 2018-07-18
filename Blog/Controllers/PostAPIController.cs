@@ -30,14 +30,13 @@ namespace Blog.Controllers
         {
             object jsonObject;
 
-            if (pageNumber <= 0 || pageSize <= 0)
+            if (pageNumber <= 0 || pageSize < 0)
             {
                 jsonObject = new { status = 500 };
                 return Json(jsonObject);
             }
 
             PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.GetPostCardPagination(pageNumber, pageSize, category: category, searchQuery: searchQuery);
-            APIPaginationModel<APIPostCardModel> postCardPaginationModel = dataMapper.MapPostCardPaginationDTOToModel(postCardPaginationDTO);
 
             if (postCardPaginationDTO == null)
             {
@@ -45,6 +44,8 @@ namespace Blog.Controllers
             }
             else
             {
+                APIPaginationModel<APIPostCardModel> postCardPaginationModel = dataMapper.MapPostCardPaginationDTOToModel(postCardPaginationDTO);
+
                 jsonObject = new
                 {
                     status = 200,
@@ -59,22 +60,16 @@ namespace Blog.Controllers
         public IHttpActionResult GetEditedPost(string postId)
         {
             object jsonObject;
-
-            if (string.IsNullOrWhiteSpace(postId))
-            {
-                jsonObject = new { status = 500 };
-                return Json(jsonObject);
-            }
-
             PostDTO postDTO = postService.GetPost(postId);
-            APIEditedPostModel editedPostModel = dataMapper.MapEditedPostDTOToModel(postDTO);
 
-            if (editedPostModel == null)
+            if (postDTO == null)
             {
                 jsonObject = new { status = 500 };
             }
             else
             {
+                APIEditedPostModel editedPostModel = dataMapper.MapEditedPostDTOToModel(postDTO);
+
                 jsonObject = new
                 {
                     status = 200,
@@ -91,9 +86,7 @@ namespace Blog.Controllers
         {
             object jsonObject;
 
-            if (string.IsNullOrWhiteSpace(postId)
-                || pageNumber <= 0
-                || pageSize <= 0)
+            if (pageNumber <= 0 || pageSize < 0)
             {
                 jsonObject = new { status = 500 };
                 return Json(jsonObject);
@@ -159,7 +152,7 @@ namespace Blog.Controllers
         {
             object jsonObject;
 
-            if (string.IsNullOrWhiteSpace(postId) || !ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 jsonObject = new { status = 500 };
                 return Json(jsonObject);

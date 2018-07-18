@@ -28,14 +28,13 @@ namespace Blog.Controllers
         {
             object jsonObject;
 
-            if (pageNumber <= 0 || pageSize <= 0)
+            if (pageNumber <= 0 || pageSize < 0)
             {
                 jsonObject = new { status = 500 };
                 return Json(jsonObject);
             }
 
             PaginationDTO<CommentDTO> commentPaginationDTO = commentService.GetCommentPagination(pageNumber, pageSize, postId: postId, searchQuery: searchQuery);
-            PaginationModel<APICommentModel> commentPaginationModel = dataMapper.MapCommentPaginationDTOToModel(commentPaginationDTO);
 
             if (commentPaginationDTO == null)
             {
@@ -43,6 +42,8 @@ namespace Blog.Controllers
             }
             else
             {
+                PaginationModel<APICommentModel> commentPaginationModel = dataMapper.MapCommentPaginationDTOToModel(commentPaginationDTO);
+
                 jsonObject = new
                 {
                     status = 200,
@@ -58,16 +59,13 @@ namespace Blog.Controllers
         {
             object jsonObject;
 
-            if (string.IsNullOrWhiteSpace(commentId) 
-                || pageNumber <= 0 
-                || pageSize <= 0)
+            if (pageNumber <= 0 || pageSize < 0)
             {
                 jsonObject = new { status = 500 };
                 return Json(jsonObject);
             }
 
             PaginationDTO<CommentDTO> commentPaginationDTO = commentService.GetCommentPagination(pageNumber, pageSize, commentId: commentId);
-            PaginationModel<APICommentModel> commentPaginationModel = dataMapper.MapCommentPaginationDTOToModel(commentPaginationDTO);
 
             if (commentPaginationDTO == null)
             {
@@ -75,6 +73,8 @@ namespace Blog.Controllers
             }
             else
             {
+                PaginationModel<APICommentModel> commentPaginationModel = dataMapper.MapCommentPaginationDTOToModel(commentPaginationDTO);
+
                 jsonObject = new
                 {
                     status = 200,
@@ -91,9 +91,7 @@ namespace Blog.Controllers
         {
             object jsonObject;
 
-            if (string.IsNullOrWhiteSpace(commentId)
-                || pageNumber <= 0
-                || pageSize < 0)
+            if (pageNumber <= 0 || pageSize < 0)
             {
                 jsonObject = new { status = 500 };
                 return Json(jsonObject);

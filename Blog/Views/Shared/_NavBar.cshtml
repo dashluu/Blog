@@ -15,8 +15,14 @@
             <ul class="nav navbar-nav">
                 @foreach (CategoryModel categoryModel in Model)
                 {
-                    <li>@Html.ActionLink(categoryModel.Name.ToUpper(), "Category", "Home", new { category = categoryModel.Name }, new { })</li>
+                    string categoryName = categoryModel.Name;
+                    string categoryText = categoryName.ToUpper();
+
+                    <li>@Html.ActionLink(categoryText, categoryName, "Categories", categoryName, new { })</li>
                 }
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a class="navbar-icon-anchor"><span class="glyphicon glyphicon-search"></span></a></li>
             </ul>
         </div>
     </div>

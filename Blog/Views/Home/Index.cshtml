@@ -3,13 +3,12 @@
 
 @section styles {
     <link rel="stylesheet" type="text/css" href="~/Content/Bar/nav-bar.css" />
-    <link href="@Url.Content("~/Content/Home/home.css")" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="~/Content/Home/category_partial.css" />
+    <link href="~/Content/Home/home.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="~/Content/Home/post-grid.css" />
 }
 
 @section scripts {
-    <script src="~/Scripts/Home/home.js"></script>
-    <script src="~/Scripts/Home/category_partial.js"></script>
+    <script src="~/Scripts/Home/post-grid.js"></script>
 }
 
 @if (Model == null || Model.Count == 0)
@@ -17,11 +16,11 @@
     return;
 }
 
-<div class="container" id="post-block">
+<div class="container" id="content-block">
     <div class="row">
         @foreach (PaginationModel<PostCardModel> postCardPaginationModel in Model)
         {
-            Html.RenderPartial("~/Views/Home/_CategoryPartial.cshtml", postCardPaginationModel);
+            Html.RenderPartial("~/Views/Home/_PostGrid.cshtml", postCardPaginationModel);
         }
     </div>
 </div>

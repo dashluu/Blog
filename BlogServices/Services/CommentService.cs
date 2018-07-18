@@ -32,9 +32,9 @@ namespace BlogServices.Services
             return addSuccessfully;
         }
 
-        public List<CommentDTO> GetChildComments(string commentId, int skip)
+        public List<CommentDTO> GetChildComments(string commentId)
         {
-            List<CommentEntity> childCommentEntities = commentRepository.GetChildComments(commentId, skip);
+            List<CommentEntity> childCommentEntities = commentRepository.GetChildComments(commentId);
             List<CommentDTO> childCommentDTOs = dataMapper.MapCommentEntitiesToDTOs(childCommentEntities);
 
             return childCommentDTOs;

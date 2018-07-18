@@ -46,4 +46,10 @@
     border: 1px solid #0063cc;
 }
 
+.navbar-icon-anchor {
+    font-size: 14px;
+    color: black;
+    cursor: pointer;
+}
+
 

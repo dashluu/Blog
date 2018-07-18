@@ -29,7 +29,6 @@ namespace Blog.Controllers
             object jsonObject;
 
             List<CategoryDTO> categoryDTOs = categoryService.GetCategories();
-            List<APICategoryModel> categoryModels = dataMapper.MapCategoryDTOsToModels(categoryDTOs);
 
             if (categoryDTOs == null)
             {
@@ -37,6 +36,8 @@ namespace Blog.Controllers
             }
             else
             {
+                List<APICategoryModel> categoryModels = dataMapper.MapCategoryDTOsToModels(categoryDTOs);
+
                 jsonObject = new
                 {
                     status = 200,

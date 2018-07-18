@@ -29,15 +29,13 @@ function createPostCardHtml(postCardModel) {
                 <div class='row'>
                     <div class='col-xs-12 col-sm-3 col-md-3 col-lg-4 post-col-1'>
                         <img class='post-img' src=${postCardModel.thumbnailImageSrc} />
+                        <input type="hidden" class="post-id" value=${postCardModel.postId} />
                     </div>
                     <div class='col-xs-12 col-sm-9 col-md-9 col-lg-8 post-col-2'>
                         <div class='post-title'>${postCardModel.title}</div>
                         <div class='post-date'>On <strong>${postCardModel.createdDate}</strong></div>
                         <div class='post-date'>Updated ${postCardModel.updatedDate}</div>
                         <div class='post-summary'>${postCardModel.shortDescription}</div>
-                        <form action='/Home/ViewPost' method='post'>
-                            <input type='hidden' value=${postCardModel.postId} name='postId' />
-                        </form>
                     </div>
                 </div>
             </div>`;
@@ -46,7 +44,8 @@ function createPostCardHtml(postCardModel) {
 }
 
 $(document).on("click", ".post-img", function () {
-    $(this).parent().siblings().first().children("form").first().submit();
+    var postId = $(this).siblings(".post-id").first().val();
+    window.location.href = "/" + postId;
 });
 
 $(document).on("click", ".next-page-btn", function () {
@@ -59,7 +58,7 @@ $(document).on("click", ".previous-page-btn", function () {
     navigatePage(targetRow, false);
 });
 
-var searchQuery = null;
+var searchQuery = "";
 
 function navigatePage(targetRow, nextPage) {
     var postNavigationInputElement = targetRow
@@ -94,14 +93,17 @@ function navigatePage(targetRow, nextPage) {
         .children(".previous-page-btn")
         .first();
 
+    var category = categoryInputElement.html().toLowerCase();
+
     var values = {
         pageNumber: parseInt(pageNumberInputElement.html()) + (nextPage ? 1 : -1),
-        category: categoryInputElement.html().toLowerCase(),
         pageSize: pageSizeInputElement.val(),
         searchQuery: searchQuery
     };
 
-    $.post("/Home/CategoryPartial", values, function (result) {
+    var url = `/Categories/${category}`;
+
+    $.post(url, values, function (result) {
         if (result.status === 200) {
             var postCardPaginationObject = result.data;
 

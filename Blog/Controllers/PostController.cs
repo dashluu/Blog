@@ -22,13 +22,9 @@ namespace Blog.Controllers
         }
 
         // GET: Default
+        [Route("{postId}")]
         public ActionResult Index(string postId)
         {
-            if (string.IsNullOrWhiteSpace(postId))
-            {
-                //Do something with this exception.
-            }
-
             PostDTOWithPaginatedComments postDTOWithPaginatedComments = postService.GetPostWithPaginatedComments(postId, pageSize: Settings.COMMENT_PAGE_SIZE);
             PostModelWithPaginatedComments postModelWithPaginatedComments = dataMapper.MapPostDTOToModelWithPaginatedComments(postDTOWithPaginatedComments);
 
@@ -36,11 +32,13 @@ namespace Blog.Controllers
         }
 
         [HttpPost]
+        [Route("Comments")]
         public ActionResult AddMasterComment(string comment, string postId)
         {
             object jsonObject;
 
-            if (string.IsNullOrWhiteSpace(comment) || string.IsNullOrWhiteSpace(postId))
+            if (string.IsNullOrWhiteSpace(comment) 
+                || string.IsNullOrWhiteSpace(postId))
             {
                 jsonObject = new { status = 500 };
                 return Json(jsonObject);
@@ -73,11 +71,13 @@ namespace Blog.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddChildComment(string comment, string commentId, string postId)
+        [Route("Comments/{parentCommentId}/ChildComments/New")]
+        public ActionResult AddChildComment(string comment, string parentCommentId, string postId, bool loadChildComments)
         {
             object jsonObject;
 
-            if (string.IsNullOrWhiteSpace(comment) || string.IsNullOrWhiteSpace(postId) || string.IsNullOrWhiteSpace(commentId))
+            if (string.IsNullOrWhiteSpace(comment) 
+                || string.IsNullOrWhiteSpace(postId))
             {
                 jsonObject = new { status = 500 };
                 return Json(jsonObject);
@@ -87,7 +87,7 @@ namespace Blog.Controllers
             {
                 Content = comment,
                 PostId = postId,
-                ParentCommentId = commentId
+                ParentCommentId = parentCommentId
             };
 
             bool addSuccessfully = commentService.Add(childCommentDTO);
@@ -95,8 +95,10 @@ namespace Blog.Controllers
             if (!addSuccessfully)
             {
                 jsonObject = new { status = 500 };
+                return Json(jsonObject);
             }
-            else
+
+            if (!loadChildComments)
             {
                 CommentModel childCommentModel = dataMapper.MapCommentDTOToModel(childCommentDTO);
 
@@ -106,16 +108,36 @@ namespace Blog.Controllers
                     data = childCommentModel
                 };
             }
+            else
+            {
+                List<CommentDTO> childCommentDTOs = commentService.GetChildComments(parentCommentId);
+
+                if (childCommentDTOs == null)
+                {
+                    jsonObject = new { status = 500 };
+                }
+                else
+                {
+                    List<CommentModel> childCommentModels = dataMapper.MapCommentDTOsToModels(childCommentDTOs);
+
+                    jsonObject = new
+                    {
+                        status = 200,
+                        data = childCommentModels
+                    };
+                }
+            }
 
             return Json(jsonObject);
         }
 
         [HttpPost]
+        [Route("{postId}/Comments/More")]
         public JsonResult ShowMoreComments(string postId, string createdDateString)
         {
             object jsonObject;
 
-            if (string.IsNullOrWhiteSpace(postId) || string.IsNullOrWhiteSpace(createdDateString))
+            if (string.IsNullOrWhiteSpace(createdDateString))
             {
                 jsonObject = new { status = 500 };
                 return Json(jsonObject);
@@ -123,14 +145,15 @@ namespace Blog.Controllers
 
             DateTime createdDate = dataMapper.ParseCommentTime(createdDateString);
             PaginationDTO<CommentDTO> commentPaginationDTO = commentService.GetCommentPaginationOfPostWithPreservedFetch(postId, createdDate, pageSize: Settings.COMMENT_PAGE_SIZE);
-            PaginationModel<CommentModel> commentPaginationModel = dataMapper.MapCommentPaginationDTOToModel(commentPaginationDTO);
 
-            if (commentPaginationModel == null)
+            if (commentPaginationDTO == null)
             {
                 jsonObject = new { status = 500 };
             }
             else
             {
+                PaginationModel<CommentModel> commentPaginationModel = dataMapper.MapCommentPaginationDTOToModel(commentPaginationDTO);
+
                 jsonObject = new
                 {
                     status = 200,
@@ -142,25 +165,21 @@ namespace Blog.Controllers
         }
 
         [HttpPost]
-        public ActionResult ShowChildComments(string commentId, int skip)
+        [Route("Comments/{parentCommentId}/ChildComments")]
+        public ActionResult ShowChildComments(string parentCommentId)
         {
             object jsonObject;
 
-            if (string.IsNullOrWhiteSpace(commentId) || skip < 0)
-            {
-                jsonObject = new { status = 500 };
-                return Json(jsonObject);
-            }
+            List<CommentDTO> childCommentDTOs = commentService.GetChildComments(parentCommentId);
 
-            List<CommentDTO> childCommentDTOs = commentService.GetChildComments(commentId, skip);
-            List<CommentModel> childCommentModels = dataMapper.MapCommentDTOsToModels(childCommentDTOs);
-
-            if (childCommentModels == null)
+            if (childCommentDTOs == null)
             {
                 jsonObject = new { status = 500 };
             }
             else
             {
+                List<CommentModel> childCommentModels = dataMapper.MapCommentDTOsToModels(childCommentDTOs);
+
                 jsonObject = new
                 {
                     status = 200,

@@ -10,11 +10,12 @@ namespace Blog.Controllers
     public class ImageController : Controller
     {
         // GET: Image
-        public ActionResult Index(string imageName)
+        [Route("Images")]
+        public ActionResult Index(string name)
         {
             string imageDir = Server.MapPath("~/Images");
-            string imagePath = Path.Combine(imageDir, imageName);
-            return base.File(imagePath, MimeMapping.GetMimeMapping(imagePath));
+            string imagePath = Path.Combine(imageDir, name);
+            return File(imagePath, MimeMapping.GetMimeMapping(imagePath));
         }
     }
 }

@@ -1,18 +1,22 @@
 ﻿@section styles {
     <link rel="stylesheet" type="text/css" href="~/Content/Bar/nav-bar.css" />
-    <link href="@Url.Content("~/Content/Home/category.css")" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="~/Content/Home/category_partial.css" />
+    <link href="~/Content/Home/category.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="~/Content/Home/post-grid.css" />
 }
 
 @section scripts {
-    <script src="~/Scripts/Home/category_partial.js"></script>
+    <script src="~/Scripts/Home/post-grid.js"></script>
 }
 
-<div class="container" id="post-block">
+<div class="container" id="content-block">
     <div class="row">
         @{
-            string category = ViewBag.Category;
-            Html.RenderAction("CategoryPartial", "Home", category);
+            object values = new
+            {
+                category = ViewBag.Category
+            };
+
+            Html.RenderAction("PostGrid", "Home", values);
         }
     </div>
 </div>

@@ -11,7 +11,7 @@ namespace BlogServices.Services
 
         bool Remove(string commentId);
 
-        List<CommentDTO> GetChildComments(string commentId, int skip);
+        List<CommentDTO> GetChildComments(string commentId);
         PaginationDTO<CommentDTO> GetCommentPaginationOfPostWithPreservedFetch(string postId, DateTime createdDate, int pageSize);
         PaginationDTO<CommentDTO> GetCommentPagination(int pageNumber, int pageSize, string postId = null, string commentId = null, string searchQuery = null);
     }

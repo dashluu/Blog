@@ -5,11 +5,11 @@
 
 @section styles {
     <link rel="stylesheet" type="text/css" href="~/Content/Bar/nav-bar.css" />
-    <link href="@Url.Content("~/Content/Post/viewpost.css")" rel="stylesheet" type="text/css" />
+    <link href="~/Content/Post/post.css" rel="stylesheet" type="text/css" />
 }
 
 @section scripts {
-    <script src="~/Scripts/Post/viewpost.js"></script>
+    <script src="~/Scripts/Post/post.js"></script>
 }
 
 @if (Model == null || Model.Post == null)
@@ -17,7 +17,7 @@
     return;
 }
 
-<div class="container" id="post-block">
+<div class="container" id="content-block">
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 post-section">
             <div class="post-title">@Model.Post.Title</div>
@@ -66,7 +66,6 @@
                                     <button class="add-child-comment-btn"><span class='glyphicon glyphicon-edit'></span></button>
                                 </div>
                                 <div class="comment-body">@commentModel.Content</div>
-                                <input type="hidden" class="load-children-comment" value="0" />
                             </div>
                             <form class="comment-form child-comment-form" style="display: none">
                                 <textarea class="comment-input" placeholder="Comment"></textarea>

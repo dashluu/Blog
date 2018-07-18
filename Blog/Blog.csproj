@@ -244,17 +244,16 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Bar\nav-bar.css" />
-    <Content Include="Content\Bar\search-bar.css" />
+    <Content Include="Content\Home\search.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Home\category.css" />
-    <Content Include="Content\Home\category_partial.css" />
+    <Content Include="Content\Home\post-grid.css" />
     <Content Include="Content\Home\home.css" />
-    <Content Include="Content\Post\viewpost.css" />
-    <Content Include="Scripts\Home\category_partial.js" />
-    <Content Include="Scripts\Home\home.js" />
+    <Content Include="Content\Post\post.css" />
+    <Content Include="Scripts\Home\post-grid.js" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -275,7 +274,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
-    <Content Include="Scripts\Post\viewpost.js" />
+    <Content Include="Scripts\Post\post.js" />
     <Content Include="Unity.Mvc3.README.txt" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -291,11 +290,10 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Shared\_SearchBar.cshtml" />
     <Content Include="Views\Post\Index.cshtml" />
     <Content Include="Views\Shared\_NavBar.cshtml" />
     <Content Include="Views\Home\Category.cshtml" />
-    <Content Include="Views\Home\_CategoryPartial.cshtml" />
+    <Content Include="Views\Home\_PostGrid.cshtml" />
     <Content Include="Views\Home\Search.cshtml" />
   </ItemGroup>
   <ItemGroup>
