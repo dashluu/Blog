@@ -1,22 +1,21 @@
-﻿@section styles {
+﻿@using Blog.Models
+@model PaginationModel<PostCardModel>
+
+@section styles {
     <link rel="stylesheet" type="text/css" href="~/Content/Bar/nav-bar.css" />
-    <link href="~/Content/Home/category.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" type="text/css" href="~/Content/Home/post-grid.css" />
 }
 
 @section scripts {
+    <script src="~/Scripts/Home/post-card-mapper.js"></script>
+    <script src="~/Scripts/Home/post-card-factory.js"></script>
     <script src="~/Scripts/Home/post-grid.js"></script>
 }
 
-<div class="container" id="content-block">
+<div class="container content-block">
     <div class="row">
         @{
-            object values = new
-            {
-                category = ViewBag.Category
-            };
-
-            Html.RenderAction("PostGrid", "Home", values);
+            Html.RenderPartial("~/Views/Home/_PostGrid.cshtml", Model);
         }
     </div>
 </div>

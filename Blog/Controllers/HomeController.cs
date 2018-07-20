@@ -32,35 +32,27 @@ namespace Blog.Controllers
         }
 
         [Route("Categories/{category}")]
-        public ActionResult Categories(string category)
+        public ActionResult Category(string category)
         {
-            ViewBag.Category = category;
-            return View("Category");
-        }
-
-        [ChildActionOnly]
-        [Route("Home/PostGrid")]
-        public ActionResult PostGrid(string category, string searchQuery = null)
-        {
-            PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.GetPostCardPagination(pageNumber: 1, pageSize: Settings.POST_PAGE_SIZE, category, searchQuery);
+            PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.GetPostCardPagination(pageNumber: 1, pageSize: Settings.POST_PAGE_SIZE, category);
             PaginationModel<PostCardModel> postCardPaginationModel = dataMapper.MapPostCardPaginationDTOToModel(postCardPaginationDTO);
 
-            return PartialView("_PostGrid", postCardPaginationModel);
+            return View(postCardPaginationModel);
         }
 
         [HttpPost]
         [Route("Categories/{category}")]
-        public ActionResult PostGrid(string category, int pageNumber, int pageSize, string searchQuery = null)
+        public ActionResult PostGrid(string category, int pageNumber = 1, string searchQuery = null)
         {
             object jsonObject;
 
-            if (pageNumber <= 0 || pageSize < 0)
+            if (pageNumber <= 0)
             {
                 jsonObject = new { status = 500 };
                 return Json(jsonObject);
             }
 
-            PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.GetPostCardPagination(pageNumber, pageSize, category, searchQuery);
+            PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.GetPostCardPagination(pageNumber, Settings.HOME_POST_PAGE_SIZE, category, searchQuery);
 
             if (postCardPaginationDTO == null)
             {

@@ -1,51 +1,6 @@
-﻿function mapObjectToPostCardModel(object) {
-    var postCardModel = {
-        postId: object["PostId"],
-        title: object["Title"],
-        createdDate: object["CreatedDate"],
-        updatedDate: object["UpdatedDate"],
-        shortDescription: object["ShortDescription"],
-        thumbnailImageSrc: object["ThumbnailImageSrc"]
-    };
-
-    return postCardModel;
-}
-
-function mapObjectToPostCardPaginationModel(object) {
-    var postCardPaginationModel = {
-        postCardModels: object["Models"],
-        hasNext: object["HasNext"],
-        hasPrevious: object["HasPrevious"],
-        pageNumber: object["PageNumber"],
-        pages: object["Pages"]
-    }
-
-    return postCardPaginationModel;
-}
-
-function createPostCardHtml(postCardModel) {
-    var postCardHtml =
-        `<div class='post-card container col-xs-12 col-sm-12 col-md-12 col-lg-6'>
-                <div class='row'>
-                    <div class='col-xs-12 col-sm-3 col-md-3 col-lg-4 post-col-1'>
-                        <img class='post-img' src=${postCardModel.thumbnailImageSrc} />
-                        <input type="hidden" class="post-id" value=${postCardModel.postId} />
-                    </div>
-                    <div class='col-xs-12 col-sm-9 col-md-9 col-lg-8 post-col-2'>
-                        <div class='post-title'>${postCardModel.title}</div>
-                        <div class='post-date'>On <strong>${postCardModel.createdDate}</strong></div>
-                        <div class='post-date'>Updated ${postCardModel.updatedDate}</div>
-                        <div class='post-summary'>${postCardModel.shortDescription}</div>
-                    </div>
-                </div>
-            </div>`;
-
-    return postCardHtml;
-}
-
-$(document).on("click", ".post-img", function () {
+﻿$(document).on("click", ".post-img", function () {
     var postId = $(this).siblings(".post-id").first().val();
-    window.location.href = "/" + postId;
+    window.location.href = `/Posts/${postId}`;
 });
 
 $(document).on("click", ".next-page-btn", function () {
@@ -81,10 +36,6 @@ function navigatePage(targetRow, nextPage) {
         .children(".page-count")
         .first();
 
-    var pageSizeInputElement = postNavigationInputElement
-        .children(".post-page-size")
-        .first();
-
     var nextBtnInputElement = postNavigationInputElement
         .children(".next-page-btn")
         .first();
@@ -97,7 +48,6 @@ function navigatePage(targetRow, nextPage) {
 
     var values = {
         pageNumber: parseInt(pageNumberInputElement.html()) + (nextPage ? 1 : -1),
-        pageSize: pageSizeInputElement.val(),
         searchQuery: searchQuery
     };
 

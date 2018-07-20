@@ -9,6 +9,8 @@
 }
 
 @section scripts {
+    <script src="~/Scripts/Post/comment-mapper.js"></script>
+    <script src="~/Scripts/Post/normal-comment-factory.js"></script>
     <script src="~/Scripts/Post/post.js"></script>
 }
 
@@ -17,73 +19,36 @@
     return;
 }
 
-<div class="container" id="content-block">
+<div class="container content-block">
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 post-section">
             <div class="post-title">@Model.Post.Title</div>
             @{
                 CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
                 TextInfo textInfo = cultureInfo.TextInfo;
+                PostModel postModel = Model.Post;
+                PaginationModel<CommentModel> commentPaginationModel = Model.CommentPaginationModel;
             }
-            <div class="post-category">About <strong>@textInfo.ToTitleCase(Model.Post.PostCategory.Name)</strong></div>
-            <div class="post-date">On <strong>@Model.Post.CreatedDate</strong></div>
-            <div class="post-date">Updated @Model.Post.UpdatedDate</div>
-            <div class="post-summary">@Model.Post.ShortDescription</div>
-            <div class="post-content">@Html.Raw(Model.Post.Content)</div>
+            <div class="post-category">About <strong>@textInfo.ToTitleCase(postModel.PostCategory.Name)</strong></div>
+            <div class="post-date">On <strong>@postModel.CreatedDate</strong></div>
+            <div class="post-date">Updated @postModel.UpdatedDate</div>
+            <div class="post-summary">@postModel.ShortDescription</div>
+            <div class="post-content">@Html.Raw(postModel.Content)</div>
+            <input type="hidden" class="post-id" value=@postModel.PostId />
         </div>
 
         <div class="col-xs-12 col-sm-10 col-md-8 col-lg-7 comment-section">
             <div class="comment-title">Comments</div>
-            <div class="comment-count">@Model.Post.CommentCount</div>
-            <form class="comment-form master-comment-form">
-                <textarea class="comment-input" placeholder="Comment"></textarea>
-                <input type="hidden" value=@Model.Post.PostId class="post-id" id="post-id" />
-                <button type="submit" class="submit-comment-btn"><span class="glyphicon glyphicon-send"></span></button>
-            </form>
-            <div class="master-comment-list-container">
-                @{
-                    PaginationModel<CommentModel> commentPaginationModel = Model.CommentPaginationModel;
+            <div class="comment-count">@postModel.CommentCount</div>
+            @{
+                Html.RenderPartial("~/Views/Post/_NormalCommentSection.cshtml", commentPaginationModel);
 
-                    if (commentPaginationModel == null)
-                    {
-                        return;
-                    }
-
-                    List<CommentModel> commentModels = commentPaginationModel.Models;
-
-                    if (commentModels == null || commentModels.Count == 0)
-                    {
-                        return;
-                    }
-
-                    foreach (CommentModel commentModel in commentModels)
-                    {
-                        <div class="comment-container">
-                            <div class="master-comment-container">
-                                <div class="comment-user-container">
-                                    <strong class="comment-user">@commentModel.Username</strong>
-                                    <button class="show-child-comment-btn"><span class='glyphicon glyphicon-list'></span></button>
-                                    <button class="add-child-comment-btn"><span class='glyphicon glyphicon-edit'></span></button>
-                                </div>
-                                <div class="comment-body">@commentModel.Content</div>
-                            </div>
-                            <form class="comment-form child-comment-form" style="display: none">
-                                <textarea class="comment-input" placeholder="Comment"></textarea>
-                                <input type="hidden" value=@commentModel.CommentId class="comment-id" />
-                                <input type="hidden" value=@Model.Post.PostId class="post-id" />
-                                <input type="hidden" value=@commentModel.CreatedDate class="comment-created-date" />
-                                <button type="submit" class="submit-comment-btn"><span class="glyphicon glyphicon-send"></span></button>
-                            </form>
-                            <div class="child-comment-list-container"></div>
-                        </div>
-                    }
+                if (commentPaginationModel.HasNext)
+                {
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <button id="expand-master-comment-btn" class="expand-comment-btn"><span class="glyphicon glyphicon-option-horizontal"></span></button>
+                    </div>
                 }
-            </div>
-            @if (Model.CommentPaginationModel.HasNext)
-            {
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <button id="expand-master-comment-btn" class="expand-comment-btn"><span class="glyphicon glyphicon-option-horizontal"></span></button>
-                </div>
             }
         </div>
     </div>

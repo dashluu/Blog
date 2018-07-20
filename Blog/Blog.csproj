@@ -215,6 +215,7 @@
     <Compile Include="Controllers\ImageAPIController.cs" />
     <Compile Include="Controllers\ImageController.cs" />
     <Compile Include="Controllers\PostAPIController.cs" />
+    <Compile Include="Controllers\SearchController.cs" />
     <Compile Include="Models\APICategoryModel.cs" />
     <Compile Include="Models\APICommentModel.cs" />
     <Compile Include="Models\APIEditedCategoryModel.cs" />
@@ -244,15 +245,16 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Bar\nav-bar.css" />
-    <Content Include="Content\Home\search.css" />
+    <Content Include="Content\Post\logged-in-comment-section.css" />
+    <Content Include="Content\Search\search.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
-    <Content Include="Content\Home\category.css" />
     <Content Include="Content\Home\post-grid.css" />
-    <Content Include="Content\Home\home.css" />
     <Content Include="Content\Post\post.css" />
+    <Content Include="Scripts\Home\post-card-factory.js" />
+    <Content Include="Scripts\Home\post-card-mapper.js" />
     <Content Include="Scripts\Home\post-grid.js" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
@@ -274,7 +276,12 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\Post\logged-in-comment-factory.js" />
+    <Content Include="Scripts\Post\comment-mapper.js" />
+    <Content Include="Scripts\Post\logged-in-comment-section.js" />
+    <Content Include="Scripts\Post\normal-comment-factory.js" />
     <Content Include="Scripts\Post\post.js" />
+    <Content Include="Scripts\Search\search.js" />
     <Content Include="Unity.Mvc3.README.txt" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -294,7 +301,10 @@
     <Content Include="Views\Shared\_NavBar.cshtml" />
     <Content Include="Views\Home\Category.cshtml" />
     <Content Include="Views\Home\_PostGrid.cshtml" />
-    <Content Include="Views\Home\Search.cshtml" />
+    <Content Include="Views\Search\Index.cshtml" />
+    <Content Include="Views\Home\_PostGridList.cshtml" />
+    <Content Include="Views\Post\_LoggedInCommentSection.cshtml" />
+    <Content Include="Views\Post\_NormalCommentSection.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

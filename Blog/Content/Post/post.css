@@ -1,15 +1,11 @@
 ﻿body {
 }
 
-#content-block {
-    margin-top: 30px;
-}
-
 .post-section {
     margin-bottom: 80px;
 }
 
-.post-title, .post-category, .post-author, .post-date, .post-summary, .post-content{
+.post-title, .post-category, .post-author, .post-date, .post-summary, .post-content {
     color: black;
     margin-bottom: 25px;
 }
@@ -40,6 +36,10 @@
     font-weight: 400;
 }
 
+img {
+    width: 100%;
+}
+
 .comment-title {
     color: black;
     margin-right: 20px;
@@ -58,48 +58,8 @@
     margin-top: 10px;
 }
 
-.comment-form {
-    margin-top: 20px;
-}
-
 .master-comment-list-container {
     padding-left: 0;
-}
-
-.comment-form > * {
-    display: block;
-}
-
-.comment-input {
-    width: 100%;
-    height: 50px;
-    resize: none;
-    padding: 0px 5px 3px 5px;
-    outline: none;
-    border-radius: 3px;
-    border: 1px solid #EEEEEE;
-    background-color: #EEEEEE;
-    font-size: 14px;
-    color: black;
-    font-weight: 400;
-}
-
-.submit-comment-btn, .expand-comment-btn {
-    outline: none;
-    font-weight: bold;
-    padding-bottom: 3px;
-    padding-top: 3px;
-}
-
-.submit-comment-btn {
-    color: white;
-    border: 1px solid #006fe6;
-    background: linear-gradient(#007aff, #006fe6);
-    border-radius: 3px;
-    margin-top: 8px;
-    font-size: 14px;
-    width: 50px;
-    box-shadow: 0px 1px 10px 1px #bdbdbd;
 }
 
 .expand-comment-btn {
@@ -108,10 +68,18 @@
     background-color: transparent;
     padding: 0;
     font-size: 14px;
+    outline: none;
+    font-weight: bold;
+    padding-bottom: 3px;
+    padding-top: 3px;
 }
 
 .comment-container {
     margin-top: 20px;
+}
+
+.comment-info-container {
+    display: none;
 }
 
 .comment-user, .comment-body {
@@ -129,7 +97,7 @@
     font-weight: 400;
 }
 
-.show-child-comment-btn, .add-child-comment-btn {
+.show-child-comment-btn {
     outline: none;
     border: 1px solid transparent;
     background-color: transparent;
@@ -141,7 +109,7 @@
     margin-left: 5px;
 }
 
-.show-child-comment-btn:hover, .add-child-comment-btn:hover {
+.show-child-comment-btn:hover {
     color: white;
     background-color: #006fe6;
     border: 1px solid #006fe6;
@@ -151,8 +119,4 @@
 .child-comment-list-container {
     padding-left: 50px;
     margin-top: 20px;
-}
-
-label.error {
-    color: red;
 }

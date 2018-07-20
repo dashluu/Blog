@@ -17,12 +17,13 @@
                 {
                     string categoryName = categoryModel.Name;
                     string categoryText = categoryName.ToUpper();
+                    string categoryLink = $"/Categories/{categoryName}";
 
-                    <li>@Html.ActionLink(categoryText, categoryName, "Categories", categoryName, new { })</li>
+                    <li><a href=@categoryLink>@categoryText</a></li>
                 }
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a class="navbar-icon-anchor"><span class="glyphicon glyphicon-search"></span></a></li>
+                <li><a class="navbar-icon-anchor" href="/Search"><span class="glyphicon glyphicon-search"></span></a></li>
             </ul>
         </div>
     </div>

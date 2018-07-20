@@ -24,5 +24,13 @@ body {
     background-color: whitesmoke;
 }
 
+.content-block {
+    margin-top: 30px;
+}
+
+input[type=hidden] {
+    display: none !important;
+}
+
 
 

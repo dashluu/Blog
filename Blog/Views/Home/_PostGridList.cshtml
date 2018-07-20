@@ -1,0 +1,12 @@
+﻿@using Blog.Models
+@model List<PaginationModel<PostCardModel>>
+
+@if (Model == null || Model.Count == 0)
+{
+    return;
+}
+
+@foreach (PaginationModel<PostCardModel> postCardPaginationModel in Model)
+{
+    Html.RenderPartial("~/Views/Home/_PostGrid.cshtml", postCardPaginationModel);
+}

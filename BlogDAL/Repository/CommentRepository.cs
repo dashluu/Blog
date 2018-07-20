@@ -37,8 +37,9 @@ namespace BlogDAL.Repository
 
                 return true;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                System.Diagnostics.Debug.WriteLine(e);
                 return false;
             }
         }

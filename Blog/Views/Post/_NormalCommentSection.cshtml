@@ -1,0 +1,36 @@
+﻿@using Blog.Models
+@model PaginationModel<CommentModel>
+
+<div class="master-comment-list-container">
+    @{
+        if (Model == null)
+        {
+            return;
+        }
+
+        List<CommentModel> commentModels = Model.Models;
+
+        if (commentModels == null || commentModels.Count == 0)
+        {
+            return;
+        }
+
+        foreach (CommentModel commentModel in commentModels)
+        {
+            <div class="comment-container">
+                <div class="comment-info-container">
+                    <input type="hidden" value=@commentModel.CommentId class="comment-id" />
+                    <input type="hidden" value=@commentModel.CreatedDate class="comment-created-date" />
+                </div>
+                <div class="master-comment-container">
+                    <div class="comment-user-container">
+                        <strong class="comment-user">@commentModel.Username</strong>
+                        <button class="show-child-comment-btn"><span class='glyphicon glyphicon-list'></span></button>
+                    </div>
+                    <div class="comment-body">@commentModel.Content</div>
+                </div>
+                <div class="child-comment-list-container"></div>
+            </div>
+        }
+    }
+</div>

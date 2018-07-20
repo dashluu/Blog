@@ -22,7 +22,7 @@ namespace Blog.Controllers
         }
 
         // GET: Default
-        [Route("{postId}")]
+        [Route("Posts/{postId}")]
         public ActionResult Index(string postId)
         {
             PostDTOWithPaginatedComments postDTOWithPaginatedComments = postService.GetPostWithPaginatedComments(postId, pageSize: Settings.COMMENT_PAGE_SIZE);

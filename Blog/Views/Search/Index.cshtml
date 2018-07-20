@@ -1,27 +1,23 @@
 ﻿@section styles {
     <link rel="stylesheet" type="text/css" href="~/Content/Bar/nav-bar.css" />
-    <link href="~/Content/Home/search.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/Search/search.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" type="text/css" href="~/Content/Home/post-grid.css" />
 }
 
 @section scripts {
+    <script src="~/Scripts/Home/post-card-mapper.js"></script>
+    <script src="~/Scripts/Home/post-card-factory.js"></script>
     <script src="~/Scripts/Home/post-grid.js"></script>
+    <script src="~/Scripts/Search/search.js"></script>
 }
 
-@if (Model == null || Model.Count == 0)
-{
-    return;
-}
-
-<div class="container" id="content-block">
-    <div class="row">
+<div class="container content-block">
+    <div class="row" id="search-bar">
         <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4"></div>
         <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
             <input type="text" id="search-box" placeholder="Search" />
         </div>
         <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4"></div>
     </div>
-    <div class="row">
-        
-    </div>
+    <div class="row search-result-container"></div>
 </div>
