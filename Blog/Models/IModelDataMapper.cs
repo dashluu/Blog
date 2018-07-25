@@ -27,5 +27,9 @@ namespace Blog.Models
         CategoryModel MapCategoryDTOToModel(CategoryDTO categoryDTO);
         CategoryDTO MapCategoryModelToDTO(CategoryModel categoryModel);
         List<CategoryModel> MapCategoryDTOsToModels(List<CategoryDTO> categoryDTOs);
+
+        //Map user
+        UserDTO MapUserSignUpModelToDTO(UserSignUpModel userModel);
+        UserDTO MapUserLogInModelToDTO(UserLogInModel userModel);
     }
 }

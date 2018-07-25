@@ -31,10 +31,12 @@ namespace Blog
             container.RegisterType<IModelDataMapper, ModelDataMapper>();
             container.RegisterType<IServiceDataMapper, ServiceDataMapper>();
 
+            container.RegisterType<IUserRepository, UserRepository>();
             container.RegisterType<ICategoryRepository, CategoryRepository>();
             container.RegisterType<ICommentRepository, CommentRepository>();
             container.RegisterType<IPostRepository, PostRepository>();
 
+            container.RegisterType<IUserService, UserService>();
             container.RegisterType<ICategoryService, CategoryService>();
             container.RegisterType<IPostService, PostService>();
             container.RegisterType<ICommentService, CommentService>();

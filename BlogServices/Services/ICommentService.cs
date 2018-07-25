@@ -13,6 +13,6 @@ namespace BlogServices.Services
 
         List<CommentDTO> GetChildComments(string commentId);
         PaginationDTO<CommentDTO> GetCommentPaginationOfPostWithPreservedFetch(string postId, DateTime createdDate, int pageSize);
-        PaginationDTO<CommentDTO> GetCommentPagination(int pageNumber, int pageSize, string postId = null, string commentId = null, string searchQuery = null);
+        PaginationDTO<CommentDTO> GetCommentPagination(int pageNumber, int pageSize, string postId = null, string commentId = null, string userName = null, string searchQuery = null);
     }
 }

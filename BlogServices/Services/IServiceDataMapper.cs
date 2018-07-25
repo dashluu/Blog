@@ -27,5 +27,11 @@ namespace BlogServices.Services
         CategoryDTO MapCategoryEntityToDTO(CategoryEntity categoryEntity);
         CategoryEntity MapCategoryDTOToEntity(CategoryDTO categoryDTO);
         List<CategoryDTO> MapCategoryEntitiesToDTOs(List<CategoryEntity> categoryEntities);
+
+        //Map user
+        UserEntity MapUserDTOToEntity(UserDTO userDTO);
+        UserDTO MapUserEntityToDTO(UserEntity userEntity);
+        PaginationDTO<UserDTO> MapUserPaginationEntityToDTO(PaginationEntity<UserEntity> userPaginationEntity);
+        List<UserDTO> MapUserEntitiesToDTOs(List<UserEntity> userEntities);
     }
 }

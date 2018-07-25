@@ -6,11 +6,26 @@
 @section styles {
     <link rel="stylesheet" type="text/css" href="~/Content/Bar/nav-bar.css" />
     <link href="~/Content/Post/post.css" rel="stylesheet" type="text/css" />
+
+    @if (ViewBag.IsAuthenticated)
+    {
+        <link href="~/Content/Post/logged-in-comment-section.css" rel="stylesheet" type="text/css" />
+    }
 }
 
 @section scripts {
     <script src="~/Scripts/Post/comment-mapper.js"></script>
-    <script src="~/Scripts/Post/normal-comment-factory.js"></script>
+
+    @if (!ViewBag.IsAuthenticated)
+    {
+        <script src="~/Scripts/Post/normal-comment-factory.js"></script>
+    }
+    else
+    {
+        <script src="~/Scripts/Post/logged-in-comment-factory.js"></script>
+        <script src="~/Scripts/Post/logged-in-comment-section.js"></script>
+    }
+
     <script src="~/Scripts/Post/post.js"></script>
 }
 
@@ -41,7 +56,14 @@
             <div class="comment-title">Comments</div>
             <div class="comment-count">@postModel.CommentCount</div>
             @{
-                Html.RenderPartial("~/Views/Post/_NormalCommentSection.cshtml", commentPaginationModel);
+                if (!ViewBag.IsAuthenticated)
+                {
+                    Html.RenderPartial("~/Views/Post/_NormalCommentSection.cshtml", commentPaginationModel);
+                }
+                else
+                {
+                    Html.RenderPartial("~/Views/Post/_LoggedInCommentSection.cshtml", commentPaginationModel);
+                }
 
                 if (commentPaginationModel.HasNext)
                 {

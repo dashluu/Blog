@@ -24,7 +24,7 @@ namespace Blog.Controllers
         }
 
         [Route("api/Comments")]
-        public IHttpActionResult GetComments(int pageSize, int pageNumber = 1, string postId = null, string searchQuery = null)
+        public IHttpActionResult GetComments(int pageSize, int pageNumber = 1, string postId = null, string userName = null, string searchQuery = null)
         {
             object jsonObject;
 
@@ -34,7 +34,7 @@ namespace Blog.Controllers
                 return Json(jsonObject);
             }
 
-            PaginationDTO<CommentDTO> commentPaginationDTO = commentService.GetCommentPagination(pageNumber, pageSize, postId: postId, searchQuery: searchQuery);
+            PaginationDTO<CommentDTO> commentPaginationDTO = commentService.GetCommentPagination(pageNumber, pageSize, postId: postId, userName: userName, searchQuery: searchQuery);
 
             if (commentPaginationDTO == null)
             {
@@ -42,7 +42,7 @@ namespace Blog.Controllers
             }
             else
             {
-                PaginationModel<APICommentModel> commentPaginationModel = dataMapper.MapCommentPaginationDTOToModel(commentPaginationDTO);
+                APIPaginationModel<APICommentModel> commentPaginationModel = dataMapper.MapCommentPaginationDTOToModel(commentPaginationDTO);
 
                 jsonObject = new
                 {
@@ -73,7 +73,7 @@ namespace Blog.Controllers
             }
             else
             {
-                PaginationModel<APICommentModel> commentPaginationModel = dataMapper.MapCommentPaginationDTOToModel(commentPaginationDTO);
+                APIPaginationModel<APICommentModel> commentPaginationModel = dataMapper.MapCommentPaginationDTOToModel(commentPaginationDTO);
 
                 jsonObject = new
                 {
@@ -87,7 +87,7 @@ namespace Blog.Controllers
 
         [HttpDelete]
         [Route("api/Comments/{commentId}")]
-        public IHttpActionResult RemoveComment(string commentId, int pageNumber = 1, int pageSize = 0, string postId = null)
+        public IHttpActionResult RemoveComment(string commentId, int pageNumber = 1, int pageSize = 0, string postId = null, string userName = null)
         {
             object jsonObject;
 
@@ -105,8 +105,8 @@ namespace Blog.Controllers
             }
             else
             {
-                PaginationDTO<CommentDTO> commentPaginationDTO = commentService.GetCommentPagination(pageNumber, pageSize, postId: postId);
-                PaginationModel<APICommentModel> commentPaginationModel = dataMapper.MapCommentPaginationDTOToModel(commentPaginationDTO);
+                PaginationDTO<CommentDTO> commentPaginationDTO = commentService.GetCommentPagination(pageNumber, pageSize, postId: postId, userName: userName);
+                APIPaginationModel<APICommentModel> commentPaginationModel = dataMapper.MapCommentPaginationDTOToModel(commentPaginationDTO);
 
                 jsonObject = new
                 {

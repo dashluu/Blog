@@ -24,7 +24,6 @@ namespace BlogServices.Services
         {
             commentDTO.CommentId = hashService.GenerateId();
             commentDTO.CreatedDate = DateTime.Now;
-            commentDTO.Username = "username";
 
             CommentEntity commentEntity = dataMapper.MapCommentDTOToEntity(commentDTO);
             bool addSuccessfully = commentRepository.Add(commentEntity);
@@ -48,9 +47,9 @@ namespace BlogServices.Services
             return commentPaginationDTO;
         }
 
-        public PaginationDTO<CommentDTO> GetCommentPagination(int pageNumber, int pageSize, string postId = null, string commentId = null, string searchQuery = null)
+        public PaginationDTO<CommentDTO> GetCommentPagination(int pageNumber, int pageSize, string postId = null, string commentId = null, string userName = null, string searchQuery = null)
         {
-            PaginationEntity<CommentEntity> commentPaginationEntity = commentRepository.GetCommentPagination(pageNumber, pageSize, postId, commentId, searchQuery);
+            PaginationEntity<CommentEntity> commentPaginationEntity = commentRepository.GetCommentPagination(pageNumber, pageSize, postId, commentId, userName, searchQuery);
             PaginationDTO<CommentDTO> commentPaginationDTO = dataMapper.MapCommentPaginationEntityToDTO(commentPaginationEntity);
 
             return commentPaginationDTO;

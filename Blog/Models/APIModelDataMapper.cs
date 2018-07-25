@@ -252,7 +252,7 @@ namespace Blog.Models
             return commentModels;
         }
 
-        public PaginationModel<APICommentModel> MapCommentPaginationDTOToModel(PaginationDTO<CommentDTO> commentPaginationDTO)
+        public APIPaginationModel<APICommentModel> MapCommentPaginationDTOToModel(PaginationDTO<CommentDTO> commentPaginationDTO)
         {
             if (commentPaginationDTO == null)
             {
@@ -262,7 +262,7 @@ namespace Blog.Models
             List<CommentDTO> commentDTOs = commentPaginationDTO.DTOs;
             List<APICommentModel> commentModels = MapCommentDTOsToModels(commentDTOs);
 
-            PaginationModel<APICommentModel> commentPaginationModel = new PaginationModel<APICommentModel>()
+            APIPaginationModel<APICommentModel> commentPaginationModel = new APIPaginationModel<APICommentModel>()
             {
                 Models = commentModels,
                 HasNext = commentPaginationDTO.HasNext,
@@ -289,6 +289,76 @@ namespace Blog.Models
             };
 
             return imageModel;
+        }
+
+        public APIUserModel MapUserDTOToModel(UserDTO userDTO)
+        {
+            if (userDTO == null)
+            {
+                return null;
+            }
+
+            APIUserModel userModel = new APIUserModel()
+            {
+                UserName = userDTO.UserName,
+                Email = userDTO.Email,
+            };
+
+            return userModel;
+        }
+
+        public List<APIUserModel> MapUserDTOsToModels(List<UserDTO> userDTOs)
+        {
+            if (userDTOs == null)
+            {
+                return null;
+            }
+
+            List<APIUserModel> userModels = new List<APIUserModel>();
+
+            foreach (UserDTO userDTO in userDTOs)
+            {
+                APIUserModel userModel = MapUserDTOToModel(userDTO);
+                userModels.Add(userModel);
+            }
+
+            return userModels;
+        }
+
+        public APIPaginationModel<APIUserModel> MapUserPaginationDTOToModel(PaginationDTO<UserDTO> userPaginationDTO)
+        {
+            if (userPaginationDTO == null)
+            {
+                return null;
+            }
+
+            APIPaginationModel<APIUserModel> userPaginationModel = new APIPaginationModel<APIUserModel>
+            {
+                Models = MapUserDTOsToModels(userPaginationDTO.DTOs),
+                HasNext = userPaginationDTO.HasNext,
+                HasPrevious = userPaginationDTO.HasPrevious,
+                PageNumber = userPaginationDTO.PageNumber,
+                PageSize = userPaginationDTO.PageSize,
+                Pages = userPaginationDTO.Pages
+            };
+
+            return userPaginationModel;
+        }
+
+        public UserDTO MapUserLogInModelToDTO(APIUserLogInModel userModel)
+        {
+            if (userModel == null)
+            {
+                return null;
+            }
+
+            UserDTO userDTO = new UserDTO()
+            {
+                UserName = userModel.UserName,
+                Password = userModel.Password
+            };
+
+            return userDTO;
         }
     }
 }

@@ -19,11 +19,23 @@
                     string categoryText = categoryName.ToUpper();
                     string categoryLink = $"/Categories/{categoryName}";
 
-                    <li><a href=@categoryLink>@categoryText</a></li>
+                <li><a href=@categoryLink>@categoryText</a></li>
                 }
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a class="navbar-icon-anchor" href="/Search"><span class="glyphicon glyphicon-search"></span></a></li>
+                <li>@Html.ActionLink("SEARCH", "", "Search", new { }, new { })</li>
+                @{
+                    if (ViewBag.IsAuthenticated)
+                    {
+                        <li>@Html.ActionLink(((string)ViewBag.UserName).ToUpper(), "Index", "Home", new { }, new { })</li>
+                        <li>@Html.ActionLink("LOG OUT", "LogOut", "Account", new { }, new { })</li>
+                    }
+                    else
+                    {
+                        <li>@Html.ActionLink("LOG IN", "LogIn", "Account", new { ReturnUrl = ViewBag.CurrentUrl }, new { })</li>
+                        <li>@Html.ActionLink("SIGN UP", "SignUp", "Account", new { }, new { })</li>
+                    }
+                }
             </ul>
         </div>
     </div>

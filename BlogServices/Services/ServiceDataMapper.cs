@@ -307,5 +307,80 @@ namespace BlogServices.DTO
 
             return commentEntity;
         }
+
+        public UserEntity MapUserDTOToEntity(UserDTO userDTO)
+        {
+            if (userDTO == null)
+            {
+                return null;
+            }
+
+            UserEntity userEntity = new UserEntity()
+            {
+                Id = userDTO.Id,
+                UserName = userDTO.UserName,
+                Email = userDTO.Email
+            };
+
+            return userEntity;
+        }
+
+        public UserDTO MapUserEntityToDTO(UserEntity userEntity)
+        {
+            if (userEntity == null)
+            {
+                return null;
+            }
+
+            UserDTO userDTO = new UserDTO()
+            {
+                Id = userEntity.Id,
+                UserName = userEntity.UserName,
+                Email = userEntity.Email
+            };
+
+            return userDTO;
+        }
+
+        public PaginationDTO<UserDTO> MapUserPaginationEntityToDTO(PaginationEntity<UserEntity> userPaginationEntity)
+        {
+            if (userPaginationEntity == null)
+            {
+                return null;
+            }
+
+            List<UserEntity> userEntities = userPaginationEntity.Entities;
+            List<UserDTO> userDTOs = MapUserEntitiesToDTOs(userEntities);
+
+            PaginationDTO<UserDTO> userPaginationDTO = new PaginationDTO<UserDTO>()
+            {
+                DTOs = userDTOs,
+                HasNext = userPaginationEntity.HasNext,
+                HasPrevious = userPaginationEntity.HasPrevious,
+                PageNumber = userPaginationEntity.PageNumber,
+                PageSize = userPaginationEntity.PageSize,
+                Pages = userPaginationEntity.Pages
+            };
+
+            return userPaginationDTO;
+        }
+
+        public List<UserDTO> MapUserEntitiesToDTOs(List<UserEntity> userEntities)
+        {
+            if (userEntities == null)
+            {
+                return null;
+            }
+
+            List<UserDTO> userDTOs = new List<UserDTO>();
+
+            foreach (UserEntity userEntity in userEntities)
+            {
+                UserDTO userDTO = MapUserEntityToDTO(userEntity);
+                userDTOs.Add(userDTO);
+            }
+
+            return userDTOs;
+        }
     }
 }

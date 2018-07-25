@@ -7,6 +7,7 @@ using BlogServices.Services;
 using BlogServices.DTO;
 using Blog.Models;
 using Newtonsoft.Json;
+using System.Security.Principal;
 
 namespace Blog.Controllers
 {
@@ -77,6 +78,10 @@ namespace Blog.Controllers
         {
             List<CategoryDTO> categoryDTOs = categoryService.GetCategories();
             List<CategoryModel> categoryModels = dataMapper.MapCategoryDTOsToModels(categoryDTOs);
+            IIdentity identity = HttpContext.User.Identity;
+            ViewBag.CurrentUrl = Request.Url.AbsolutePath;
+            ViewBag.IsAuthenticated = identity.IsAuthenticated;
+            ViewBag.UserName = identity.Name;
 
             return PartialView("_NavBar", categoryModels);
         }

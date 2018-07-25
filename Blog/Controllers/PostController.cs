@@ -27,10 +27,12 @@ namespace Blog.Controllers
         {
             PostDTOWithPaginatedComments postDTOWithPaginatedComments = postService.GetPostWithPaginatedComments(postId, pageSize: Settings.COMMENT_PAGE_SIZE);
             PostModelWithPaginatedComments postModelWithPaginatedComments = dataMapper.MapPostDTOToModelWithPaginatedComments(postDTOWithPaginatedComments);
+            ViewBag.IsAuthenticated = HttpContext.User.Identity.IsAuthenticated;
 
             return View(postModelWithPaginatedComments);
         }
 
+        [Authorize]
         [HttpPost]
         [Route("Comments")]
         public ActionResult AddMasterComment(string comment, string postId)
@@ -47,7 +49,8 @@ namespace Blog.Controllers
             CommentDTO commentDTO = new CommentDTO()
             {
                 Content = comment,
-                PostId = postId
+                PostId = postId,
+                Username = HttpContext.User.Identity.Name
             };
 
             bool addSuccessfully = commentService.Add(commentDTO);
@@ -70,6 +73,7 @@ namespace Blog.Controllers
             return Json(jsonObject);
         }
 
+        [Authorize]
         [HttpPost]
         [Route("Comments/{parentCommentId}/ChildComments/New")]
         public ActionResult AddChildComment(string comment, string parentCommentId, string postId, bool loadChildComments)
@@ -87,7 +91,8 @@ namespace Blog.Controllers
             {
                 Content = comment,
                 PostId = postId,
-                ParentCommentId = parentCommentId
+                ParentCommentId = parentCommentId,
+                Username = HttpContext.User.Identity.Name
             };
 
             bool addSuccessfully = commentService.Add(childCommentDTO);

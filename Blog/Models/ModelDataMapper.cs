@@ -312,5 +312,38 @@ namespace Blog.Models
 
             return commentPaginationModel;
         }
+
+        public UserDTO MapUserSignUpModelToDTO(UserSignUpModel userModel)
+        {
+            if (userModel == null)
+            {
+                return null;
+            }
+
+            UserDTO userDTO = new UserDTO()
+            {
+                UserName = userModel.UserName,
+                Email = userModel.Email,
+                Password = userModel.Password
+            };
+
+            return userDTO;
+        }
+
+        public UserDTO MapUserLogInModelToDTO(UserLogInModel userModel)
+        {
+            if (userModel == null)
+            {
+                return null;
+            }
+
+            UserDTO userDTO = new UserDTO()
+            {
+                UserName = userModel.UserName,
+                Password = userModel.Password
+            };
+
+            return userDTO;
+        }
     }
 }

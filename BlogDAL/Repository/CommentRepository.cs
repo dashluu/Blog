@@ -83,7 +83,7 @@ namespace BlogDAL.Repository
             }
         }
 
-        public PaginationEntity<CommentEntity> GetCommentPagination(int pageNumber, int pageSize, string postId = null, string commentId = null, string searchQuery = null)
+        public PaginationEntity<CommentEntity> GetCommentPagination(int pageNumber, int pageSize, string postId = null, string commentId = null, string userName = null, string searchQuery = null)
         {
             try
             {
@@ -100,6 +100,12 @@ namespace BlogDAL.Repository
                 {
                     commentQueryable = commentQueryable
                         .Where(x => x.ParentComment.CommentId.Equals(commentId));
+                }
+
+                if (userName != null)
+                {
+                    commentQueryable = commentQueryable
+                        .Where(x => x.Username.Equals(userName));
                 }
 
                 if (searchQuery != null)

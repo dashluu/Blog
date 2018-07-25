@@ -1,0 +1,31 @@
+﻿@using Blog.Models
+@model UserSignUpModel
+
+@section styles {
+    <link rel="stylesheet" type="text/css" href="~/Content/Bar/nav-bar.css" />
+    <link rel="stylesheet" type="text/css" href="~/Content/Account/sign-up.css" />
+}
+
+<div class="container content-block">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4"></div>
+        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+            <div id="sign-up-title">Sign up</div>
+            @Html.ValidationSummary(false)
+            @using (Html.BeginForm("SignUp", "Account"))
+            {
+                @Html.ValidationMessageFor(x => x.UserName)
+                @Html.TextBoxFor(x => x.UserName, new { id = "username", @class = "auth-input", placeholder = "Username" })
+                @Html.ValidationMessageFor(x => x.Email)
+                @Html.TextBoxFor(x => x.Email, new { id = "email", @class = "auth-input", placeholder = "Email" })
+                @Html.ValidationMessageFor(x => x.Password)
+                @Html.PasswordFor(x => x.Password, new { id = "password", @class = "auth-input", placeholder = "Password" })
+                <button type="submit" id="submit-auth-btn">
+                    <span class="glyphicon glyphicon-user"></span>
+                    <span class="glyphicon glyphicon-ok"></span>
+                </button>
+            }
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4"></div>
+    </div>
+</div>
