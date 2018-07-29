@@ -6,7 +6,7 @@ using System.Web;
 
 namespace Blog.Models
 {
-    public class UserLogInModel
+    public class UserLoginModel
     {
         [Required]
         public string UserName { get; set; }

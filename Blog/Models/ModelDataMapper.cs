@@ -330,7 +330,7 @@ namespace Blog.Models
             return userDTO;
         }
 
-        public UserDTO MapUserLogInModelToDTO(UserLogInModel userModel)
+        public UserDTO MapUserLoginModelToDTO(UserLoginModel userModel)
         {
             if (userModel == null)
             {
@@ -344,6 +344,36 @@ namespace Blog.Models
             };
 
             return userDTO;
+        }
+
+        public UserDTO MapUserEditModelToDTO(UserEditModel userModel)
+        {
+            if (userModel == null)
+            {
+                return null;
+            }
+
+            UserDTO userDTO = new UserDTO()
+            {
+                Email = userModel.Email
+            };
+
+            return userDTO;
+        }
+
+        public UserEditModel MapUserEditDTOToModel(UserDTO userDTO)
+        {
+            if (userDTO == null)
+            {
+                return null;
+            }
+
+            UserEditModel userModel = new UserEditModel()
+            {
+                Email = userDTO.Email
+            };
+
+            return userModel;
         }
     }
 }

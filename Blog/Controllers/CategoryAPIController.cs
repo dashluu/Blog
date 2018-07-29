@@ -12,6 +12,7 @@ using System.Web.Http.Cors;
 namespace Blog.Controllers
 {
     [EnableCors(origins: "http://localhost:4200", headers: "*", methods: "*")]
+    [Authorize(Roles = "admin")]
     public class CategoryAPIController : ApiController
     {
         private ICategoryService categoryService;
@@ -32,7 +33,10 @@ namespace Blog.Controllers
 
             if (categoryDTOs == null)
             {
-                jsonObject = new { status = 500 };
+                jsonObject = new
+                {
+                    status = HttpStatusCode.InternalServerError
+                };
             }
             else
             {
@@ -40,7 +44,7 @@ namespace Blog.Controllers
 
                 jsonObject = new
                 {
-                    status = 200,
+                    status = HttpStatusCode.OK,
                     data = categoryModels
                 };
             }
@@ -56,7 +60,11 @@ namespace Blog.Controllers
 
             if (!ModelState.IsValid)
             {
-                jsonObject = new { status = 500 };
+                jsonObject = new
+                {
+                    status = HttpStatusCode.BadRequest
+                };
+
                 return Json(jsonObject);
             }
 
@@ -65,14 +73,18 @@ namespace Blog.Controllers
 
             if (!addSuccessfully)
             {
-                jsonObject = new { status = 500 };
+                jsonObject = new
+                {
+                    status = HttpStatusCode.InternalServerError
+                };
             }
             else
             {
                 APICategoryModel categoryModel = dataMapper.MapCategoryDTOToModel(categoryDTO);
 
-                jsonObject = new {
-                    status = 200,
+                jsonObject = new
+                {
+                    status = HttpStatusCode.OK,
                     data = categoryModel
                 };
             }
@@ -86,9 +98,14 @@ namespace Blog.Controllers
         {
             object jsonObject;
 
-            if (string.IsNullOrWhiteSpace(categoryId) || !ModelState.IsValid)
+            if (string.IsNullOrWhiteSpace(categoryId) 
+                || !ModelState.IsValid)
             {
-                jsonObject = new { status = 500 };
+                jsonObject = new
+                {
+                    status = HttpStatusCode.BadRequest
+                };
+
                 return Json(jsonObject);
             }
 
@@ -99,11 +116,17 @@ namespace Blog.Controllers
 
             if (!updateSuccessfully)
             {
-                jsonObject = new { status = 500 };
+                jsonObject = new
+                {
+                    status = HttpStatusCode.InternalServerError
+                };
             }
             else
             {
-                jsonObject = new { status = 200 };
+                jsonObject = new
+                {
+                    status = HttpStatusCode.OK
+                };
             }
 
             return Json(jsonObject);

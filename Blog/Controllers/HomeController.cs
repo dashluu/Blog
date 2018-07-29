@@ -8,17 +8,36 @@ using BlogServices.DTO;
 using Blog.Models;
 using Newtonsoft.Json;
 using System.Security.Principal;
+using System.Threading.Tasks;
+using Microsoft.Owin.Security;
+using Microsoft.AspNet.Identity.Owin;
+using System.Net;
 
 namespace Blog.Controllers
 {
     public class HomeController : Controller
     {
+        private IUserService userService;
         private IPostService postService;
         private ICategoryService categoryService;
         private IModelDataMapper dataMapper;
 
-        public HomeController(IPostService postService, ICategoryService categoryService, IModelDataMapper dataMapper)
+        private IUserService UserService
         {
+            get
+            {
+                ServiceUserManager userManager = HttpContext.GetOwinContext().GetUserManager<ServiceUserManager>();
+                IAuthenticationManager authManager = HttpContext.GetOwinContext().Authentication;
+                userService.SetUserManager(userManager);
+                userService.SetAuthManager(authManager);
+
+                return userService;
+            }
+        }
+
+        public HomeController(IUserService userService, IPostService postService, ICategoryService categoryService, IModelDataMapper dataMapper)
+        {
+            this.userService = userService;
             this.postService = postService;
             this.categoryService = categoryService;
             this.dataMapper = dataMapper;
@@ -26,6 +45,7 @@ namespace Blog.Controllers
 
         public ActionResult Index()
         {
+            UpdateAuthView();
             List<PaginationDTO<PostCardDTO>> postCardPaginationDTOs = postService.GetPostCardPaginationList(pageSize: Settings.HOME_POST_PAGE_SIZE);
             List<PaginationModel<PostCardModel>> postCardPaginationModels = dataMapper.MapPostCardPaginationDTOsToModels(postCardPaginationDTOs);
 
@@ -35,10 +55,35 @@ namespace Blog.Controllers
         [Route("Categories/{category}")]
         public ActionResult Category(string category)
         {
+            UpdateAuthView();
             PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.GetPostCardPagination(pageNumber: 1, pageSize: Settings.POST_PAGE_SIZE, category);
             PaginationModel<PostCardModel> postCardPaginationModel = dataMapper.MapPostCardPaginationDTOToModel(postCardPaginationDTO);
 
             return View(postCardPaginationModel);
+        }
+
+        private void UpdateAuthView()
+        {
+            AuthDTO authDTO = UserService.GetAuth();
+
+            if (authDTO.IsAuthenticated)
+            {
+                bool lockoutEnabled = UserService.LockoutEnabled(authDTO.UserName);
+
+                if (lockoutEnabled)
+                {
+                    UserService.Logout();
+                }
+
+                ViewBag.IsAuthenticated = !lockoutEnabled;
+            }
+            else
+            {
+                ViewBag.IsAuthenticated = false;
+            }
+
+            ViewBag.ReturnUrl = Request.Url.AbsolutePath;
+            ViewBag.UserName = authDTO.UserName;
         }
 
         [HttpPost]
@@ -47,9 +92,14 @@ namespace Blog.Controllers
         {
             object jsonObject;
 
-            if (pageNumber <= 0)
+            if (string.IsNullOrWhiteSpace(category) 
+                || pageNumber <= 0)
             {
-                jsonObject = new { status = 500 };
+                jsonObject = new
+                {
+                    status = HttpStatusCode.BadRequest
+                };
+
                 return Json(jsonObject);
             }
 
@@ -57,7 +107,10 @@ namespace Blog.Controllers
 
             if (postCardPaginationDTO == null)
             {
-                jsonObject = new { status = 500 };
+                jsonObject = new
+                {
+                    status = HttpStatusCode.InternalServerError
+                };
             }
             else
             {
@@ -65,7 +118,7 @@ namespace Blog.Controllers
 
                 jsonObject = new
                 {
-                    status = 200,
+                    status = HttpStatusCode.OK,
                     data = postCardPaginationModel
                 };
             }
@@ -74,14 +127,14 @@ namespace Blog.Controllers
         }
 
         [ChildActionOnly]
-        public ActionResult NavBar()
+        public ActionResult NavBar(string returnUrl, string userName, bool isAuthenticated)
         {
             List<CategoryDTO> categoryDTOs = categoryService.GetCategories();
             List<CategoryModel> categoryModels = dataMapper.MapCategoryDTOsToModels(categoryDTOs);
-            IIdentity identity = HttpContext.User.Identity;
-            ViewBag.CurrentUrl = Request.Url.AbsolutePath;
-            ViewBag.IsAuthenticated = identity.IsAuthenticated;
-            ViewBag.UserName = identity.Name;
+
+            ViewBag.ReturnUrl = returnUrl;
+            ViewBag.UserName = userName;
+            ViewBag.IsAuthenticated = isAuthenticated;
 
             return PartialView("_NavBar", categoryModels);
         }

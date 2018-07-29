@@ -25,15 +25,17 @@
             <ul class="nav navbar-nav navbar-right">
                 <li>@Html.ActionLink("SEARCH", "", "Search", new { }, new { })</li>
                 @{
+                    string returnUrl = ViewBag.ReturnUrl;
+
                     if (ViewBag.IsAuthenticated)
                     {
-                        <li>@Html.ActionLink(((string)ViewBag.UserName).ToUpper(), "Index", "Home", new { }, new { })</li>
-                        <li>@Html.ActionLink("LOG OUT", "LogOut", "Account", new { }, new { })</li>
+                        <li>@Html.ActionLink(((string)ViewBag.UserName).ToUpper(), "Info", "Account", new { }, new { })</li>
+                        <li>@Html.ActionLink("LOG OUT", "Logout", "Account", new { ReturnUrl = returnUrl }, new { })</li>
                     }
                     else
                     {
-                        <li>@Html.ActionLink("LOG IN", "LogIn", "Account", new { ReturnUrl = ViewBag.CurrentUrl }, new { })</li>
-                        <li>@Html.ActionLink("SIGN UP", "SignUp", "Account", new { }, new { })</li>
+                        <li>@Html.ActionLink("LOG IN", "Login", "Account", new { ReturnUrl = returnUrl }, new { })</li>
+                        <li>@Html.ActionLink("SIGN UP", "SignUp", "Account", new { ReturnUrl = returnUrl }, new { })</li>
                     }
                 }
             </ul>

@@ -16,6 +16,7 @@ namespace BlogDAL.Repository
         {
             try
             {
+                userQueryable = userQueryable.Include(x => x.Roles);
                 Expression<Func<UserEntity, string>> userOrderByExpression = (x => x.UserName);            
 
                 if (searchQuery != null)

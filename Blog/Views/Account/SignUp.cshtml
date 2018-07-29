@@ -14,6 +14,7 @@
             @Html.ValidationSummary(false)
             @using (Html.BeginForm("SignUp", "Account"))
             {
+                <input type="hidden" value=@ViewBag.ReturnUrl name="ReturnUrl" />
                 @Html.ValidationMessageFor(x => x.UserName)
                 @Html.TextBoxFor(x => x.UserName, new { id = "username", @class = "auth-input", placeholder = "Username" })
                 @Html.ValidationMessageFor(x => x.Email)

@@ -1,0 +1,40 @@
+﻿@using Blog.Models
+@model UserEditModel
+
+@section styles {
+    <link rel="stylesheet" type="text/css" href="~/Content/Bar/nav-bar.css" />
+    <link rel="stylesheet" type="text/css" href="~/Content/Account/info.css" />
+}
+
+    <div class="container content-block">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4"></div>
+            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                <div id="password-editing-title" class="editing-title">Password</div>
+                @Html.ValidationSummary(false)
+                @using (Html.BeginForm("Password", "Account"))
+                {
+                    <input type="password" class="info-input" id="current-password" placeholder="Current password" name="CurrentPassword" />
+                    <input type="password" class="info-input" id="new-password" placeholder="New password" name="NewPassword" />
+                    <button type="submit" id="submit-password-btn" class="submit-btn"><span class="glyphicon glyphicon-edit"></span></button>
+                }
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4"></div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4"></div>
+            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                <div id="info-editing-title" class="editing-title">Information</div>
+                @Html.ValidationSummary(false)
+                @using (Html.BeginForm("Info", "Account"))
+                {
+                    @Html.ValidationMessageFor(x => x.Email)
+                    @Html.TextBoxFor(x => x.Email, new { id = "email", @class = "info-input", placeholder = "Email" })
+                    <button type="submit" id="submit-info-btn" class="submit-btn"><span class="glyphicon glyphicon-edit"></span></button>
+                }
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4"></div>
+        </div>
+    </div>
+
+

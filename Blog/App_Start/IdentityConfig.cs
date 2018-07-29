@@ -1,4 +1,5 @@
-﻿using BlogServices.Services;
+﻿using BlogDAL.Entity;
+using BlogServices.Services;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
@@ -14,12 +15,14 @@ namespace Blog.App_Start
     {
         public void Configuration(IAppBuilder app)
         {
-            app.CreatePerOwinContext(ServiceUserManager.Create);
+            app.CreatePerOwinContext<BlogDBContext>(BlogDBContext.Create);
+            app.CreatePerOwinContext<ServiceUserManager>(ServiceUserManager.Create);
+            app.CreatePerOwinContext<ServiceRoleManager>(ServiceRoleManager.Create);
 
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {
                 AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
-                LoginPath = new PathString("/Account/LogIn")
+                LoginPath = new PathString("/Account/Login")
             });
         }
     }

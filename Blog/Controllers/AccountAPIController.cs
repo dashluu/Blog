@@ -1,6 +1,7 @@
 ﻿using Blog.Models;
 using BlogServices.DTO;
 using BlogServices.Services;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using System;
@@ -27,9 +28,11 @@ namespace Blog.Controllers
             {
                 HttpContext httpContext = HttpContext.Current;
                 ServiceUserManager userManager = httpContext.GetOwinContext().GetUserManager<ServiceUserManager>();
+                ServiceRoleManager roleManager = httpContext.GetOwinContext().GetUserManager<ServiceRoleManager>();
                 IAuthenticationManager authManager = httpContext.GetOwinContext().Authentication;
                 userService.SetUserManager(userManager);
                 userService.SetAuthManager(authManager);
+                userService.SetRoleManager(roleManager);
 
                 return userService;
             }
@@ -41,6 +44,7 @@ namespace Blog.Controllers
             this.dataMapper = dataMapper;
         }
 
+        [Authorize(Roles = "admin")]
         [Route("api/Users")]
         public IHttpActionResult GetUsers(int pageSize, int pageNumber = 1, string searchQuery = null)
         {
@@ -48,7 +52,11 @@ namespace Blog.Controllers
 
             if (pageNumber <= 0 || pageSize < 0)
             {
-                jsonObject = new { status = 500 };
+                jsonObject = new
+                {
+                    status = HttpStatusCode.BadRequest
+                };
+
                 return Json(jsonObject);
             }
 
@@ -56,7 +64,10 @@ namespace Blog.Controllers
 
             if (userPaginationDTO == null)
             {
-                jsonObject = new { status = 500 };
+                jsonObject = new
+                {
+                    status = HttpStatusCode.InternalServerError
+                };
             }
             else
             {
@@ -64,7 +75,7 @@ namespace Blog.Controllers
 
                 jsonObject = new
                 {
-                    status = 200,
+                    status = HttpStatusCode.OK,
                     data = userPaginationModel
                 };
             }
@@ -74,21 +85,26 @@ namespace Blog.Controllers
 
         [HttpPost]
         [Route("api/Users/Login")]
-        public async Task<IHttpActionResult> Login([FromBody]APIUserLogInModel userLogInModel)
+        public async Task<IHttpActionResult> Login([FromBody]APIUserLoginModel userLoginModel)
         {
             object jsonObject;
 
             if (!ModelState.IsValid)
             {
-                jsonObject = new { status = 500 };
+                jsonObject = new
+                {
+                    status = HttpStatusCode.BadRequest
+                };
+
                 return Json(jsonObject);
             }
 
-            bool logInSuccessfully = await UserService.LogIn(userLogInModel.UserName, userLogInModel.Password);
+            IdentityResult result = await UserService.LoginAsAdmin(userLoginModel.UserName, userLoginModel.Password);
 
-            jsonObject = new {
-                status = 200,
-                data = logInSuccessfully
+            jsonObject = new
+            {
+                status = HttpStatusCode.OK,
+                data = result.Succeeded
             };
 
             return Json(jsonObject);
@@ -98,8 +114,99 @@ namespace Blog.Controllers
         [Route("api/Users/Logout")]
         public IHttpActionResult Logout()
         {
-            UserService.LogOut();
-            return Json(new { });
+            object jsonObject;
+            IdentityResult result = UserService.Logout();
+
+            if (!result.Succeeded)
+            {
+                jsonObject = new
+                {
+                    status = HttpStatusCode.InternalServerError
+                };
+            }
+            else
+            {
+                jsonObject = new
+                {
+                    status = HttpStatusCode.OK
+                };
+            }
+
+            return Json(jsonObject);
+        }
+
+        [Authorize(Roles = "admin")]
+        [HttpPost]
+        [Route("api/Users/Lockout/{userName}")]
+        public async Task<IHttpActionResult> Lockout(string userName, bool lockout)
+        {
+            object jsonObject;
+
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                jsonObject = new
+                {
+                    status = HttpStatusCode.BadRequest
+                };
+
+                return Json(jsonObject);
+            }
+
+            IdentityResult result = await UserService.SetLockout(userName, lockout);
+
+            if (!result.Succeeded)
+            {
+                jsonObject = new
+                {
+                    status = HttpStatusCode.InternalServerError
+                };
+            }
+            else
+            {
+                jsonObject = new
+                {
+                    status = HttpStatusCode.OK
+                };
+            }
+
+            return Json(jsonObject);
+        }
+
+        [Authorize(Roles = "admin")]
+        [HttpPost]
+        [Route("api/Users/Admin/{userName}")]
+        public async Task<IHttpActionResult> AddAdmin(string userName)
+        {
+            object jsonObject;
+
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                jsonObject = new
+                {
+                    status = HttpStatusCode.BadRequest
+                };
+
+                return Json(jsonObject);
+            }
+
+            IdentityResult result = await UserService.AddAdmin(userName);
+
+            if (!result.Succeeded)
+            {
+                jsonObject = new
+                {
+                    status = HttpStatusCode.InternalServerError
+                };
+            }
+            else
+            {
+                jsonObject = new
+                {
+                    status = HttpStatusCode.OK
+                };
+            }
+
+            return Json(jsonObject);
         }
     }
 }

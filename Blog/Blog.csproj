@@ -257,7 +257,7 @@
     <Compile Include="Models\APIPostCardModel.cs" />
     <Compile Include="Models\APIPostCategoryModel.cs" />
     <Compile Include="Models\APISettings.cs" />
-    <Compile Include="Models\APIUserLogInModel.cs" />
+    <Compile Include="Models\APIUserLoginModel.cs" />
     <Compile Include="Models\APIUserModel.cs" />
     <Compile Include="Models\PaginationModel.cs" />
     <Compile Include="Models\CategoryModel.cs" />
@@ -273,7 +273,8 @@
     <Compile Include="Models\PostCardModel.cs" />
     <Compile Include="Models\PostModelWithPaginatedComments.cs" />
     <Compile Include="Models\PostModel.cs" />
-    <Compile Include="Models\UserLogInModel.cs" />
+    <Compile Include="Models\UserEditModel.cs" />
+    <Compile Include="Models\UserLoginModel.cs" />
     <Compile Include="Models\UserSignUpModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -282,6 +283,7 @@
     <Content Include="Content\Account\sign-up.css" />
     <Content Include="Content\Bar\nav-bar.css" />
     <Content Include="Content\Post\logged-in-comment-section.css" />
+    <Content Include="Content\Account\info.css" />
     <Content Include="Content\Search\search.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
@@ -343,6 +345,7 @@
     <Content Include="Views\Post\_NormalCommentSection.cshtml" />
     <Content Include="Views\Account\LogIn.cshtml" />
     <Content Include="Views\Account\SignUp.cshtml" />
+    <Content Include="Views\Account\Info.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -40,54 +40,223 @@ namespace Blog.Controllers
         }
 
         // GET: Account
-        public ActionResult LogIn(string ReturnUrl = "/")
+        public ActionResult Login(string ReturnUrl = "/")
         {
+            AuthDTO authDTO = UserService.GetAuth();
+
+            if (authDTO.IsAuthenticated)
+            {
+                bool lockoutEnabled = UserService.LockoutEnabled(authDTO.UserName);
+
+                if (lockoutEnabled)
+                {
+                    UserService.Logout();
+                }
+                else
+                {
+                    return Redirect(ReturnUrl);
+                }
+            }
+
             ViewBag.ReturnUrl = ReturnUrl;
+            ViewBag.IsAuthenticated = false;
+            ViewBag.UserName = "";
+
             return View();
         }
 
-        public ActionResult LogOut()
+        public ActionResult Logout(string ReturnUrl = "/")
         {
-            UserService.LogOut();
-            return RedirectToAction("LogIn", "Account");
+            AuthDTO authDTO = UserService.GetAuth();
+
+            if (!authDTO.IsAuthenticated)
+            {
+                return Redirect(ReturnUrl);
+            }
+
+            UserService.Logout();
+
+            return RedirectToAction("Login");
         }
 
-        public ActionResult SignUp()
+        public ActionResult SignUp(string ReturnUrl = "/")
         {
+            AuthDTO authDTO = UserService.GetAuth();
+
+            if (authDTO.IsAuthenticated)
+            {
+                bool lockoutEnabled = UserService.LockoutEnabled(authDTO.UserName);
+
+                if (lockoutEnabled)
+                {
+                    UserService.Logout();
+                }
+                else
+                {
+                    return Redirect(ReturnUrl);
+                }
+            }
+
+            ViewBag.ReturnUrl = ReturnUrl;
+            ViewBag.IsAuthenticated = false;
+            ViewBag.UserName = "";
+
             return View();
         }
 
         [HttpPost]
-        public async Task<ActionResult> LogIn(UserLogInModel userModel, string ReturnUrl)
+        public async Task<ActionResult> Login(UserLoginModel userModel, string ReturnUrl = "/")
         {
-            string userName = userModel.UserName;
-            string password = userModel.Password;
-            bool logInSuccessfully = await UserService.LogIn(userName, password);
+            ViewBag.ReturnUrl = ReturnUrl;
+            ViewBag.IsAuthenticated = false;
+            ViewBag.UserName = "";
 
-            if (!logInSuccessfully)
+            if (!ModelState.IsValid)
             {
-                ModelState.AddModelError("", "Username or password not found.");
+                ModelState.AddModelError("", "Invalid inputs.");
                 return View(userModel);
             }
 
-            return Redirect(ReturnUrl);
+            AuthDTO authDTO = UserService.GetAuth();
+
+            if (authDTO.IsAuthenticated)
+            {
+                bool lockoutEnabled = UserService.LockoutEnabled(authDTO.UserName);
+
+                if (lockoutEnabled)
+                {
+                    UserService.Logout();
+                    ModelState.AddModelError("", "User has been locked out.");
+
+                    return View(userModel);
+                }
+                else
+                {
+                    return Redirect(ReturnUrl);
+                }
+            }
+
+            string userName = userModel.UserName;
+            string password = userModel.Password;
+            IdentityResult result = await UserService.Login(userName, password);
+
+            if (result.Succeeded)
+            {
+                return Redirect(ReturnUrl);
+            }
+
+            AddErrors(result.Errors);
+
+            return View(userModel);
         }
 
         [HttpPost]
-        public async Task<ActionResult> SignUp(UserSignUpModel userModel)
+        public async Task<ActionResult> SignUp(UserSignUpModel userModel, string ReturnUrl = "/")
         {
+            ViewBag.ReturnUrl = ReturnUrl;
+            ViewBag.IsAuthenticated = false;
+            ViewBag.UserName = "";
+
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("", "Invalid inputs.");
+                return View(userModel);
+            }
+
+            AuthDTO authDTO = UserService.GetAuth();
+
+            if (authDTO.IsAuthenticated)
+            {
+                bool lockoutEnabled = UserService.LockoutEnabled(authDTO.UserName);
+
+                if (lockoutEnabled)
+                {
+                    UserService.Logout();
+                    ModelState.AddModelError("", "User has been locked out.");
+
+                    return View(userModel);
+                }
+                else
+                {
+                    return Redirect(ReturnUrl);
+                }
+            }
+
             UserDTO userDTO = dataMapper.MapUserSignUpModelToDTO(userModel);
             IdentityResult result = await UserService.Create(userDTO);
 
-            if (!result.Succeeded)
+            if (result.Succeeded)
             {
-                AddErrors(result.Errors);
-                return View(userModel);
+                await UserService.Login(userDTO.UserName, userDTO.Password);
+                return Redirect(ReturnUrl);
             }
 
-            await UserService.LogIn(userDTO.UserName, userDTO.Password);
+            AddErrors(result.Errors);
 
-            return RedirectToAction("Index", "Home");
+            return View(userModel);
+        }
+
+        [Authorize]
+        public async Task<ActionResult> Info()
+        {
+            AuthDTO authDTO = UserService.GetAuth();
+            bool lockoutEnabled = UserService.LockoutEnabled(authDTO.UserName);
+
+            if (lockoutEnabled)
+            {
+                UserService.Logout();
+                return RedirectToAction("Login");
+            }
+
+            ViewBag.IsAuthenticated = true;
+            ViewBag.ReturnUrl = Request.Url.AbsolutePath;
+            ViewBag.UserName = authDTO.UserName;
+            UserDTO userDTO = await UserService.GetUser(authDTO.UserName);
+            UserEditModel userModel = dataMapper.MapUserEditDTOToModel(userDTO);
+
+            return View(userModel);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<ActionResult> Password(string CurrentPassword, string NewPassword)
+        {
+            AuthDTO authDTO = UserService.GetAuth();
+            bool lockoutEnabled = UserService.LockoutEnabled(authDTO.UserName);
+
+            if (lockoutEnabled)
+            {
+                UserService.Logout();
+                return RedirectToAction("Login");
+            }
+
+            ViewBag.IsAuthenticated = true;
+            ViewBag.ReturnUrl = Request.Url.AbsolutePath;
+            ViewBag.UserName = authDTO.UserName;
+            UserDTO userDTO;
+            UserEditModel userModel;
+
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("", "Invalid inputs.");
+                userDTO = await UserService.GetUser(authDTO.UserName);
+                userModel = dataMapper.MapUserEditDTOToModel(userDTO);
+
+                return View("Info", userModel);
+            }
+
+            IdentityResult result = await UserService.UpdatePassword(authDTO.UserName, CurrentPassword, NewPassword);
+            userDTO = await UserService.GetUser(authDTO.UserName);
+            userModel = dataMapper.MapUserEditDTOToModel(userDTO);
+
+            if (result.Succeeded)
+            {
+                return View("Info", userModel);
+            }
+
+            AddErrors(result.Errors);
+
+            return View("Info", userModel);
         }
 
         private void AddErrors(IEnumerable<string> errors)

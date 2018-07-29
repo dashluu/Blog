@@ -14,6 +14,7 @@ using System.Web.Http.Cors;
 namespace Blog.Controllers
 {
     [EnableCors(origins: "http://localhost:4200", headers: "*", methods: "*")]
+    [Authorize(Roles = "admin")]
     public class PostAPIController : ApiController
     {
         private IPostService postService;
@@ -32,7 +33,11 @@ namespace Blog.Controllers
 
             if (pageNumber <= 0 || pageSize < 0)
             {
-                jsonObject = new { status = 500 };
+                jsonObject = new
+                {
+                    status = HttpStatusCode.BadRequest
+                };
+
                 return Json(jsonObject);
             }
 
@@ -40,7 +45,10 @@ namespace Blog.Controllers
 
             if (postCardPaginationDTO == null)
             {
-                jsonObject = new { status = 500 };
+                jsonObject = new
+                {
+                    status = HttpStatusCode.InternalServerError
+                };
             }
             else
             {
@@ -48,7 +56,7 @@ namespace Blog.Controllers
 
                 jsonObject = new
                 {
-                    status = 200,
+                    status = HttpStatusCode.OK,
                     data = postCardPaginationModel
                 };
             }
@@ -60,11 +68,25 @@ namespace Blog.Controllers
         public IHttpActionResult GetEditedPost(string postId)
         {
             object jsonObject;
+
+            if (string.IsNullOrWhiteSpace(postId))
+            {
+                jsonObject = new
+                {
+                    status = HttpStatusCode.BadRequest
+                };
+
+                return Json(jsonObject);
+            }
+
             PostDTO postDTO = postService.GetPost(postId);
 
             if (postDTO == null)
             {
-                jsonObject = new { status = 500 };
+                jsonObject = new
+                {
+                    status = HttpStatusCode.InternalServerError
+                };
             }
             else
             {
@@ -72,7 +94,7 @@ namespace Blog.Controllers
 
                 jsonObject = new
                 {
-                    status = 200,
+                    status = HttpStatusCode.OK,
                     data = editedPostModel
                 };
             }
@@ -86,9 +108,15 @@ namespace Blog.Controllers
         {
             object jsonObject;
 
-            if (pageNumber <= 0 || pageSize < 0)
+            if (string.IsNullOrWhiteSpace(postId)
+                || pageNumber <= 0 
+                || pageSize < 0)
             {
-                jsonObject = new { status = 500 };
+                jsonObject = new
+                {
+                    status = HttpStatusCode.BadRequest
+                };
+
                 return Json(jsonObject);
             }
 
@@ -96,7 +124,10 @@ namespace Blog.Controllers
 
             if (!removeSuccessfully)
             {
-                jsonObject = new { status = 500 };
+                jsonObject = new
+                {
+                    status = HttpStatusCode.InternalServerError
+                };
             }
             else
             {
@@ -105,7 +136,7 @@ namespace Blog.Controllers
 
                 jsonObject = new
                 {
-                    status = 200,
+                    status = HttpStatusCode.OK,
                     data = postCardPaginationModel
                 };
             }
@@ -121,7 +152,11 @@ namespace Blog.Controllers
 
             if (!ModelState.IsValid)
             {
-                jsonObject = new { status = 500 };
+                jsonObject = new
+                {
+                    status = HttpStatusCode.BadRequest
+                };
+
                 return Json(jsonObject);
             }
 
@@ -136,11 +171,17 @@ namespace Blog.Controllers
 
             if (!addSuccessfully)
             {
-                jsonObject = new { status = 500 };
+                jsonObject = new
+                {
+                    status = HttpStatusCode.InternalServerError
+                };
             }
             else
             {
-                jsonObject = new { status = 200 };
+                jsonObject = new
+                {
+                    status = HttpStatusCode.OK
+                };
             }
 
             return Json(jsonObject);
@@ -152,9 +193,14 @@ namespace Blog.Controllers
         {
             object jsonObject;
 
-            if (!ModelState.IsValid)
+            if (string.IsNullOrWhiteSpace(postId) 
+                || !ModelState.IsValid)
             {
-                jsonObject = new { status = 500 };
+                jsonObject = new
+                {
+                    status = HttpStatusCode.BadRequest
+                };
+
                 return Json(jsonObject);
             }
 
@@ -170,11 +216,17 @@ namespace Blog.Controllers
 
             if (!updateSuccessfully)
             {
-                jsonObject = new { status = 500 };
+                jsonObject = new
+                {
+                    status = HttpStatusCode.InternalServerError
+                };
             }
             else
             {
-                jsonObject = new { status = 200 };
+                jsonObject = new
+                {
+                    status = HttpStatusCode.OK
+                };
             }
 
             return Json(jsonObject);

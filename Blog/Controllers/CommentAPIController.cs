@@ -12,6 +12,7 @@ using System.Web.Http.Cors;
 namespace Blog.Controllers
 {
     [EnableCors(origins: "http://localhost:4200", headers: "*", methods: "*")]
+    [Authorize(Roles = "admin")]
     public class CommentAPIController : ApiController
     {
         private ICommentService commentService;
@@ -30,7 +31,11 @@ namespace Blog.Controllers
 
             if (pageNumber <= 0 || pageSize < 0)
             {
-                jsonObject = new { status = 500 };
+                jsonObject = new
+                {
+                    status = HttpStatusCode.BadRequest
+                };
+
                 return Json(jsonObject);
             }
 
@@ -38,7 +43,10 @@ namespace Blog.Controllers
 
             if (commentPaginationDTO == null)
             {
-                jsonObject = new { status = 500 };
+                jsonObject = new
+                {
+                    status = HttpStatusCode.InternalServerError
+                };
             }
             else
             {
@@ -46,7 +54,7 @@ namespace Blog.Controllers
 
                 jsonObject = new
                 {
-                    status = 200,
+                    status = HttpStatusCode.OK,
                     data = commentPaginationModel
                 };
             }
@@ -61,7 +69,11 @@ namespace Blog.Controllers
 
             if (pageNumber <= 0 || pageSize < 0)
             {
-                jsonObject = new { status = 500 };
+                jsonObject = new
+                {
+                    status = HttpStatusCode.BadRequest
+                };
+
                 return Json(jsonObject);
             }
 
@@ -69,7 +81,10 @@ namespace Blog.Controllers
 
             if (commentPaginationDTO == null)
             {
-                jsonObject = new { status = 500 };
+                jsonObject = new
+                {
+                    status = HttpStatusCode.InternalServerError
+                };
             }
             else
             {
@@ -77,7 +92,7 @@ namespace Blog.Controllers
 
                 jsonObject = new
                 {
-                    status = 200,
+                    status = HttpStatusCode.OK,
                     data = commentPaginationModel
                 };
             }
@@ -91,9 +106,15 @@ namespace Blog.Controllers
         {
             object jsonObject;
 
-            if (pageNumber <= 0 || pageSize < 0)
+            if (string.IsNullOrWhiteSpace(commentId)
+                || pageNumber <= 0 
+                || pageSize < 0)
             {
-                jsonObject = new { status = 500 };
+                jsonObject = new
+                {
+                    status = HttpStatusCode.BadRequest
+                };
+
                 return Json(jsonObject);
             }
 
@@ -101,7 +122,10 @@ namespace Blog.Controllers
 
             if (!removeSuccessfully)
             {
-                jsonObject = new { status = 500 };
+                jsonObject = new
+                {
+                    status = HttpStatusCode.InternalServerError
+                };
             }
             else
             {
@@ -110,7 +134,7 @@ namespace Blog.Controllers
 
                 jsonObject = new
                 {
-                    status = 200,
+                    status = HttpStatusCode.OK,
                     data = commentPaginationModel
                 };
             }

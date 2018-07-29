@@ -1,6 +1,8 @@
 ﻿using BlogDAL.Entity;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,10 +19,27 @@ namespace BlogServices.Services
             this.userStore = userStore;
         }
 
-        public static ServiceUserManager Create()
+        public static ServiceUserManager Create(IdentityFactoryOptions<ServiceUserManager> options, IOwinContext context)
         {
-            BlogDBContext blogDBContext = new BlogDBContext();
+            BlogDBContext blogDBContext = context.Get<BlogDBContext>();
             UserStore<UserEntity> userStore = new UserStore<UserEntity>(blogDBContext);
+            ServiceUserManager serviceUserManager = new ServiceUserManager(userStore);
+
+            serviceUserManager.PasswordValidator = new PasswordValidator()
+            {
+                RequiredLength = 6,
+                RequireNonLetterOrDigit = false,
+                RequireDigit = true,
+                RequireLowercase = true,
+                RequireUppercase = true
+            };
+
+            serviceUserManager.UserValidator = new UserValidator<UserEntity>(serviceUserManager)
+            {
+                AllowOnlyAlphanumericUserNames = true,
+                RequireUniqueEmail = true
+            };
+
             return new ServiceUserManager(userStore);
         }
 

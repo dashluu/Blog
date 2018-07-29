@@ -6,11 +6,9 @@ using System.Web;
 
 namespace Blog.Models
 {
-    public class APIUserLoginModel
+    public class UserEditModel
     {
         [Required]
-        public string UserName { get; set; }
-        [Required]
-        public string Password { get; set; }
+        public string Email { get; set; }
     }
 }

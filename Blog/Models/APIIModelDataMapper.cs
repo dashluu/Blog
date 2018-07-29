@@ -35,6 +35,6 @@ namespace Blog.Models
         APIUserModel MapUserDTOToModel(UserDTO userDTO);
         List<APIUserModel> MapUserDTOsToModels(List<UserDTO> userDTOs);
         APIPaginationModel<APIUserModel> MapUserPaginationDTOToModel(PaginationDTO<UserDTO> userPaginationDTO);
-        UserDTO MapUserLogInModelToDTO(APIUserLogInModel userModel);
+        UserDTO MapUserLoginModelToDTO(APIUserLoginModel userModel);
     }
 }

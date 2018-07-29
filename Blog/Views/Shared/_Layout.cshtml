@@ -10,7 +10,14 @@
 </head>
 <body>
     @{
-        Html.RenderAction("NavBar", "Home");
+        object values = new
+        {
+            returnUrl = ViewBag.ReturnUrl,
+            userName = ViewBag.UserName,
+            isAuthenticated = ViewBag.IsAuthenticated
+        };
+
+        Html.RenderAction("NavBar", "Home", values);
     }
 
     <div class="container body-content">

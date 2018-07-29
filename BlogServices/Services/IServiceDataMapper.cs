@@ -30,8 +30,8 @@ namespace BlogServices.Services
 
         //Map user
         UserEntity MapUserDTOToEntity(UserDTO userDTO);
-        UserDTO MapUserEntityToDTO(UserEntity userEntity);
-        PaginationDTO<UserDTO> MapUserPaginationEntityToDTO(PaginationEntity<UserEntity> userPaginationEntity);
-        List<UserDTO> MapUserEntitiesToDTOs(List<UserEntity> userEntities);
+        UserDTO MapUserEntityToDTO(UserEntity userEntity, RoleEntity adminRoleEntity = null);
+        PaginationDTO<UserDTO> MapUserPaginationEntityToDTO(PaginationEntity<UserEntity> userPaginationEntity, RoleEntity adminRoleEntity = null);
+        List<UserDTO> MapUserEntitiesToDTOs(List<UserEntity> userEntities, RoleEntity adminRoleEntity = null);
     }
 }

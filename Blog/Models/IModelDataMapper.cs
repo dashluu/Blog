@@ -30,6 +30,8 @@ namespace Blog.Models
 
         //Map user
         UserDTO MapUserSignUpModelToDTO(UserSignUpModel userModel);
-        UserDTO MapUserLogInModelToDTO(UserLogInModel userModel);
+        UserDTO MapUserLoginModelToDTO(UserLoginModel userModel);
+        UserDTO MapUserEditModelToDTO(UserEditModel userModel);
+        UserEditModel MapUserEditDTOToModel(UserDTO userDTO);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using BlogDAL.Entity;
 using BlogServices.Services;
+using Microsoft.AspNet.Identity.EntityFramework;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -325,7 +326,7 @@ namespace BlogServices.DTO
             return userEntity;
         }
 
-        public UserDTO MapUserEntityToDTO(UserEntity userEntity)
+        public UserDTO MapUserEntityToDTO(UserEntity userEntity, RoleEntity adminRoleEntity = null)
         {
             if (userEntity == null)
             {
@@ -339,10 +340,33 @@ namespace BlogServices.DTO
                 Email = userEntity.Email
             };
 
+            if (adminRoleEntity == null)
+            {
+                userDTO.LockoutEnabled = userEntity.LockoutEnabled;
+                return userDTO;
+            }
+
+            foreach(IdentityUserRole userRole in userEntity.Roles)
+            {
+                if (userRole.RoleId.Equals(adminRoleEntity.Id))
+                {
+                    userDTO.IsAdmin = true;
+                }
+            }
+
+            if (userDTO.IsAdmin)
+            {
+                userDTO.LockoutEnabled = false;
+            }
+            else
+            {
+                userDTO.LockoutEnabled = userEntity.LockoutEnabled;
+            }
+
             return userDTO;
         }
 
-        public PaginationDTO<UserDTO> MapUserPaginationEntityToDTO(PaginationEntity<UserEntity> userPaginationEntity)
+        public PaginationDTO<UserDTO> MapUserPaginationEntityToDTO(PaginationEntity<UserEntity> userPaginationEntity, RoleEntity adminRoleEntity = null)
         {
             if (userPaginationEntity == null)
             {
@@ -350,7 +374,7 @@ namespace BlogServices.DTO
             }
 
             List<UserEntity> userEntities = userPaginationEntity.Entities;
-            List<UserDTO> userDTOs = MapUserEntitiesToDTOs(userEntities);
+            List<UserDTO> userDTOs = MapUserEntitiesToDTOs(userEntities, adminRoleEntity);
 
             PaginationDTO<UserDTO> userPaginationDTO = new PaginationDTO<UserDTO>()
             {
@@ -365,7 +389,7 @@ namespace BlogServices.DTO
             return userPaginationDTO;
         }
 
-        public List<UserDTO> MapUserEntitiesToDTOs(List<UserEntity> userEntities)
+        public List<UserDTO> MapUserEntitiesToDTOs(List<UserEntity> userEntities, RoleEntity adminRoleEntity = null)
         {
             if (userEntities == null)
             {
@@ -376,7 +400,7 @@ namespace BlogServices.DTO
 
             foreach (UserEntity userEntity in userEntities)
             {
-                UserDTO userDTO = MapUserEntityToDTO(userEntity);
+                UserDTO userDTO = MapUserEntityToDTO(userEntity, adminRoleEntity);
                 userDTOs.Add(userDTO);
             }
 

@@ -1,0 +1,37 @@
+﻿.editing-title {
+    color: black;
+    margin-bottom: 25px;
+    margin-top: 0px;
+    font-weight: 800;
+    font-size: 30px;
+}
+
+.info-input {
+    width: 100%;
+    display: block;
+    margin-bottom: 10px;
+    padding: 0px 5px 3px 5px;
+    outline: none;
+    border-radius: 3px;
+    border: 1px solid #EEEEEE;
+    background-color: #EEEEEE;
+    font-size: medium;
+    color: black;
+    font-weight: 400;
+}
+
+.submit-btn {
+    color: white;
+    border: 1px solid #006fe6;
+    background: linear-gradient(#007aff, #006fe6);
+    border-radius: 3px;
+    margin-top: 8px;
+    font-size: 14px;
+    width: 50px;
+    box-shadow: 0px 1px 10px 1px #bdbdbd;
+    outline: none;
+    font-weight: bold;
+    padding-bottom: 3px;
+    padding-top: 3px;
+    float: right;
+}

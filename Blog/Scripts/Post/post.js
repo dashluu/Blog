@@ -50,7 +50,7 @@ $("#expand-master-comment-btn").click(function () {
         createdDateString: $(".comment-created-date").last().val()
     };
 
-    var url = `/${postId}/Comments/More`;
+    var url = `/Posts/${postId}/Comments/More`;
 
     $.post(url, values, function (result) {
         if (result.status === 200) {

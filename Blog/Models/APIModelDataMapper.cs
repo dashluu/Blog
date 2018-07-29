@@ -302,6 +302,8 @@ namespace Blog.Models
             {
                 UserName = userDTO.UserName,
                 Email = userDTO.Email,
+                LockoutEnabled = userDTO.LockoutEnabled,
+                IsAdmin = userDTO.IsAdmin
             };
 
             return userModel;
@@ -345,7 +347,7 @@ namespace Blog.Models
             return userPaginationModel;
         }
 
-        public UserDTO MapUserLogInModelToDTO(APIUserLogInModel userModel)
+        public UserDTO MapUserLoginModelToDTO(APIUserLoginModel userModel)
         {
             if (userModel == null)
             {
