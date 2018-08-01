@@ -99,7 +99,10 @@ namespace Blog.Controllers
                 return Json(jsonObject);
             }
 
-            IdentityResult result = await UserService.LoginAsAdmin(userLoginModel.UserName, userLoginModel.Password);
+            string userName = userLoginModel.UserName;
+            string password = userLoginModel.Password;
+            bool isPersistent = userLoginModel.IsPersistent;
+            IdentityResult result = await UserService.LoginAsAdmin(userName, password, isPersistent);
 
             jsonObject = new
             {
@@ -115,9 +118,9 @@ namespace Blog.Controllers
         public IHttpActionResult Logout()
         {
             object jsonObject;
-            IdentityResult result = UserService.Logout();
+            AuthDTO authDTO = UserService.GetAuth();
 
-            if (!result.Succeeded)
+            if (!authDTO.IsAuthenticated)
             {
                 jsonObject = new
                 {
@@ -126,6 +129,8 @@ namespace Blog.Controllers
             }
             else
             {
+                UserService.Logout();
+
                 jsonObject = new
                 {
                     status = HttpStatusCode.OK

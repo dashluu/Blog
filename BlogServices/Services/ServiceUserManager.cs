@@ -37,7 +37,7 @@ namespace BlogServices.Services
             serviceUserManager.UserValidator = new UserValidator<UserEntity>(serviceUserManager)
             {
                 AllowOnlyAlphanumericUserNames = true,
-                RequireUniqueEmail = true
+                RequireUniqueEmail = false
             };
 
             return new ServiceUserManager(userStore);

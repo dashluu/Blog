@@ -219,10 +219,11 @@ namespace Blog.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult> Password(string CurrentPassword, string NewPassword)
+        public async Task<ActionResult> Info(UserEditModel userModel)
         {
             AuthDTO authDTO = UserService.GetAuth();
-            bool lockoutEnabled = UserService.LockoutEnabled(authDTO.UserName);
+            string userName = authDTO.UserName;
+            bool lockoutEnabled = UserService.LockoutEnabled(userName);
 
             if (lockoutEnabled)
             {
@@ -231,23 +232,62 @@ namespace Blog.Controllers
             }
 
             ViewBag.IsAuthenticated = true;
-            ViewBag.ReturnUrl = Request.Url.AbsolutePath;
-            ViewBag.UserName = authDTO.UserName;
+            ViewBag.ReturnUrl = "/Account/Info";
+            ViewBag.UserName = userName;
             UserDTO userDTO;
-            UserEditModel userModel;
 
             if (!ModelState.IsValid)
             {
-                ModelState.AddModelError("", "Invalid inputs.");
-                userDTO = await UserService.GetUser(authDTO.UserName);
+                userDTO = await UserService.GetUser(userName);
                 userModel = dataMapper.MapUserEditDTOToModel(userDTO);
+                ModelState.AddModelError("", "Invalid inputs.");
 
                 return View("Info", userModel);
             }
 
-            IdentityResult result = await UserService.UpdatePassword(authDTO.UserName, CurrentPassword, NewPassword);
-            userDTO = await UserService.GetUser(authDTO.UserName);
+            userDTO = dataMapper.MapUserEditModelToDTO(userModel);
+            userDTO.UserName = userName;
+            IdentityResult result = await UserService.UpdateInfo(userDTO);
+
+            if (result.Succeeded)
+            {
+                return View("Info", userModel);
+            }
+
+            userDTO = await UserService.GetUser(userName);
             userModel = dataMapper.MapUserEditDTOToModel(userDTO);
+            AddErrors(result.Errors);
+
+            return View("Info", userModel);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<ActionResult> Password(string CurrentPassword, string NewPassword)
+        {
+            AuthDTO authDTO = UserService.GetAuth();
+            string userName = authDTO.UserName;
+            bool lockoutEnabled = UserService.LockoutEnabled(userName);
+
+            if (lockoutEnabled)
+            {
+                UserService.Logout();
+                return RedirectToAction("Login");
+            }
+
+            ViewBag.IsAuthenticated = true;
+            ViewBag.ReturnUrl = "/Account/Info";
+            ViewBag.UserName = userName;
+            UserDTO userDTO = await UserService.GetUser(userName);
+            UserEditModel userModel = dataMapper.MapUserEditDTOToModel(userDTO);
+
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("", "Invalid inputs.");
+                return View("Info", userModel);
+            }
+
+            IdentityResult result = await UserService.UpdatePassword(userName, CurrentPassword, NewPassword);
 
             if (result.Succeeded)
             {

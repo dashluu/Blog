@@ -18,8 +18,8 @@ namespace BlogServices.Services
         void SetRoleManager(ServiceRoleManager roleManager);
         Task<IdentityResult> Create(UserDTO userDTO);
         Task<IdentityResult> Login(string userName, string password);
-        Task<IdentityResult> LoginAsAdmin(string userName, string password);
-        IdentityResult Logout();
+        Task<IdentityResult> LoginAsAdmin(string userName, string password, bool isPersistent = false);
+        void Logout();
         PaginationDTO<UserDTO> GetUserPagination(int pageNumber, int pageSize, string searchQuery = null);
         Task<IdentityResult> SetLockout(string userName, bool lockout);
         Task<bool> LockoutEnabledAsync(string userName);
@@ -27,6 +27,7 @@ namespace BlogServices.Services
         AuthDTO GetAuth();
         Task<IdentityResult> AddAdmin(string userName);
         Task<IdentityResult> UpdatePassword(string userName, string currentPassword, string newPassword);
+        Task<IdentityResult> UpdateInfo(UserDTO userDTO);
         Task<UserDTO> GetUser(string userName);
     }
 }

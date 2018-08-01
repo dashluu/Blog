@@ -84,18 +84,9 @@ namespace BlogServices.Services
             return IdentityResult.Success;
         }
 
-        public IdentityResult Logout()
+        public void Logout()
         {
-            IIdentity identity = authManager.User.Identity;
-            
-            if (!identity.IsAuthenticated)
-            {
-                return IdentityResult.Failed("User is not logged in.");
-            }
-
             authManager.SignOut();
-
-            return IdentityResult.Success;
         }
 
         public async Task<IdentityResult> SetLockout(string userName, bool lockout)
@@ -165,7 +156,7 @@ namespace BlogServices.Services
             this.roleManager = roleManager;
         }
 
-        public async Task<IdentityResult> LoginAsAdmin(string userName, string password)
+        public async Task<IdentityResult> LoginAsAdmin(string userName, string password, bool isPersistent = false)
         {
             UserEntity userEntity = await userManager.FindAsync(userName, password);
 
@@ -183,7 +174,7 @@ namespace BlogServices.Services
 
             AuthenticationProperties authProperties = new AuthenticationProperties()
             {
-                IsPersistent = false
+                IsPersistent = isPersistent
             };
 
             ClaimsIdentity claimsIdentity = await userManager.CreateIdentityAsync(userEntity, DefaultAuthenticationTypes.ApplicationCookie);
@@ -247,6 +238,28 @@ namespace BlogServices.Services
             UserDTO userDTO = dataMapper.MapUserEntityToDTO(userEntity);
 
             return userDTO;
+        }
+
+        public async Task<IdentityResult> UpdateInfo(UserDTO userDTO)
+        {
+            UserEntity userEntity = await userManager.FindByNameAsync(userDTO.UserName);
+
+            if (userEntity == null)
+            {
+                return IdentityResult.Failed("User not found.");
+            }
+
+            userEntity.Email = userDTO.Email;
+            IdentityResult identityResult = await userManager.UserValidator.ValidateAsync(userEntity);
+
+            if (!identityResult.Succeeded)
+            {
+                return identityResult;
+            }
+
+            identityResult = await userManager.UpdateAsync(userEntity);
+
+            return identityResult;
         }
     }
 }
