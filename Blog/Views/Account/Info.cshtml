@@ -10,8 +10,12 @@
         <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4"></div>
             <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-                @Html.ValidationSummary(false)
                 <div id="password-editing-title" class="editing-title">Password</div>
+                <div class="requirement-container">
+                    <div class="info-requirement">Password must be at least 6 characters long.</div>
+                    <div class="info-requirement">Password must contain at least 1 uppercase, 1 lowercase letter and 1 digit.</div>
+                </div>
+                @Html.ValidationMessage("Password")
                 @using (Html.BeginForm("Password", "Account"))
                 {
                     <input type="password" class="info-input" id="current-password" placeholder="Current password" name="CurrentPassword" />
@@ -25,6 +29,7 @@
             <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4"></div>
             <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                 <div id="info-editing-title" class="editing-title">Information</div>
+                @Html.ValidationMessage("Info")
                 @using (Html.BeginForm("Info", "Account"))
                 {
                     @Html.ValidationMessageFor(x => x.Email)

@@ -17,13 +17,12 @@ namespace BlogServices.Services
         void SetAuthManager(IAuthenticationManager authManager);
         void SetRoleManager(ServiceRoleManager roleManager);
         Task<IdentityResult> Create(UserDTO userDTO);
-        Task<IdentityResult> Login(string userName, string password);
+        Task<IdentityResult> Login(string userName, string password, bool isPersistent = false);
         Task<IdentityResult> LoginAsAdmin(string userName, string password, bool isPersistent = false);
         void Logout();
         PaginationDTO<UserDTO> GetUserPagination(int pageNumber, int pageSize, string searchQuery = null);
         Task<IdentityResult> SetLockout(string userName, bool lockout);
-        Task<bool> LockoutEnabledAsync(string userName);
-        bool LockoutEnabled(string userName);
+        Task<bool> LockoutEnabled(string userName);
         AuthDTO GetAuth();
         Task<IdentityResult> AddAdmin(string userName);
         Task<IdentityResult> UpdatePassword(string userName, string currentPassword, string newPassword);

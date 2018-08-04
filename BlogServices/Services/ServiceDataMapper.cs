@@ -23,20 +23,8 @@ namespace BlogServices.DTO
                 CommentDTO commentDTO = MapCommentEntityToDTO(commentEntity);
                 commentDTOs.Add(commentDTO);
                 List<CommentEntity> childCommentEntities = commentEntity.ChildCommentEntities;
-
-                if (childCommentEntities == null)
-                {
-                    continue;
-                }
-
-                List<CommentDTO> childCommentDTOs = new List<CommentDTO>();
-
-                foreach (CommentEntity childCommentEntity in childCommentEntities)
-                {
-                    CommentDTO childCommentDTO = MapCommentEntityToDTO(childCommentEntity);
-                    childCommentDTOs.Add(childCommentDTO);
-                }
-
+                Func<CommentEntity, CommentDTO> delegateMapper = MapCommentEntityToDTO;
+                List<CommentDTO> childCommentDTOs = MapGenericList(childCommentEntities, delegateMapper);
                 commentDTO.ChildCommentDTOs = childCommentDTOs;
             }
 
@@ -150,64 +138,24 @@ namespace BlogServices.DTO
 
         public PaginationDTO<PostCardDTO> MapPostCardPaginationEntityToDTO(PaginationEntity<PostEntity> postPaginationEntity)
         {
-            if (postPaginationEntity == null)
-            {
-                return null;
-            }
-
-            List<PostEntity> postEntities = postPaginationEntity.Entities;
-            List<PostCardDTO> postCardDTOs = MapPostCardEntitiesToDTOs(postEntities);
-
-            PaginationDTO<PostCardDTO> postCardPaginationDTO = new PaginationDTO<PostCardDTO>()
-            {
-                DTOs = postCardDTOs,
-                HasNext = postPaginationEntity.HasNext,
-                HasPrevious = postPaginationEntity.HasPrevious,
-                PageNumber = postPaginationEntity.PageNumber,
-                PageSize = postPaginationEntity.PageSize,
-                Pages = postPaginationEntity.Pages,
-            };
+            Func<List<PostEntity>, List<PostCardDTO>> delegateMapper = MapPostCardEntitiesToDTOs;
+            PaginationDTO<PostCardDTO> postCardPaginationDTO = MapGenericPagination(postPaginationEntity, delegateMapper);
 
             return postCardPaginationDTO;
         }
 
         public List<PostCardDTO> MapPostCardEntitiesToDTOs(List<PostEntity> postEntities)
         {
-            if (postEntities == null)
-            {
-                return null;
-            }
-
-            List<PostCardDTO> postCardDTOs = new List<PostCardDTO>();
-
-            foreach (PostEntity postEntity in postEntities)
-            {
-                PostCardDTO postCardDTO = MapPostCardEntityToDTO(postEntity);
-                postCardDTOs.Add(postCardDTO);
-            }
+            Func<PostEntity, PostCardDTO> delegateMapper = MapPostCardEntityToDTO;
+            List<PostCardDTO> postCardDTOs = MapGenericList(postEntities, delegateMapper);
 
             return postCardDTOs;
         }
 
         public PaginationDTO<CommentDTO> MapCommentPaginationEntityToDTO(PaginationEntity<CommentEntity> commentPaginationEntity)
         {
-            if (commentPaginationEntity == null)
-            {
-                return null;
-            }
-
-            List<CommentEntity> commentEntities = commentPaginationEntity.Entities;
-            List<CommentDTO> commentDTOs = MapCommentEntitiesToDTOs(commentEntities);
-
-            PaginationDTO<CommentDTO> commentPaginationDTO = new PaginationDTO<CommentDTO>()
-            {
-                DTOs = commentDTOs,
-                HasNext = commentPaginationEntity.HasNext,
-                HasPrevious = commentPaginationEntity.HasPrevious,
-                PageNumber = commentPaginationEntity.PageNumber,
-                PageSize = commentPaginationEntity.PageSize,
-                Pages = commentPaginationEntity.Pages
-            };
+            Func<List<CommentEntity>, List<CommentDTO>> delegateMapper = MapCommentEntitiesToDTOs;
+            PaginationDTO<CommentDTO> commentPaginationDTO = MapGenericPagination(commentPaginationEntity, delegateMapper);
 
             return commentPaginationDTO;
         }
@@ -233,18 +181,8 @@ namespace BlogServices.DTO
 
         public List<PaginationDTO<PostCardDTO>> MapPostCardPaginationEntitiesToDTOs(List<PaginationEntity<PostEntity>> postPaginationEntities)
         {
-            if (postPaginationEntities == null)
-            {
-                return null;
-            }
-
-            List<PaginationDTO<PostCardDTO>> postCardPaginationDTOs = new List<PaginationDTO<PostCardDTO>>();
-
-            foreach (PaginationEntity<PostEntity> postPaginationEntity in postPaginationEntities)
-            {
-                PaginationDTO<PostCardDTO> postCardPaginationDTO = MapPostCardPaginationEntityToDTO(postPaginationEntity);
-                postCardPaginationDTOs.Add(postCardPaginationDTO);
-            }
+            Func<PaginationEntity<PostEntity>, PaginationDTO<PostCardDTO>> delegateMapper = MapPostCardPaginationEntityToDTO;
+            List<PaginationDTO<PostCardDTO>> postCardPaginationDTOs = MapGenericList(postPaginationEntities, delegateMapper);
 
             return postCardPaginationDTOs;
         }
@@ -273,18 +211,8 @@ namespace BlogServices.DTO
 
         public List<CategoryDTO> MapCategoryEntitiesToDTOs(List<CategoryEntity> categoryEntities)
         {
-            if (categoryEntities == null)
-            {
-                return null;
-            }
-
-            List<CategoryDTO> categoryDTOs = new List<CategoryDTO>();
-
-            foreach (CategoryEntity categoryEntity in categoryEntities)
-            {
-                CategoryDTO categoryDTO = MapCategoryEntityToDTO(categoryEntity);
-                categoryDTOs.Add(categoryDTO);
-            }
+            Func<CategoryEntity, CategoryDTO> delegateMapper = MapCategoryEntityToDTO;
+            List<CategoryDTO> categoryDTOs = MapGenericList(categoryEntities, delegateMapper);
 
             return categoryDTOs;
         }
@@ -405,6 +333,44 @@ namespace BlogServices.DTO
             }
 
             return userDTOs;
+        }
+
+        public List<T2> MapGenericList<T1, T2>(List<T1> list1, Func<T1, T2> delegateMapper)
+        {
+            if (list1 == null)
+            {
+                return null;
+            }
+
+            List<T2> list2 = new List<T2>();
+
+            foreach (T1 object1 in list1)
+            {
+                T2 object2 = delegateMapper(object1);
+                list2.Add(object2);
+            }
+
+            return list2;
+        }
+
+        public PaginationDTO<T2> MapGenericPagination<T1, T2>(PaginationEntity<T1> pagination1, Func<List<T1>, List<T2>> delegateMapper)
+        {
+            if (pagination1 == null)
+            {
+                return null;
+            }
+
+            PaginationDTO<T2> paginationDTO = new PaginationDTO<T2>
+            {
+                DTOs = delegateMapper(pagination1.Entities),
+                HasNext = pagination1.HasNext,
+                HasPrevious = pagination1.HasPrevious,
+                PageNumber = pagination1.PageNumber,
+                PageSize = pagination1.PageSize,
+                Pages = pagination1.Pages
+            };
+
+            return paginationDTO;
         }
     }
 }

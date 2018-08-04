@@ -6,6 +6,7 @@ using Microsoft.Owin.Security;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
@@ -22,8 +23,10 @@ namespace Blog.Controllers
             get
             {
                 ServiceUserManager userManager = HttpContext.GetOwinContext().GetUserManager<ServiceUserManager>();
+                ServiceRoleManager roleManager = HttpContext.GetOwinContext().GetUserManager<ServiceRoleManager>();
                 IAuthenticationManager authManager = HttpContext.GetOwinContext().Authentication;
                 userService.SetUserManager(userManager);
+                userService.SetRoleManager(roleManager);
                 userService.SetAuthManager(authManager);
 
                 return userService;
@@ -39,9 +42,9 @@ namespace Blog.Controllers
 
         // GET: Search
         [Route("Search")]
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            UpdateAuthView();
+            await UpdateAuthView();
             return View();
         }
 
@@ -55,26 +58,23 @@ namespace Blog.Controllers
             return PartialView("~/Views/Home/_PostGridList.cshtml", postCardPaginationModels);
         }
 
-        private void UpdateAuthView()
+        private async Task UpdateAuthView()
         {
             AuthDTO authDTO = UserService.GetAuth();
+            bool isAuthenticated = authDTO.IsAuthenticated;
+            bool lockoutEnabled = false;
 
-            if (authDTO.IsAuthenticated)
+            if (isAuthenticated)
             {
-                bool lockoutEnabled = UserService.LockoutEnabled(authDTO.UserName);
+                lockoutEnabled = await UserService.LockoutEnabled(authDTO.UserName);
 
                 if (lockoutEnabled)
                 {
                     UserService.Logout();
                 }
-
-                ViewBag.IsAuthenticated = !lockoutEnabled;
-            }
-            else
-            {
-                ViewBag.IsAuthenticated = false;
             }
 
+            ViewBag.IsAuthenticated = isAuthenticated && !lockoutEnabled;
             ViewBag.ReturnUrl = Request.Url.AbsolutePath;
             ViewBag.UserName = authDTO.UserName;
         }

@@ -58,7 +58,7 @@ namespace BlogServices.Services
             return userPaginationDTO;
         }
 
-        public async Task<IdentityResult> Login(string userName, string password)
+        public async Task<IdentityResult> Login(string userName, string password, bool isPersistent = false)
         {
             UserEntity userEntity = await userManager.FindAsync(userName, password);
 
@@ -74,7 +74,7 @@ namespace BlogServices.Services
 
             AuthenticationProperties authProperties = new AuthenticationProperties()
             {
-                IsPersistent = false
+                IsPersistent = isPersistent
             };
 
             ClaimsIdentity claimsIdentity = await userManager.CreateIdentityAsync(userEntity, DefaultAuthenticationTypes.ApplicationCookie);
@@ -110,7 +110,7 @@ namespace BlogServices.Services
             return result;
         }
 
-        public async Task<bool> LockoutEnabledAsync(string userName)
+        public async Task<bool> LockoutEnabled(string userName)
         {
             UserEntity userEntity = await userManager.FindByNameAsync(userName);
 
@@ -120,20 +120,6 @@ namespace BlogServices.Services
             }
 
             bool lockout = await userManager.GetLockoutEnabledAsync(userEntity.Id);
-
-            return lockout;
-        }
-
-        public bool LockoutEnabled(string userName)
-        {
-            UserEntity userEntity = userManager.FindByName(userName);
-
-            if (userEntity == null)
-            {
-                return true;
-            }
-
-            bool lockout = userManager.GetLockoutEnabled(userEntity.Id);
 
             return lockout;
         }

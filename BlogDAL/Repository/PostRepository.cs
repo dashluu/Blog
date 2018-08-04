@@ -98,7 +98,7 @@ namespace BlogDAL.Repository
                         || x.PostCategory.Name.Contains(encodedSearchQuery));
                 }
 
-                Expression<Func<PostEntity, DateTime>> postOrderByExpression = (x => x.CreatedDate);
+                Expression<Func<PostEntity, DateTime>> postOrderByExpression = (x => x.UpdatedDate);
                 PaginationEntity<PostEntity> postPaginationEntity = GetPaginationEntity(postQueryable, isDesc: true, postOrderByExpression, pageNumber, pageSize);
 
                 return postPaginationEntity;

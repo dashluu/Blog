@@ -112,38 +112,16 @@ namespace Blog.Models
 
         public List<APIPostCardModel> MapPostCardDTOsToModels(List<PostCardDTO> postCardDTOs)
         {
-            if (postCardDTOs == null)
-            {
-                return null;
-            }
-
-            List<APIPostCardModel> postCardModels = new List<APIPostCardModel>();
-
-            foreach (PostCardDTO postCardDTO in postCardDTOs)
-            {
-                APIPostCardModel postCardModel = MapPostCardDTOToModel(postCardDTO);
-                postCardModels.Add(postCardModel);
-            }
+            Func<PostCardDTO, APIPostCardModel> delegateMapper = MapPostCardDTOToModel;
+            List<APIPostCardModel> postCardModels = MapGenericList(postCardDTOs, delegateMapper);
 
             return postCardModels;
         }
 
         public APIPaginationModel<APIPostCardModel> MapPostCardPaginationDTOToModel(PaginationDTO<PostCardDTO> postCardPaginationDTO)
         {
-            if (postCardPaginationDTO == null)
-            {
-                return null;
-            }
-
-            APIPaginationModel<APIPostCardModel> postCardPaginationModel = new APIPaginationModel<APIPostCardModel>
-            {
-                Models = MapPostCardDTOsToModels(postCardPaginationDTO.DTOs),
-                HasNext = postCardPaginationDTO.HasNext,
-                HasPrevious = postCardPaginationDTO.HasPrevious,
-                PageNumber = postCardPaginationDTO.PageNumber,
-                PageSize = postCardPaginationDTO.PageSize,
-                Pages = postCardPaginationDTO.Pages
-            };
+            Func<List<PostCardDTO>, List<APIPostCardModel>> delegateMapper = MapPostCardDTOsToModels;
+            APIPaginationModel<APIPostCardModel> postCardPaginationModel = MapGenericPagination(postCardPaginationDTO, delegateMapper);
 
             return postCardPaginationModel;
         }
@@ -168,18 +146,8 @@ namespace Blog.Models
 
         public List<APICategoryModel> MapCategoryDTOsToModels(List<CategoryDTO> categoryDTOs)
         {
-            if (categoryDTOs == null)
-            {
-                return null;
-            }
-
-            List<APICategoryModel> categoryModels = new List<APICategoryModel>();
-
-            foreach (CategoryDTO categoryDTO in categoryDTOs)
-            {
-                APICategoryModel categoryModel = MapCategoryDTOToModel(categoryDTO);
-                categoryModels.Add(categoryModel);
-            }
+            Func<CategoryDTO, APICategoryModel> delegateMapper = MapCategoryDTOToModel;
+            List<APICategoryModel> categoryModels = MapGenericList(categoryDTOs, delegateMapper);
 
             return categoryModels;
         }
@@ -232,20 +200,8 @@ namespace Blog.Models
                 APICommentModel commentModel = MapCommentDTOToModel(commentDTO);
                 commentModels.Add(commentModel);
                 List<CommentDTO> childCommentDTOs = commentDTO.ChildCommentDTOs;
-
-                if (childCommentDTOs == null)
-                {
-                    continue;
-                }
-
-                List<APICommentModel> childCommentModels = new List<APICommentModel>();
-
-                foreach (CommentDTO childCommentDTO in childCommentDTOs)
-                {
-                    APICommentModel childAPICommentModel = MapCommentDTOToModel(childCommentDTO);
-                    childCommentModels.Add(childAPICommentModel);
-                }
-
+                Func<CommentDTO, APICommentModel> delegateMapper = MapCommentDTOToModel;
+                List<APICommentModel> childCommentModels = MapGenericList(childCommentDTOs, delegateMapper);
                 commentModel.ChildCommentModels = childCommentModels;
             }
 
@@ -254,23 +210,8 @@ namespace Blog.Models
 
         public APIPaginationModel<APICommentModel> MapCommentPaginationDTOToModel(PaginationDTO<CommentDTO> commentPaginationDTO)
         {
-            if (commentPaginationDTO == null)
-            {
-                return null;
-            }
-
-            List<CommentDTO> commentDTOs = commentPaginationDTO.DTOs;
-            List<APICommentModel> commentModels = MapCommentDTOsToModels(commentDTOs);
-
-            APIPaginationModel<APICommentModel> commentPaginationModel = new APIPaginationModel<APICommentModel>()
-            {
-                Models = commentModels,
-                HasNext = commentPaginationDTO.HasNext,
-                HasPrevious = commentPaginationDTO.HasPrevious,
-                PageNumber = commentPaginationDTO.PageNumber,
-                PageSize = commentPaginationDTO.PageSize,
-                Pages = commentPaginationDTO.Pages
-            };
+            Func<List<CommentDTO>, List<APICommentModel>> delegateMapper = MapCommentDTOsToModels;
+            APIPaginationModel<APICommentModel> commentPaginationModel = MapGenericPagination(commentPaginationDTO, delegateMapper);
 
             return commentPaginationModel;
         }
@@ -311,38 +252,16 @@ namespace Blog.Models
 
         public List<APIUserModel> MapUserDTOsToModels(List<UserDTO> userDTOs)
         {
-            if (userDTOs == null)
-            {
-                return null;
-            }
-
-            List<APIUserModel> userModels = new List<APIUserModel>();
-
-            foreach (UserDTO userDTO in userDTOs)
-            {
-                APIUserModel userModel = MapUserDTOToModel(userDTO);
-                userModels.Add(userModel);
-            }
+            Func<UserDTO, APIUserModel> delegateMapper = MapUserDTOToModel;
+            List<APIUserModel> userModels = MapGenericList(userDTOs, delegateMapper);
 
             return userModels;
         }
 
         public APIPaginationModel<APIUserModel> MapUserPaginationDTOToModel(PaginationDTO<UserDTO> userPaginationDTO)
         {
-            if (userPaginationDTO == null)
-            {
-                return null;
-            }
-
-            APIPaginationModel<APIUserModel> userPaginationModel = new APIPaginationModel<APIUserModel>
-            {
-                Models = MapUserDTOsToModels(userPaginationDTO.DTOs),
-                HasNext = userPaginationDTO.HasNext,
-                HasPrevious = userPaginationDTO.HasPrevious,
-                PageNumber = userPaginationDTO.PageNumber,
-                PageSize = userPaginationDTO.PageSize,
-                Pages = userPaginationDTO.Pages
-            };
+            Func<List<UserDTO>, List<APIUserModel>> delegateMapper = MapUserDTOsToModels;
+            APIPaginationModel<APIUserModel> userPaginationModel = MapGenericPagination(userPaginationDTO, delegateMapper);
 
             return userPaginationModel;
         }
@@ -361,6 +280,44 @@ namespace Blog.Models
             };
 
             return userDTO;
+        }
+
+        public List<T2> MapGenericList<T1, T2>(List<T1> list1, Func<T1, T2> delegateMapper)
+        {
+            if (list1 == null)
+            {
+                return null;
+            }
+
+            List<T2> list2 = new List<T2>();
+
+            foreach (T1 object1 in list1)
+            {
+                T2 object2 = delegateMapper(object1);
+                list2.Add(object2);
+            }
+
+            return list2;
+        }
+
+        public APIPaginationModel<T2> MapGenericPagination<T1, T2>(PaginationDTO<T1> pagination1, Func<List<T1>, List<T2>> delegateMapper)
+        {
+            if (pagination1 == null)
+            {
+                return null;
+            }
+
+            APIPaginationModel<T2> paginationModel = new APIPaginationModel<T2>
+            {
+                Models = delegateMapper(pagination1.DTOs),
+                HasNext = pagination1.HasNext,
+                HasPrevious = pagination1.HasPrevious,
+                PageNumber = pagination1.PageNumber,
+                PageSize = pagination1.PageSize,
+                Pages = pagination1.Pages
+            };
+
+            return paginationModel;
         }
     }
 }

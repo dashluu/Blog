@@ -25,8 +25,10 @@ namespace Blog.Controllers
             get
             {
                 ServiceUserManager userManager = HttpContext.GetOwinContext().GetUserManager<ServiceUserManager>();
+                ServiceRoleManager roleManager = HttpContext.GetOwinContext().GetUserManager<ServiceRoleManager>();
                 IAuthenticationManager authManager = HttpContext.GetOwinContext().Authentication;
                 userService.SetUserManager(userManager);
+                userService.SetRoleManager(roleManager);
                 userService.SetAuthManager(authManager);
 
                 return userService;
@@ -43,35 +45,32 @@ namespace Blog.Controllers
 
         // GET: Default
         [Route("Posts/{postId}")]
-        public ActionResult Index(string postId)
+        public async Task<ActionResult> Index(string postId)
         {
-            UpdateAuthView();
+            await UpdateAuthView();
             PostDTOWithPaginatedComments postDTOWithPaginatedComments = postService.GetPostWithPaginatedComments(postId, pageSize: Settings.COMMENT_PAGE_SIZE);
             PostModelWithPaginatedComments postModelWithPaginatedComments = dataMapper.MapPostDTOToModelWithPaginatedComments(postDTOWithPaginatedComments);
 
             return View(postModelWithPaginatedComments);
         }
 
-        private void UpdateAuthView()
+        private async Task UpdateAuthView()
         {
             AuthDTO authDTO = UserService.GetAuth();
+            bool isAuthenticated = authDTO.IsAuthenticated;
+            bool lockoutEnabled = false;
 
-            if (authDTO.IsAuthenticated)
+            if (isAuthenticated)
             {
-                bool lockoutEnabled = UserService.LockoutEnabled(authDTO.UserName);
+                lockoutEnabled = await UserService.LockoutEnabled(authDTO.UserName);
 
                 if (lockoutEnabled)
                 {
                     UserService.Logout();
                 }
-
-                ViewBag.IsAuthenticated = !lockoutEnabled;
-            }
-            else
-            {
-                ViewBag.IsAuthenticated = false;
             }
 
+            ViewBag.IsAuthenticated = isAuthenticated && !lockoutEnabled;
             ViewBag.ReturnUrl = Request.Url.AbsolutePath;
             ViewBag.UserName = authDTO.UserName;
         }
@@ -98,7 +97,7 @@ namespace Blog.Controllers
 
             if (authDTO.IsAuthenticated)
             {
-                bool lockoutEnabled = await UserService.LockoutEnabledAsync(authDTO.UserName);
+                bool lockoutEnabled = await UserService.LockoutEnabled(authDTO.UserName);
                 
                 if (lockoutEnabled)
                 {
@@ -117,7 +116,7 @@ namespace Blog.Controllers
             {
                 Content = comment,
                 PostId = postId,
-                Username = HttpContext.User.Identity.Name
+                Username = authDTO.UserName
             };
 
             bool addSuccessfully = commentService.Add(commentDTO);
@@ -165,7 +164,7 @@ namespace Blog.Controllers
 
             if (authDTO.IsAuthenticated)
             {
-                bool lockoutEnabled = await UserService.LockoutEnabledAsync(authDTO.UserName);
+                bool lockoutEnabled = await UserService.LockoutEnabled(authDTO.UserName);
 
                 if (lockoutEnabled)
                 {
@@ -185,7 +184,7 @@ namespace Blog.Controllers
                 Content = comment,
                 PostId = postId,
                 ParentCommentId = parentCommentId,
-                Username = HttpContext.User.Identity.Name
+                Username = authDTO.UserName
             };
 
             bool addSuccessfully = commentService.Add(childCommentDTO);

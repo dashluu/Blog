@@ -36,5 +36,8 @@ namespace Blog.Models
         List<APIUserModel> MapUserDTOsToModels(List<UserDTO> userDTOs);
         APIPaginationModel<APIUserModel> MapUserPaginationDTOToModel(PaginationDTO<UserDTO> userPaginationDTO);
         UserDTO MapUserLoginModelToDTO(APIUserLoginModel userModel);
+
+        List<T2> MapGenericList<T1, T2>(List<T1> list1, Func<T1, T2> delegateMapper);
+        APIPaginationModel<T2> MapGenericPagination<T1, T2>(PaginationDTO<T1> pagination1, Func<List<T1>, List<T2>> delegateMapper);
     }
 }

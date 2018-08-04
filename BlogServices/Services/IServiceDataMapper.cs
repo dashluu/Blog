@@ -33,5 +33,8 @@ namespace BlogServices.Services
         UserDTO MapUserEntityToDTO(UserEntity userEntity, RoleEntity adminRoleEntity = null);
         PaginationDTO<UserDTO> MapUserPaginationEntityToDTO(PaginationEntity<UserEntity> userPaginationEntity, RoleEntity adminRoleEntity = null);
         List<UserDTO> MapUserEntitiesToDTOs(List<UserEntity> userEntities, RoleEntity adminRoleEntity = null);
+
+        List<T2> MapGenericList<T1, T2>(List<T1> list1, Func<T1, T2> delegateMapper);
+        PaginationDTO<T2> MapGenericPagination<T1, T2>(PaginationEntity<T1> pagination1, Func<List<T1>, List<T2>> delegateMapper);
     }
 }

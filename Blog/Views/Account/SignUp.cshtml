@@ -11,6 +11,11 @@
         <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4"></div>
         <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
             <div id="sign-up-title">Sign up</div>
+            <div id="requirement-container">
+                <div class="sign-up-requirement">Username must be alphanumeric.</div>
+                <div class="sign-up-requirement">Password must be at least 6 characters long.</div>
+                <div class="sign-up-requirement">Password must contain at least 1 uppercase, 1 lowercase letter and 1 digit.</div>
+            </div>
             @Html.ValidationSummary(false)
             @using (Html.BeginForm("SignUp", "Account"))
             {

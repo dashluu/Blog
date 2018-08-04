@@ -33,5 +33,8 @@ namespace Blog.Models
         UserDTO MapUserLoginModelToDTO(UserLoginModel userModel);
         UserDTO MapUserEditModelToDTO(UserEditModel userModel);
         UserEditModel MapUserEditDTOToModel(UserDTO userDTO);
+
+        List<T2> MapGenericList<T1, T2>(List<T1> list1, Func<T1, T2> delegateMapper);
+        PaginationModel<T2> MapGenericPagination<T1, T2>(PaginationDTO<T1> pagination1, Func<List<T1>, List<T2>> delegateMapper);
     }
 }

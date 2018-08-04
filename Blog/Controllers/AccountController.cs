@@ -25,8 +25,10 @@ namespace Blog.Controllers
             get
             {
                 ServiceUserManager userManager = HttpContext.GetOwinContext().GetUserManager<ServiceUserManager>();
+                ServiceRoleManager roleManager = HttpContext.GetOwinContext().GetUserManager<ServiceRoleManager>();
                 IAuthenticationManager authManager = HttpContext.GetOwinContext().Authentication;
                 userService.SetUserManager(userManager);
+                userService.SetRoleManager(roleManager);
                 userService.SetAuthManager(authManager);
 
                 return userService;
@@ -40,13 +42,13 @@ namespace Blog.Controllers
         }
 
         // GET: Account
-        public ActionResult Login(string ReturnUrl = "/")
+        public async Task<ActionResult> Login(string ReturnUrl = "/")
         {
             AuthDTO authDTO = UserService.GetAuth();
 
             if (authDTO.IsAuthenticated)
             {
-                bool lockoutEnabled = UserService.LockoutEnabled(authDTO.UserName);
+                bool lockoutEnabled = await UserService.LockoutEnabled(authDTO.UserName);
 
                 if (lockoutEnabled)
                 {
@@ -79,13 +81,13 @@ namespace Blog.Controllers
             return RedirectToAction("Login");
         }
 
-        public ActionResult SignUp(string ReturnUrl = "/")
+        public async Task<ActionResult> SignUp(string ReturnUrl = "/")
         {
             AuthDTO authDTO = UserService.GetAuth();
 
             if (authDTO.IsAuthenticated)
             {
-                bool lockoutEnabled = UserService.LockoutEnabled(authDTO.UserName);
+                bool lockoutEnabled = await UserService.LockoutEnabled(authDTO.UserName);
 
                 if (lockoutEnabled)
                 {
@@ -121,7 +123,7 @@ namespace Blog.Controllers
 
             if (authDTO.IsAuthenticated)
             {
-                bool lockoutEnabled = UserService.LockoutEnabled(authDTO.UserName);
+                bool lockoutEnabled = await UserService.LockoutEnabled(authDTO.UserName);
 
                 if (lockoutEnabled)
                 {
@@ -167,7 +169,7 @@ namespace Blog.Controllers
 
             if (authDTO.IsAuthenticated)
             {
-                bool lockoutEnabled = UserService.LockoutEnabled(authDTO.UserName);
+                bool lockoutEnabled = await UserService.LockoutEnabled(authDTO.UserName);
 
                 if (lockoutEnabled)
                 {
@@ -200,7 +202,7 @@ namespace Blog.Controllers
         public async Task<ActionResult> Info()
         {
             AuthDTO authDTO = UserService.GetAuth();
-            bool lockoutEnabled = UserService.LockoutEnabled(authDTO.UserName);
+            bool lockoutEnabled = await UserService.LockoutEnabled(authDTO.UserName);
 
             if (lockoutEnabled)
             {
@@ -223,7 +225,7 @@ namespace Blog.Controllers
         {
             AuthDTO authDTO = UserService.GetAuth();
             string userName = authDTO.UserName;
-            bool lockoutEnabled = UserService.LockoutEnabled(userName);
+            bool lockoutEnabled = await UserService.LockoutEnabled(userName);
 
             if (lockoutEnabled)
             {
@@ -256,7 +258,7 @@ namespace Blog.Controllers
 
             userDTO = await UserService.GetUser(userName);
             userModel = dataMapper.MapUserEditDTOToModel(userDTO);
-            AddErrors(result.Errors);
+            AddErrors(result.Errors, "Info");
 
             return View("Info", userModel);
         }
@@ -267,7 +269,7 @@ namespace Blog.Controllers
         {
             AuthDTO authDTO = UserService.GetAuth();
             string userName = authDTO.UserName;
-            bool lockoutEnabled = UserService.LockoutEnabled(userName);
+            bool lockoutEnabled = await UserService.LockoutEnabled(userName);
 
             if (lockoutEnabled)
             {
@@ -294,16 +296,16 @@ namespace Blog.Controllers
                 return View("Info", userModel);
             }
 
-            AddErrors(result.Errors);
+            AddErrors(result.Errors, "Password");
 
             return View("Info", userModel);
         }
 
-        private void AddErrors(IEnumerable<string> errors)
+        private void AddErrors(IEnumerable<string> errors, string key = "")
         {
             foreach (string error in errors)
             {
-                ModelState.AddModelError("", error);
+                ModelState.AddModelError(key, error);
             }
         }
     }

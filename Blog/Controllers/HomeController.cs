@@ -27,8 +27,10 @@ namespace Blog.Controllers
             get
             {
                 ServiceUserManager userManager = HttpContext.GetOwinContext().GetUserManager<ServiceUserManager>();
+                ServiceRoleManager roleManager = HttpContext.GetOwinContext().GetUserManager<ServiceRoleManager>();
                 IAuthenticationManager authManager = HttpContext.GetOwinContext().Authentication;
                 userService.SetUserManager(userManager);
+                userService.SetRoleManager(roleManager);
                 userService.SetAuthManager(authManager);
 
                 return userService;
@@ -43,9 +45,9 @@ namespace Blog.Controllers
             this.dataMapper = dataMapper;
         }
 
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            UpdateAuthView();
+            await UpdateAuthView();
             List<PaginationDTO<PostCardDTO>> postCardPaginationDTOs = postService.GetPostCardPaginationList(pageSize: Settings.HOME_POST_PAGE_SIZE);
             List<PaginationModel<PostCardModel>> postCardPaginationModels = dataMapper.MapPostCardPaginationDTOsToModels(postCardPaginationDTOs);
 
@@ -53,35 +55,32 @@ namespace Blog.Controllers
         }
 
         [Route("Categories/{category}")]
-        public ActionResult Category(string category)
+        public async Task<ActionResult> Category(string category)
         {
-            UpdateAuthView();
+            await UpdateAuthView();
             PaginationDTO<PostCardDTO> postCardPaginationDTO = postService.GetPostCardPagination(pageNumber: 1, pageSize: Settings.POST_PAGE_SIZE, category);
             PaginationModel<PostCardModel> postCardPaginationModel = dataMapper.MapPostCardPaginationDTOToModel(postCardPaginationDTO);
 
             return View(postCardPaginationModel);
         }
 
-        private void UpdateAuthView()
+        private async Task UpdateAuthView()
         {
             AuthDTO authDTO = UserService.GetAuth();
+            bool isAuthenticated = authDTO.IsAuthenticated;
+            bool lockoutEnabled = false;
 
-            if (authDTO.IsAuthenticated)
+            if (isAuthenticated)
             {
-                bool lockoutEnabled = UserService.LockoutEnabled(authDTO.UserName);
+                lockoutEnabled = await UserService.LockoutEnabled(authDTO.UserName);
 
                 if (lockoutEnabled)
                 {
                     UserService.Logout();
                 }
-
-                ViewBag.IsAuthenticated = !lockoutEnabled;
-            }
-            else
-            {
-                ViewBag.IsAuthenticated = false;
             }
 
+            ViewBag.IsAuthenticated = isAuthenticated && !lockoutEnabled;
             ViewBag.ReturnUrl = Request.Url.AbsolutePath;
             ViewBag.UserName = authDTO.UserName;
         }

@@ -1,9 +1,26 @@
 ﻿.editing-title {
     color: black;
-    margin-bottom: 25px;
     margin-top: 0px;
     font-weight: 800;
     font-size: 30px;
+}
+
+#password-editing-title {
+    margin-bottom: 10px;
+}
+
+#info-editing-title {
+    margin-bottom: 25px;
+}
+
+.requirement-container {
+    margin-bottom: 25px;
+}
+
+.info-requirement {
+    color: gray;
+    font-weight: 600;
+    font-size: 14px;
 }
 
 .info-input {

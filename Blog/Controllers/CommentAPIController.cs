@@ -102,7 +102,7 @@ namespace Blog.Controllers
 
         [HttpDelete]
         [Route("api/Comments/{commentId}")]
-        public IHttpActionResult RemoveComment(string commentId, int pageNumber = 1, int pageSize = 0, string postId = null, string userName = null)
+        public IHttpActionResult RemoveComment(string commentId, int pageNumber = 1, int pageSize = 0, string postId = null, string parentCommentId = null, string userName = null)
         {
             object jsonObject;
 
@@ -129,7 +129,7 @@ namespace Blog.Controllers
             }
             else
             {
-                PaginationDTO<CommentDTO> commentPaginationDTO = commentService.GetCommentPagination(pageNumber, pageSize, postId: postId, userName: userName);
+                PaginationDTO<CommentDTO> commentPaginationDTO = commentService.GetCommentPagination(pageNumber, pageSize, postId: postId, commentId: parentCommentId, userName: userName);
                 APIPaginationModel<APICommentModel> commentPaginationModel = dataMapper.MapCommentPaginationDTOToModel(commentPaginationDTO);
 
                 jsonObject = new
